@@ -15,7 +15,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (isAuthenticated) {
     return <Component />;
   } else {
-    return <Navigate to={authenticationPath} />;
+    return <Navigate to={authenticationPath} replace={true} />;
   }
 };
 
