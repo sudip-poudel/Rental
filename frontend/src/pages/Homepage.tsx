@@ -1,10 +1,13 @@
+import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import React from "react";
+import Search from "@/components/Search";
 
 const Homepage = () => {
   return (
     <>
       <Navbar />
+      <Search />
+      <Footer />
     </>
   );
 };
