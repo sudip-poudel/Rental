@@ -31,12 +31,12 @@ const Navbar = () => {
         </div>
 
         <div className="flex flex-row gap-2  ">
-          <Button className="w-18 md:w-24 md:text-md">
-            <Link to={"/signin"}>Login</Link>
-          </Button>
-          <Button className="w-18 md:w-24 md:text-md">
-            <Link to={"/signin"}>Signup</Link>
-          </Button>
+          <Link to={"/signin"}>
+            <Button className="w-18 md:w-24 md:text-md">Login</Button>
+          </Link>
+          <Link to={"/signin"}>
+            <Button className="w-18 md:w-24 md:text-md">Signup</Button>
+          </Link>
         </div>
         <div className="md:hidden">
           {isOpen ? (
@@ -54,7 +54,7 @@ const Navbar = () => {
             exit={{ opacity: 0, y: -100 }}
             className="fixed w-full top-20 gap-2  md:hidden"
           >
-            <div className="flex flex-col items-center justify-center mx-auto w-[97%]  bg-[#b2b2b2] bg-opacity-65">
+            <div className="flex flex-col items-center justify-center mx-auto w-[97%]  bg-[#b2b2b2] bg-opacity-95 opacity-100">
               <Link to="/" className="p-2 hover:underline">
                 Home
               </Link>
