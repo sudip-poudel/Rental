@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Component, useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const Login = () => {
   const [islogin, setislogin] = useState(true);
@@ -37,8 +38,8 @@ const Login = () => {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col items-center justify-center">
-        <div className="flex items-center justify-around bg-white mt-10  w-fit p-4">
+      <div className="flex flex-col  items-center justify-center">
+        <div className="flex items-center justify-around bg-white   w-fit p-4">
           <div className="p-5">
             <Button
               onClick={(e) => setislogin(true)}
@@ -203,6 +204,7 @@ const Login = () => {
           )}
         </div>
       </div>
+      <Footer />
     </>
   );
 };
