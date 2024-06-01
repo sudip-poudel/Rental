@@ -1,5 +1,5 @@
 {
-  "id": "41827c2f-232f-4a51-8af5-77fe1642f371",
+  "id": "907bea8a-beba-48ad-a389-7746d1066f19",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -20,15 +20,74 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "rating": {
+          "name": "rating",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "userRole": {
+          "name": "userRole",
+          "type": "userRole",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'user'"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "emainIndex": {
+          "name": "emainIndex",
+          "columns": [
+            "email"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
     }
   },
-  "enums": {},
+  "enums": {
+    "public.userRole": {
+      "name": "userRole",
+      "schema": "public",
+      "values": [
+        "admin",
+        "user"
+      ]
+    }
+  },
   "schemas": {},
   "_meta": {
     "columns": {},
