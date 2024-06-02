@@ -2,9 +2,16 @@ import { Button } from "@/components/ui/button";
 import { Component, useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+type ErrorType = {
+  error: string;
+  errorMessage: string;
+};
 
 const Login = () => {
   const [islogin, setislogin] = useState(true);
+  const [emailError, setEmailError] = useState<ErrorType[]>([]);
+  const [passwordError, setPasswordError] = useState<ErrorType[]>([]);
+
   const loginWithGoogle = () => {
     window.location.href = "/auth/google";
   };
@@ -18,13 +25,61 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const regEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+
+  useEffect(() => {
+    setTimeout(() => {
+      // if (input.email === "" ) {
+      //   setEmailError([
+      //     {
+      //       error: "Email ",
+      //       errorMessage: "Email field must be provided",
+      //     },
+      //   ]);
+      //   console.log(emailError);
+      // }
+      if (!regEx.test(input.email) && input.email.length > 0) {
+        console.log(regEx.test(input.email));
+
+        setEmailError([{ error: "Email", errorMessage: "Email is not valid" }]);
+      } else {
+        setEmailError([]);
+      }
+      // if (input.password === "") {
+      //   setPasswordError([
+      //     {
+      //       error: "Password",
+      //       errorMessage: "Password field must be provided",
+      //     },
+      //   ]);
+      // }
+      if (input.password.length <= 6 && !(input.password.length == 0)) {
+        setPasswordError([
+          {
+            error: "Password",
+            errorMessage: "Password must be at least 6 characters",
+          },
+        ]);
+      } else {
+        setPasswordError([]);
+      }
+    }, 2000);
+  }, [input]);
 
   const handleSubmitEvent = (event) => {
     event.preventDefault();
-    if (input.email !== "" && input.password !== "") {
+    if (input.email === "") {
+      setEmailError([
+        {
+          error: "Email ",
+          errorMessage: "Email field must be provided",
+        },
+      ]);
+      console.log(emailError);
+    }
+    if (emailError.length === 0 && passwordError.length === 0) {
       // sent through api
     }
-    alert("Please enter your email and password");
   };
 
   const handleInputChange = (event) => {
@@ -32,18 +87,17 @@ const Login = () => {
       ...input,
       [event.target.name]: event.target.value,
     });
-
-    console.log(event.target.value);
   };
+
   return (
-    <>
+    <div className="bg-gray-700">
       <Navbar />
       <div className="flex flex-col  items-center justify-center">
         <div className="flex items-center justify-around bg-white   w-fit p-4">
           <div className="p-5">
             <Button
               onClick={(e) => setislogin(true)}
-              className={`${islogin ? "" : active}`}
+              className={`${islogin ? "" : active} w-20 `}
             >
               Login
             </Button>
@@ -51,7 +105,7 @@ const Login = () => {
           <div className="p-5">
             <Button
               onClick={(e) => setislogin(false)}
-              className={`${!islogin ? "" : active}`}
+              className={`${!islogin ? "" : active} w-20`}
             >
               Signup
             </Button>
@@ -75,6 +129,11 @@ const Login = () => {
                       required
                       className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                     />
+                    {emailError.length > 0 && (
+                      <p className="text-red-700">
+                        {emailError[0].errorMessage}
+                      </p>
+                    )}
                   </div>
                   <div className="mb-6">
                     {/* <label htmlFor="password" className="block text-gray-700">
@@ -89,6 +148,12 @@ const Login = () => {
                       required
                       className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                     />
+
+                    {passwordError.length > 0 && (
+                      <p className="text-red-700">
+                        {passwordError[0].errorMessage}
+                      </p>
+                    )}
                   </div>
                   <Button type="submit" className="w-full text-lg">
                     Login
@@ -205,7 +270,7 @@ const Login = () => {
         </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 
