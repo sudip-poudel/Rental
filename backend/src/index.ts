@@ -1,11 +1,17 @@
+import { Request, Response } from "express";
 import { db } from "./db";
-import { users } from "./schema/schema";
+import { errorHandler } from "./middleware/errorHandler";
+const express = require("express");
 require("dotenv").config();
+const app = express();
 
-const test = async () => {
-  await db.insert(users).values({ name: "John Doe" });
+app.use(express.json());
+app.use("/user", require("./route/userRoute"));
+app.use(errorHandler);
 
-  const result = await db.query.users.findFirst();
-  console.log(result);
-};
-test();
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello World home!");
+});
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
+});
