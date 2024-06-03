@@ -25,16 +25,16 @@ const Footer = () => {
       <div>
         <h1 className="font-bold text-center">Quick Links</h1>
         <section className="text-sm flex flex-col items-center gap-2 ">
-          <Link className="hover:underline" to={"#"}>
+          <Link className="hover:underline" to="/">
             Home
           </Link>
-          <Link className="hover:underline" to={"#"}>
+          <Link to="/signin" className="hover:underline">
             Join As Renter
           </Link>
-          <Link className="hover:underline" to={"#"}>
+          <Link className="hover:underline" to="/about">
             About Us
           </Link>
-          <Link className="hover:underline" to={"#"}>
+          <Link className="hover:underline" to="/contact">
             Contact Us
           </Link>
           <Link className="hover:underline" to={"#"}>

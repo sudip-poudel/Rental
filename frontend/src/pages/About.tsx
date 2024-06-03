@@ -11,10 +11,10 @@ const About = () => {
         <div className=" w-2/3 ">
           <div className="mt-10 ml-20 ">
             <div className="flex  ">
-              <h1 className="text-lg font-bold ">About Rent Hub:</h1>
+              <h1 className="text-lg font-bold ">About RentHub:</h1>
             </div>
             <div>
-              Welcome to Rentable, your one-stop destination for renting items
+              Welcome to RentHub, your one-stop destination for renting items
               from your local community. Whether you need a camera for a weekend
               trip, a bike for your city commute, a tent for your camping
               adventure, or a kayak for a day on the water, Rentable makes it
@@ -26,7 +26,7 @@ const About = () => {
               <h1 className="text-lg font-bold ">Our Mission:</h1>
             </div>
             <div>
-              At Rent Hub, our mission is to foster a sharing economy that
+              At RentHub, our mission is to foster a sharing economy that
               benefits everyone. We believe in the power of community and the
               value of sharing resources. By providing a platform where people
               can list their items for rent, we aim to reduce waste, save money,
@@ -98,7 +98,7 @@ const About = () => {
             <div>
               <h1 className="text-lg font-bold">Our Story</h1>
             </div>{" "}
-            Rentable was founded with the vision of creating a sustainable and
+            RentHub was founded with the vision of creating a sustainable and
             connected community where resources are shared efficiently. Our team
             is passionate about making it easy for people to access the items
             they need without the burden of ownership. By connecting renters and
@@ -111,7 +111,7 @@ const About = () => {
             Have questions or need assistance? Our support team is here to help.
             Contact us at{" "}
             <a href="#" className="text-blue-500 hover:underline">
-              support@rentable.com{" "}
+              support@renthub.com
             </a>
             or visit our{" "}
             <a href="#" className="text-blue-500 hover:underline">
@@ -122,7 +122,7 @@ const About = () => {
             <div>
               <h1 className="text-lg font-bold">Join Us</h1>
             </div>
-            Be a part of the Rentable community today. Whether you’re looking to
+            Be a part of the RentHub community today. Whether you’re looking to
             rent or list an item, we’re excited to have you with us. Together,
             we can make renting the new norm and contribute to a more
             sustainable future.
