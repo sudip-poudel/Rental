@@ -1,81 +1,144 @@
-import Footer from "@/components/Footer";
+import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
-import React from "react";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
 
-const Contact = () => {
+const ContactUs = () => {
+  const [contactInput, setContactInput] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setContactInput({
+      ...contactInput,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const validateEmail = (email: string) => {
+    const regEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+    return regEx.test(email);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    let formErrors = {
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    };
+
+    if (contactInput.name === "") {
+      formErrors.name = "Name is required";
+    }
+    if (contactInput.email === "") {
+      formErrors.email = "Email is required";
+    } else if (!validateEmail(contactInput.email)) {
+      formErrors.email = "Invalid email address";
+    }
+    if (contactInput.subject === "") {
+      formErrors.subject = "Subject is required";
+    }
+    if (contactInput.message === "") {
+      formErrors.message = "Message is required";
+    }
+
+    setErrors(formErrors);
+
+    if (
+      formErrors.name === "" &&
+      formErrors.email === "" &&
+      formErrors.subject === "" &&
+      formErrors.message === ""
+    ) {
+      // Submit form data
+      console.log("Form submitted:", contactInput);
+      // Reset form
+      setContactInput({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+    }
+  };
+
   return (
-    <div>
+    <div className="bg-gray-100 min-h-screen flex flex-col">
       <Navbar />
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt magni
-        nemo temporibus earum libero, eveniet error hic ea ullam voluptatibus
-        labore. Exercitationem vero sint eligendi est, earum recusandae impedit
-        blanditiis. Corrupti nulla, libero quas in perspiciatis quasi sint
-        provident expedita tempore officia porro consequuntur, minus cum sit
-        ullam ratione iure ab quam quo amet. Soluta dolore quasi facilis ad
-        asperiores! Voluptate, earum labore! Sed labore libero corrupti ipsum
-        odit deserunt accusantium voluptatum consectetur nesciunt, dolores harum
-        suscipit, fugit quia earum nobis eos, tenetur modi adipisci. Adipisci,
-        incidunt quia? Incidunt, dicta. Nihil doloribus ut rerum. Consectetur
-        accusantium eaque nemo assumenda repudiandae. Sunt laboriosam soluta
-        earum rerum nam, omnis ducimus. Earum hic commodi magnam ullam,
-        accusantium ea facere harum maxime natus excepturi? Sed odio quibusdam,
-        corrupti ratione est dolorem cum accusantium eius velit enim officiis
-        autem, reiciendis blanditiis non sunt modi consectetur eveniet! Eum quo
-        alias pariatur ratione dolore laudantium consequuntur numquam? Nesciunt
-        maxime in illo explicabo alias sit officiis et. Numquam maxime in ex
-        doloribus, fuga suscipit quam, saepe consequatur rem quaerat minima
-        officia non, recusandae officiis illum corrupti praesentium distinctio!
-        Mollitia fugit nobis corrupti soluta saepe vero, consectetur itaque nam
-        veritatis placeat molestiae rerum ab eum voluptas quas sint animi ipsum.
-        Nisi cumque nostrum tempore ad iure asperiores corrupti quos. Aspernatur
-        dignissimos maiores voluptas rerum ad incidunt, ipsa sunt. Distinctio
-        asperiores explicabo quos nihil repellendus molestiae tempore qui
-        reprehenderit at consequatur, ipsa incidunt magni cumque eos inventore
-        dolores sequi! Nobis. Numquam facere ex in, temporibus corporis vero
-        blanditiis ea quae soluta et, accusamus dolorem earum ipsa cupiditate
-        sequi, minima dignissimos nobis quos adipisci doloribus? Obcaecati
-        beatae sunt explicabo molestiae pariatur? Earum iure suscipit fugiat
-        quia nobis sunt cupiditate. Quisquam, labore provident! Vero, numquam
-        inventore eum consequuntur dolor ex, asperiores sapiente velit minus
-        autem id soluta suscipit saepe! Beatae, quae quod? Quisquam explicabo
-        deleniti nostrum minus inventore quidem asperiores nesciunt assumenda
-        itaque ex voluptatum eum minima dolorem culpa natus, dolor quibusdam
-        laboriosam placeat, mollitia cumque tempore sunt nobis labore accusamus!
-        Fugit. Tempore est fuga dicta nam quos, laborum id tenetur maiores
-        doloremque ullam aperiam distinctio velit? Explicabo dolorum magnam, et
-        fugiat esse neque necessitatibus nemo perspiciatis itaque numquam
-        adipisci fugit voluptas. Repellendus, perspiciatis. Autem illum quasi,
-        mollitia laudantium iste sunt error quia saepe, sed suscipit illo
-        voluptas iusto nulla ratione alias, ab atque rerum voluptates cumque
-        facilis? Sequi recusandae asperiores ab. Nisi expedita at autem neque
-        molestiae quo perspiciatis ab, tempora numquam dolores error, sint natus
-        fugit ullam velit odit. Velit officiis perferendis ratione voluptates
-        eum corporis iure vitae quos numquam. Excepturi, iste quo omnis
-        molestias natus corporis nulla sapiente. Adipisci quos quod quisquam
-        reiciendis nam dolorum, iusto pariatur harum placeat tenetur, odit porro
-        iste ullam cumque quas amet inventore neque. Rem repellat voluptatem
-        provident numquam nemo eligendi animi debitis temporibus. Consequuntur,
-        ab nam nisi quia quam ducimus ipsam sint sequi veritatis alias non.
-        Quibusdam modi iusto voluptatibus unde laboriosam autem. Earum, dolorem.
-        Quibusdam et veritatis perspiciatis numquam perferendis laudantium
-        magnam delectus enim sint eum nemo, magni voluptatum, tenetur, aliquam
-        odio consectetur architecto ipsum quod quas sed iusto placeat vel
-        molestias. Voluptatibus, labore corrupti recusandae dolore ipsam nulla
-        molestiae unde autem iusto soluta, incidunt itaque quaerat voluptate
-        exercitationem repellat nemo. Aliquam, nam voluptatum ipsa ducimus
-        voluptate animi velit quis distinctio ratione? Perferendis facere, unde
-        aspernatur beatae placeat vel veritatis, vero, perspiciatis voluptatum
-        nostrum praesentium. Vero obcaecati in quos laboriosam eligendi. Laborum
-        architecto voluptatibus obcaecati laboriosam blanditiis culpa aut
-        excepturi ipsum sed. Tempore iste impedit veritatis quod voluptates
-        aspernatur saepe molestias temporibus recusandae. Eligendi quo deserunt
-        assumenda nemo eos magnam veniam, incidunt officia recusandae adipisci
-        quod amet cum porro voluptatum quaerat vero.
-      </p>
+      <div className="flex-grow flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+          <h1 className="text-2xl font-bold mb-6 text-center">Contact Us</h1>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <input
+                type="text"
+                name="name"
+                placeholder="Your Name"
+                value={contactInput.name}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              {errors.name && <p className="text-red-600">{errors.name}</p>}
+            </div>
+            <div className="mb-4">
+              <input
+                type="email"
+                name="email"
+                placeholder="Your Email"
+                value={contactInput.email}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              {errors.email && <p className="text-red-600">{errors.email}</p>}
+            </div>
+            <div className="mb-4">
+              <input
+                type="text"
+                name="subject"
+                placeholder="Subject"
+                value={contactInput.subject}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              {errors.subject && (
+                <p className="text-red-600">{errors.subject}</p>
+              )}
+            </div>
+            <div className="mb-4">
+              <textarea
+                name="message"
+                placeholder="Your Message"
+                value={contactInput.message}
+                onChange={handleInputChange}
+                className="w-full h-40 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              ></textarea>
+              {errors.message && (
+                <p className="text-red-600">{errors.message}</p>
+              )}
+            </div>
+            <Button type="submit" className="w-full text-lg">
+              Send Message
+            </Button>
+          </form>
+        </div>
+      </div>
       <Footer />
     </div>
   );
 };
 
-export default Contact;
+export default ContactUs;
