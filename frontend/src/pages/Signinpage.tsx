@@ -11,71 +11,13 @@ type ErrorType = {
   errorMessage: string;
 };
 
-// const Signup = () => {
-//   const [emailError, setEmailError] = useState<ErrorType[]>([]);
-//   const [passwordError, setPasswordError] = useState<ErrorType[]>([]);
-//   const [signupInput, setSignupInput] = useState({
-//     name: "",
-//     email: "",
-//     password: "",
-//     confirmPassword: "",
-//   });
-//   const signupWithGoogle = () => {
-//     window.location.href = "/auth/google";
-//   };
-
-//   const signupWithFacebook = () => {
-//     window.location.href = "/auth/facebook";
-//   };
-//   const regEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
-
-//   useEffect(() => {
-//     setTimeout(() => {
-//       // if (input.email === "" ) {
-//       //   setEmailError([
-//       //     {
-//       //       error: "Email ",
-//       //       errorMessage: "Email field must be provided",
-//       //     },
-//       //   ]);
-//       //   console.log(emailError);
-//       // }
-//       if (!regEx.test(signupInput.email) && signupInput.email.length > 0) {
-//         console.log(regEx.test(signupInput.email));
-
-//         setEmailError([{ error: "Email", errorMessage: "Email is not valid" }]);
-//       } else {
-//         setEmailError([]);
-//       }
-//       // if (input.password === "") {
-//       //   setPasswordError([
-//       //     {
-//       //       error: "Password",
-//       //       errorMessage: "Password field must be provided",
-//       //     },
-//       //   ]);
-//       // }
-//       if (
-//         signupInput.password.length <= 6 &&
-//         !(signupInput.password.length == 0)
-//       ) {
-//         setPasswordError([
-//           {
-//             error: "Password",
-//             errorMessage: "Password must be at least 6 characters",
-//           },
-//         ]);
-//       } else {
-//         setPasswordError([]);
-//       }
-//     }, 2000);
-//   }, [signupInput]);
-// };
-
-const Signup = ({ loginWithFacebook, loginWithGoogle }) => {
+//signup component
+const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState<ErrorType[]>([]);
+  const [nameError, setNameError] = useState<ErrorType[]>([]);
   const [passwordError, setPasswordError] = useState<ErrorType[]>([]);
+  const [confPasswordError, setConfPasswordError] = useState<ErrorType[]>([]);
 
   const [signupInput, setSignupInput] = useState({
     name: "",
@@ -83,25 +25,19 @@ const Signup = ({ loginWithFacebook, loginWithGoogle }) => {
     password: "",
     confirmPassword: "",
   });
-  const signupWithGoogle = () => {
-    window.location.href = "/auth/google";
-  };
-  const signupWithFacebook = () => {
-    window.location.href = "/auth/facebook";
-  };
 
   const regEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
   useEffect(() => {
     setTimeout(() => {
       if (signupInput.name === "") {
-        setEmailError([
+        setNameError([
           {
             error: "Name ",
             errorMessage: "Name must be provided",
           },
         ]);
-        console.log(emailError);
+        // console.log(nameError);
       }
       if (!regEx.test(signupInput.email) && signupInput.email.length > 0) {
         console.log(regEx.test(signupInput.email));
@@ -119,7 +55,7 @@ const Signup = ({ loginWithFacebook, loginWithGoogle }) => {
       //   ]);
       // }
       if (
-        signupInput.password.length <= 6 &&
+        signupInput.password.length < 6 &&
         !(signupInput.password.length == 0)
       ) {
         setPasswordError([
@@ -131,23 +67,59 @@ const Signup = ({ loginWithFacebook, loginWithGoogle }) => {
       } else {
         setPasswordError([]);
       }
-    }, 2000);
+      if (signupInput.password === signupInput.confirmPassword) {
+        setConfPasswordError([]);
+      } else {
+        console.log("Password");
+        console.log(signupInput);
+        setConfPasswordError([
+          {
+            error: "Password",
+            errorMessage: "Passwords do not match",
+          },
+        ]);
+        console.log(confPasswordError);
+      }
+    }, 500);
   }, [signupInput]);
+
+  const handleSignupInputChange = (event) => {
+    setSignupInput({
+      ...signupInput,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const handleSubmitEvent = (event) => {
+    event.preventDefault();
+    if (signupInput.email === "") {
+      setEmailError([
+        {
+          error: "Email ",
+          errorMessage: "Email field must be provided",
+        },
+      ]);
+      console.log(emailError);
+    }
+    if (emailError.length === 0 && passwordError.length === 0) {
+      // sent through api
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center ">
       <div className="bg-white p-8 shadow-2xl -mt-60 rounded-lg w-full max-w-md">
         <h1 className=" text-2xl font-bold mb-6 text-center">
-          Signup to RentalHUB
+          Signup to RentHUB
         </h1>
-        <form>
+        <form onSubmit={handleSubmitEvent}>
           <div className="mb-4">
             <input
               type="text"
               id="name"
               name="name"
               placeholder="Full Name..."
-              // onChange={handleInputChange}
+              onChange={handleSignupInputChange}
               required
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
@@ -158,18 +130,21 @@ const Signup = ({ loginWithFacebook, loginWithGoogle }) => {
               id="email"
               name="email"
               placeholder="Email address..."
-              // onChange={handleInputChange}
+              onChange={handleSignupInputChange}
               required
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
+            {emailError.length > 0 && (
+              <p className="text-red-700">{emailError[0].errorMessage}</p>
+            )}
           </div>
-          <div className=" relative flex flex-row items-center mb-4 border rounded-lg">
+          <div className=" relative mb-6 border rounded-lg">
             <input
               type={showPassword ? "text" : "password"}
               id="password"
               name="password"
               placeholder="Create password..."
-              // onChange={handleInputChange}
+              onChange={handleSignupInputChange}
               required
               className="w-full px-4 py-2 focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
@@ -179,13 +154,17 @@ const Signup = ({ loginWithFacebook, loginWithGoogle }) => {
             >
               {showPassword ? <EyeOff /> : <Eye />}
             </span>
+
+            {passwordError.length > 0 && (
+              <p className="text-red-700">{passwordError[0].errorMessage}</p>
+            )}
           </div>
-          <div className=" relative flex flex-row items-center mb-4 border rounded-lg ">
+          <div className="relative mb-6 border rounded-lg ">
             <input
               type={showPassword ? "text" : "password"}
               id="Cpassword"
-              name="retype Password"
-              // onChange={handleInputChange}
+              name="confirmPassword"
+              onChange={handleSignupInputChange}
               placeholder="Confirm password..."
               required
               className="w-full px-4 py-2  focus:outline-none focus:ring-2 focus:ring-blue-600 focus:rounded-lg"
@@ -196,6 +175,11 @@ const Signup = ({ loginWithFacebook, loginWithGoogle }) => {
             >
               {showPassword ? <EyeOff /> : <Eye />}
             </span>
+            {confPasswordError[0]?.errorMessage && (
+              <p className="text-red-700">
+                {confPasswordError[0].errorMessage}
+              </p>
+            )}
           </div>
 
           <Button type="submit" className="w-full text-lg">
@@ -291,12 +275,20 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
       ]);
       console.log(emailError);
     }
+    if (loginInput.password === "") {
+      setPasswordError([
+        {
+          error: "Password",
+          errorMessage: "Password field must be provided",
+        },
+      ]);
+    }
     if (emailError.length === 0 && passwordError.length === 0) {
       // sent through api
     }
   };
 
-  const handlelginInputChange = (event) => {
+  const handleloginInputChange = (event) => {
     setLoginInput({
       ...loginInput,
       [event.target.name]: event.target.value,
@@ -307,7 +299,7 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
     <div className="min-h-screen w-full  flex items-center justify-center ">
       <div className="bg-white  p-8 -mt-80 rounded-lg shadow-2xl w-full max-w-md">
         <h1 className=" text-2xl font-bold mb-6 text-center">
-          Login to RentalHUB
+          Login to RentHUB
         </h1>
         <form onSubmit={handleSubmitEvent}>
           <div className="mb-4">
@@ -316,7 +308,7 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
               id="email"
               name="email"
               placeholder="Email address..."
-              onChange={handlelginInputChange}
+              onChange={handleloginInputChange}
               required
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
@@ -329,7 +321,7 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
               type={showPassword ? "text" : "password"}
               id="password"
               name="password"
-              onChange={handlelginInputChange}
+              onChange={handleloginInputChange}
               placeholder="Password..."
               required
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -391,10 +383,17 @@ const Signinpage = () => {
     window.location.href = "/auth/facebook";
   };
 
+  const signupWithGoogle = () => {
+    window.location.href = "/auth/google";
+  };
+  const signupWithFacebook = () => {
+    window.location.href = "/auth/facebook";
+  };
+
   return (
-    <div className="bg-gray-700">
+    <div className="min-h-screen">
       <Navbar />
-      <div className="flex flex-col  items-center justify-center">
+      <div className="flex flex-col min-h-screen  items-center justify-center">
         <div className="flex items-center justify-around bg-white   w-fit p-4">
           <div className="p-5">
             <Button
@@ -421,8 +420,8 @@ const Signinpage = () => {
             />
           ) : (
             <Signup
-              loginWithFacebook={loginWithFacebook}
-              loginWithGoogle={loginWithGoogle}
+              signupWithFacebook={signupWithFacebook}
+              signupWithGoogle={signupWithGoogle}
             />
           )}
         </div>
