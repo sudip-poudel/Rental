@@ -1,15 +1,24 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSelector } from "react-redux";
+import { RootState } from "@/types/types";
+import ProfileDropDown from "./ProfileDropDown";
 const Navbar = () => {
+  const isLoggedin = useSelector(
+    (state: RootState) => state.auth.userToken
+  )?.trim()
+    ? true
+    : false;
+
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
       <nav className="flex flex-row justify-between px-3 items-center">
         <Link to={"/"}>
-          <div className="flex flex-col  popins-title">
+          <div className="flex flex-col popins-title">
             <p className="p-0 m-0">RENT</p>
             <p className="p-0 -mt-4">HUB</p>
           </div>
@@ -30,14 +39,18 @@ const Navbar = () => {
           </Link>
         </div>
 
-        <div className="flex flex-row gap-2  ">
-          <Link to={"/signin"}>
-            <Button className="w-18 md:w-24 md:text-md">Login</Button>
-          </Link>
-          <Link to={"/signin"}>
-            <Button className="w-18 md:w-24 md:text-md">Signup</Button>
-          </Link>
-        </div>
+        {isLoggedin ? (
+          <ProfileDropDown />
+        ) : (
+          <div className="flex flex-row gap-2  ">
+            <Link to={"/signin"}>
+              <Button className="w-18 md:w-24 md:text-md">Login</Button>
+            </Link>
+            <Link to={"/signin"}>
+              <Button className="w-18 md:w-24 md:text-md">Signup</Button>
+            </Link>
+          </div>
+        )}
         <div className="md:hidden">
           {isOpen ? (
             <X size={32} onClick={() => setIsOpen(!isOpen)} />
