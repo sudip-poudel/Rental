@@ -33,19 +33,10 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
     confirmPassword: "",
   });
 
-  const regEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+  const regEx = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
   useEffect(() => {
-    setTimeout(() => {
-      if (signupInput.name === "") {
-        setNameError([
-          {
-            error: "Name ",
-            errorMessage: "Name must be provided",
-          },
-        ]);
-        // console.log(nameError);
-      }
+    const timeout = setTimeout(() => {
       if (!regEx.test(signupInput.email) && signupInput.email.length > 0) {
         console.log(regEx.test(signupInput.email));
 
@@ -53,14 +44,6 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
       } else {
         setEmailError([]);
       }
-      // if (input.password === "") {
-      //   setPasswordError([
-      //     {
-      //       error: "Password",
-      //       errorMessage: "Password field must be provided",
-      //     },
-      //   ]);
-      // }
       if (
         signupInput.password.length < 6 &&
         !(signupInput.password.length == 0)
@@ -87,7 +70,8 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
         ]);
         console.log(confPasswordError);
       }
-    }, 500);
+    }, 300);
+    return () => clearTimeout(timeout);
   }, [signupInput]);
 
   const handleSignupInputChange = (event) => {
@@ -99,6 +83,16 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
 
   const handleSubmitEvent = async (event) => {
     event.preventDefault();
+
+    if (signupInput.name === "") {
+      setNameError([
+        {
+          error: "Name ",
+          errorMessage: "Name must be provided",
+        },
+      ]);
+      // console.log(nameError);
+    }
     if (signupInput.email === "") {
       setEmailError([
         {
@@ -146,6 +140,9 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
               required
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
+            {nameError.length > 0 && (
+              <p className="text-red-700">{nameError[0].errorMessage}</p>
+            )}
           </div>
           <div className="mb-4">
             <input
@@ -182,7 +179,7 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
               <p className="text-red-700">{passwordError[0].errorMessage}</p>
             )}
           </div>
-          <div className="relative mb-6 border rounded-lg ">
+          <div className="relative mb-6 border  rounded-lg ">
             <input
               type={showPassword ? "text" : "password"}
               id="Cpassword"
@@ -234,6 +231,7 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
   );
 };
 
+//login component
 const Login = ({ loginWithFacebook, loginWithGoogle }) => {
   const [emailError, setEmailError] = useState<ErrorType[]>([]);
   const [passwordError, setPasswordError] = useState<ErrorType[]>([]);
@@ -244,10 +242,10 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
 
-  const regEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+  const regEx = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
   useEffect(() => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       // if (input.email === "" ) {
       //   setEmailError([
       //     {
@@ -285,7 +283,8 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
       } else {
         setPasswordError([]);
       }
-    }, 2000);
+    }, 300);
+    return () => clearTimeout(timeout);
   }, [loginInput]);
 
   const handleSubmitEvent = (event) => {
@@ -323,7 +322,7 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
     <div className="min-h-screen w-full  flex items-center justify-center ">
       <div className="bg-white  p-8 -mt-80 rounded-lg shadow-2xl w-full max-w-md">
         <h1 className=" text-2xl font-bold mb-6 text-center">
-          Login to RentHUB
+          Login to RentHub
         </h1>
         <form onSubmit={handleSubmitEvent}>
           <div className="mb-4">
@@ -395,9 +394,10 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
   );
 };
 
+//signin page as parent for the signup and login
 const Signinpage = () => {
   const [isLogin, setIsLogin] = useState(true);
-  let active = "bg-slate-500";
+  const active = "bg-slate-500";
 
   const loginWithGoogle = () => {
     window.location.href = "/auth/google";
