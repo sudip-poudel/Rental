@@ -5,11 +5,7 @@ import { eq } from "drizzle-orm";
 import { generateToken } from "../helper/generateToken";
 const bcrypt = require("bcrypt");
 
-const handleSignup = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const handleSignup = async (req: Request, res: Response) => {
   const {
     email,
     password,
@@ -55,8 +51,10 @@ const handleSignup = async (
   }
 };
 
-const handleSignin = async (req: Request, res: Response) => {
+const handleLogin = async (req: Request, res: Response) => {
   const { email, password }: { email: string; password: string } = req.body;
+  console.log(req.body);
+
   if (!email || !password) {
     return res.status(400).send("Username and password are required");
   }
@@ -73,17 +71,25 @@ const handleSignin = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(400).send("User not found");
     }
-    const isValid = await bcrypt.compare(password, user.password);
+    const isValid: boolean = await bcrypt.compare(password, user.password);
     if (!isValid) {
       return res.status(400).send("Invalid password");
     }
     const token = generateToken({ id: user.id });
-    return res
-      .status(200)
-      .send(user)
-      .cookie("token", token, {
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
+    const stringifiedUserData = JSON.stringify({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    });
+
+    res.cookie("token", token, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.cookie("userdata", stringifiedUserData, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).send("Login successful");
   } catch (error) {
     console.error(error);
   }
@@ -95,4 +101,4 @@ const handleLogout = async (req: Request, res: Response) => {
   res.status(200).send("Logged out successfully");
 };
 
-export { handleSignup, handleSignin, handleLogout };
+export { handleSignup, handleLogin, handleLogout };

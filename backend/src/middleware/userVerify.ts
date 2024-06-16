@@ -4,7 +4,7 @@ const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
   if (req.cookies?.token) {
     next();
   }
-  return res.status(401).redirect("/signin");
+  return res.status(401);
 };
 
 const isLoggedOut = (req: Request, res: Response, next: NextFunction) => {

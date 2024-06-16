@@ -4,12 +4,14 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Eye } from "lucide-react";
 import { EyeOff } from "lucide-react";
-import { fetchUserDetails, signupUser } from "@/api/api";
+import { loginUser, signupUser } from "@/api/api";
 import type { Dispatch } from "redux";
 
 import { useDispatch } from "react-redux";
 import { setUser } from "@/store/auth/authSlice";
 import getUserCookies from "@/helpers/getUserCookie";
+import { useNavigate } from "react-router-dom";
+import useIsLoggedin from "@/hooks/useIsLoggedin";
 
 //type definitions for Error handling
 type ErrorType = {
@@ -20,6 +22,7 @@ type ErrorType = {
 //signup component
 const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
   const dispatch: Dispatch = useDispatch();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState<ErrorType[]>([]);
   const [nameError, setNameError] = useState<ErrorType[]>([]);
@@ -105,9 +108,7 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
     if (emailError.length === 0 && passwordError.length === 0) {
       const response = await signupUser(signupInput);
       console.log(response);
-      if (response === "Signuo successful") {
-        // const userInfo =
-
+      if (response?.status === 200) {
         const authState: {
           token: string;
           userdata: { id: string; name: string; email: string };
@@ -119,6 +120,7 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
 
         dispatch(setUser(authState));
         console.log(response);
+        navigate("/");
       }
     }
   };
@@ -242,6 +244,9 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
 
+  const dispatch: Dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const regEx = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
   useEffect(() => {
@@ -271,7 +276,7 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
       //   ]);
       // }
       if (
-        loginInput.password.length <= 6 &&
+        loginInput.password.length < 6 &&
         !(loginInput.password.length == 0)
       ) {
         setPasswordError([
@@ -287,7 +292,7 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
     return () => clearTimeout(timeout);
   }, [loginInput]);
 
-  const handleSubmitEvent = (event) => {
+  const handleSubmitEvent = async (event) => {
     event.preventDefault();
     if (loginInput.email === "") {
       setEmailError([
@@ -307,7 +312,19 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
       ]);
     }
     if (emailError.length === 0 && passwordError.length === 0) {
-      // sent through api
+      const data = await loginUser(loginInput);
+      if (data?.status === 200) {
+        const authState: {
+          token: string;
+          userdata: { id: string; name: string; email: string };
+        } = {
+          token: getUserCookies().token,
+          userdata: JSON.parse(decodeURIComponent(getUserCookies().userdata)),
+        };
+        console.log(authState);
+        dispatch(setUser(authState));
+        navigate("/");
+      }
     }
   };
 
@@ -396,8 +413,15 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
 
 //signin page as parent for the signup and login
 const Signinpage = () => {
+  const isLoggedIn = useIsLoggedin();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const active = "bg-slate-500";
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn]);
 
   const loginWithGoogle = () => {
     window.location.href = "/auth/google";
@@ -414,7 +438,9 @@ const Signinpage = () => {
     window.location.href = "/auth/facebook";
   };
 
-  return (
+  return isLoggedIn ? (
+    ""
+  ) : (
     <div className="min-h-screen">
       <Navbar />
       <div className="flex flex-col min-h-screen  items-center justify-center">

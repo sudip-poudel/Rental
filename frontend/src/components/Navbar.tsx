@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSelector } from "react-redux";
@@ -14,27 +14,48 @@ const Navbar = () => {
     : false;
 
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
   return (
     <>
-      <nav className="flex flex-row justify-between px-3 items-center">
+      <nav className={`flex flex-row justify-between px-3 items-center`}>
         <Link to={"/"}>
-          <div className="flex flex-col popins-title">
-            <p className="p-0 m-0">RENT</p>
-            <p className="p-0 -mt-4">HUB</p>
+          <div className={`flex flex-col popins-title`}>
+            <p className={`p-0 m-0`}>RENT</p>
+            <p className={`p-0 -mt-4`}>HUB</p>
           </div>
         </Link>
 
-        <div className="hidden flex-row text-lg font-bold  md:flex">
-          <Link to="/" className="p-2 hover:underline">
+        <div className={`hidden flex-row text-lg font-bold md:flex`}>
+          <Link
+            to="/"
+            className={`p-2 hover:underline ${
+              location.pathname == "/" ? "underline" : ""
+            }`}
+          >
             Home
           </Link>
-          <Link to="/about" className="p-2 hover:underline">
+          <Link
+            to="/about"
+            className={`p-2 hover:underline ${
+              location.pathname == "/about" ? "underline" : ""
+            }`}
+          >
             About Us
           </Link>
-          <Link to="/contact" className="p-2 hover:underline">
+          <Link
+            to="/contact"
+            className={`p-2 hover:underline ${
+              location.pathname == "/contact" ? "underline" : ""
+            }`}
+          >
             Contact
           </Link>
-          <Link to="/dashboard" className="p-2 hover:underline">
+          <Link
+            to="/dashboard"
+            className={`p-2 hover:underline ${
+              location.pathname == "/dashboard" ? "underline" : ""
+            }`}
+          >
             Dashboard
           </Link>
         </div>
