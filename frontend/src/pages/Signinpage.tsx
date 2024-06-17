@@ -2,16 +2,11 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Eye } from "lucide-react";
+import { Eye, Loader2 } from "lucide-react";
 import { EyeOff } from "lucide-react";
-import { loginUser, signupUser } from "@/api/api";
-import type { Dispatch } from "redux";
-
-import { useDispatch } from "react-redux";
-import { setUser } from "@/store/auth/authSlice";
-import getUserCookies from "@/helpers/getUserCookie";
 import { useNavigate } from "react-router-dom";
 import useIsLoggedin from "@/hooks/useIsLoggedin";
+import { useLogin, useSignup } from "@/api/queriesAndMutation";
 
 //type definitions for Error handling
 type ErrorType = {
@@ -20,9 +15,13 @@ type ErrorType = {
 };
 
 //signup component
-const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
-  const dispatch: Dispatch = useDispatch();
-  const navigate = useNavigate();
+const Signup = ({
+  signupWithGoogle,
+  setIsLogin,
+}: {
+  signupWithGoogle: () => void;
+  setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState<ErrorType[]>([]);
   const [nameError, setNameError] = useState<ErrorType[]>([]);
@@ -35,6 +34,7 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
     password: "",
     confirmPassword: "",
   });
+  const signupuser = useSignup();
 
   const regEx = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
@@ -106,28 +106,13 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
       console.log(emailError);
     }
     if (emailError.length === 0 && passwordError.length === 0) {
-      const response = await signupUser(signupInput);
-      console.log(response);
-      if (response?.status === 200) {
-        const authState: {
-          token: string;
-          userdata: { id: string; name: string; email: string };
-        } = {
-          token: getUserCookies().token,
-          userdata: JSON.parse(decodeURIComponent(getUserCookies().userdata)),
-        };
-        console.log(authState);
-
-        dispatch(setUser(authState));
-        console.log(response);
-        navigate("/");
-      }
+      signupuser.mutate(signupInput);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center ">
-      <div className="bg-white p-8 shadow-2xl -mt-60 rounded-lg w-full max-w-md">
+    <div className=" flex items-center justify-center w-96">
+      <div className="bg-white p-8 shadow-2xl  rounded-lg w-full max-w-md">
         <h1 className=" text-2xl font-bold mb-6 text-center">
           Signup to RentHUB
         </h1>
@@ -171,7 +156,7 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
               className="w-full px-4 py-2 focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
             <span
-              className="absolute right-3 top-3 cursor-pointer"
+              className="absolute right-[8px] top-[8px] cursor-pointer"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <EyeOff /> : <Eye />}
@@ -204,6 +189,11 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
               </p>
             )}
           </div>
+          {signupuser.isError && (
+            <p className="text-red-700 text-center">
+              {signupuser.error.message}
+            </p>
+          )}
 
           <Button type="submit" className="w-full text-lg">
             Signup
@@ -220,21 +210,29 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
           >
             Continue with Google
           </button>
-          <button
-            type="button"
-            onClick={signupWithFacebook}
-            className="w-full  text-black py-2 rounded-lg hover:bg-blue-300 "
-          >
-            Continue with Facebook
-          </button>
         </form>
+        <p className="mt-6 text-center flex">
+          Already have an account?{" "}
+          <p
+            onClick={() => setIsLogin(true)}
+            className="text-black-600 hover:underline"
+          >
+            Login here
+          </p>
+        </p>
       </div>
     </div>
   );
 };
 
 //login component
-const Login = ({ loginWithFacebook, loginWithGoogle }) => {
+const Login = ({
+  loginWithGoogle,
+  setIsLogin,
+}: {
+  loginWithGoogle: () => void;
+  setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const [emailError, setEmailError] = useState<ErrorType[]>([]);
   const [passwordError, setPasswordError] = useState<ErrorType[]>([]);
 
@@ -243,23 +241,12 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-
-  const dispatch: Dispatch = useDispatch();
-  const navigate = useNavigate();
+  const loginuser = useLogin();
 
   const regEx = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      // if (input.email === "" ) {
-      //   setEmailError([
-      //     {
-      //       error: "Email ",
-      //       errorMessage: "Email field must be provided",
-      //     },
-      //   ]);
-      //   console.log(emailError);
-      // }
       if (!regEx.test(loginInput.email) && loginInput.email.length > 0) {
         console.log(regEx.test(loginInput.email));
 
@@ -267,14 +254,6 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
       } else {
         setEmailError([]);
       }
-      // if (input.password === "") {
-      //   setPasswordError([
-      //     {
-      //       error: "Password",
-      //       errorMessage: "Password field must be provided",
-      //     },
-      //   ]);
-      // }
       if (
         loginInput.password.length < 6 &&
         !(loginInput.password.length == 0)
@@ -312,19 +291,7 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
       ]);
     }
     if (emailError.length === 0 && passwordError.length === 0) {
-      const data = await loginUser(loginInput);
-      if (data?.status === 200) {
-        const authState: {
-          token: string;
-          userdata: { id: string; name: string; email: string };
-        } = {
-          token: getUserCookies().token,
-          userdata: JSON.parse(decodeURIComponent(getUserCookies().userdata)),
-        };
-        console.log(authState);
-        dispatch(setUser(authState));
-        navigate("/");
-      }
+      loginuser.mutate(loginInput);
     }
   };
 
@@ -336,8 +303,8 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
   };
 
   return (
-    <div className="min-h-screen w-full  flex items-center justify-center ">
-      <div className="bg-white  p-8 -mt-80 rounded-lg shadow-2xl w-full max-w-md">
+    <div className=" w-96 flex items-center justify-center ">
+      <div className="bg-white  p-8  rounded-lg shadow-2xl w-full max-w-md">
         <h1 className=" text-2xl font-bold mb-6 text-center">
           Login to RentHub
         </h1>
@@ -367,7 +334,8 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
             <span
-              className="absolute right-3 top-3 cursor-pointer"
+              className="absolute right-[8px] top-[8px]
+               cursor-pointer"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <EyeOff /> : <Eye />}
@@ -377,8 +345,17 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
               <p className="text-red-700">{passwordError[0].errorMessage}</p>
             )}
           </div>
-          <Button type="submit" className="w-full text-lg">
-            Login
+          {loginuser.isError && (
+            <p className="text-red-700 text-center ">
+              {loginuser.error.message}
+            </p>
+          )}
+          <Button
+            type="submit"
+            className="w-full text-lg"
+            disabled={loginuser.isPending}
+          >
+            Login {loginuser.isPending && <Loader2 />}
           </Button>
           <div className="flex items-center justify-between my-4">
             <hr className=" w-full border-gray-300" />
@@ -392,19 +369,15 @@ const Login = ({ loginWithFacebook, loginWithGoogle }) => {
           >
             Continue with Google
           </button>
-          <button
-            type="button"
-            onClick={loginWithFacebook}
-            className="w-full  text-black py-2 rounded-lg hover:bg-blue-300 "
-          >
-            Continue with Facebook
-          </button>
         </form>
-        <p className="mt-6 text-center">
+        <p className="mt-6 text-center flex">
           Don't have an account?{" "}
-          <a href="/signup" className="text-black-600 hover:underline">
+          <p
+            onClick={() => setIsLogin(false)}
+            className="text-black-600 hover:underline"
+          >
             Register here
-          </a>
+          </p>
         </p>
       </div>
     </div>
@@ -427,15 +400,8 @@ const Signinpage = () => {
     window.location.href = "/auth/google";
   };
 
-  const loginWithFacebook = () => {
-    window.location.href = "/auth/facebook";
-  };
-
   const signupWithGoogle = () => {
     window.location.href = "/auth/google";
-  };
-  const signupWithFacebook = () => {
-    window.location.href = "/auth/facebook";
   };
 
   return isLoggedIn ? (
@@ -443,20 +409,20 @@ const Signinpage = () => {
   ) : (
     <div className="min-h-screen">
       <Navbar />
-      <div className="flex flex-col min-h-screen  items-center justify-center">
-        <div className="flex items-center justify-around bg-white   w-fit p-4">
-          <div className="p-5">
+      <div className="flex flex-col items-center justify-center">
+        <div className="flex items-center justify-around  w-96 h-16 rounded-sm mb-4 ">
+          <div className="w-1/2 mx-1">
             <Button
               onClick={() => setIsLogin(true)}
-              className={`${isLogin ? "" : active} w-20 `}
+              className={`${isLogin ? "" : active} w-full`}
             >
               Login
             </Button>
           </div>
-          <div className="p-5">
+          <div className="w-1/2 mx-1">
             <Button
               onClick={() => setIsLogin(false)}
-              className={`${!isLogin ? "" : active} w-20`}
+              className={`${!isLogin ? "" : active} w-full `}
             >
               Signup
             </Button>
@@ -464,14 +430,11 @@ const Signinpage = () => {
         </div>
         <div>
           {isLogin ? (
-            <Login
-              loginWithFacebook={loginWithFacebook}
-              loginWithGoogle={loginWithGoogle}
-            />
+            <Login loginWithGoogle={loginWithGoogle} setIsLogin={setIsLogin} />
           ) : (
             <Signup
-              signupWithFacebook={signupWithFacebook}
               signupWithGoogle={signupWithGoogle}
+              setIsLogin={setIsLogin}
             />
           )}
         </div>

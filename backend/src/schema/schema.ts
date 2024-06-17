@@ -29,10 +29,11 @@ export const users = pgTable(
   },
   (table) => {
     return {
-      emailIndex: index("emainIndex").on(table.email),
+      emailIndex: index("emailIndex").on(table.email),
     };
   }
 );
+//TODO add picture and rate for item
 export const item = pgTable("item", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }).notNull(),

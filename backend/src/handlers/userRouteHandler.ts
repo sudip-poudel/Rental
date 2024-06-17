@@ -13,14 +13,18 @@ const handleSignup = async (req: Request, res: Response) => {
   }: { email: string; password: string; name: string } = req.body;
   console.log(email, password, name);
   if (!email || !password) {
-    return res.status(400).send("Username and password are required");
+    return res
+      .status(400)
+      .send({ success: false, message: "Username and password are required" });
   }
   try {
     const user = await db.query.users.findFirst({
       where: eq(users.email, email),
     });
     if (user) {
-      return res.status(400).send("User already exists");
+      return res
+        .status(400)
+        .send({ success: false, message: "User already exists" });
     }
     const hashedPassword: string = await bcrypt.hash(password, 10);
 
@@ -44,10 +48,10 @@ const handleSignup = async (req: Request, res: Response) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).send("Signup successful");
+    res.status(200).send({ success: true, message: "Signup successful" });
     return;
   } catch (error) {
-    return res.send("Internal server error");
+    return res.status(404).send("Internal server error");
   }
 };
 
@@ -56,7 +60,9 @@ const handleLogin = async (req: Request, res: Response) => {
   console.log(req.body);
 
   if (!email || !password) {
-    return res.status(400).send("Username and password are required");
+    return res
+      .status(400)
+      .send({ success: false, messege: "Username and password are required" });
   }
   try {
     const user = await db.query.users.findFirst({
@@ -69,11 +75,15 @@ const handleLogin = async (req: Request, res: Response) => {
       },
     });
     if (!user) {
-      return res.status(400).send("User not found");
+      return res
+        .status(400)
+        .send({ success: false, message: "User not found" });
     }
     const isValid: boolean = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      return res.status(400).send("Invalid password");
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid password" });
     }
     const token = generateToken({ id: user.id });
     const stringifiedUserData = JSON.stringify({
@@ -89,7 +99,7 @@ const handleLogin = async (req: Request, res: Response) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).send("Login successful");
+    return res.status(200).send({ success: true, message: "Login successful" });
   } catch (error) {
     console.error(error);
   }
@@ -98,7 +108,7 @@ const handleLogin = async (req: Request, res: Response) => {
 const handleLogout = async (req: Request, res: Response) => {
   res.clearCookie("token");
   res.clearCookie("userdata");
-  res.status(200).send("Logged out successfully");
+  res.status(200).send({ success: true, message: "Logged out successfully" });
 };
 
 export { handleSignup, handleLogin, handleLogout };
