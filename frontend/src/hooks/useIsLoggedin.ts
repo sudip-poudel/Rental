@@ -1,8 +1,9 @@
-import getUserCookies from "@/helpers/getUserCookie";
+import { RootState } from "@/types/types";
+import { useSelector } from "react-redux";
 
 const useIsLoggedin = (): boolean => {
-  const user = getUserCookies();
-  if (user.token) return true;
+  const user = useSelector((state: RootState) => state.auth.userToken);
+  if (user) return true;
   return false;
 };
 
