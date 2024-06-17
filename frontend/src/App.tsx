@@ -6,6 +6,7 @@ import Signinpage from "./pages/Signinpage";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
+import AddItem from "./pages/AddItem";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             />
           }
         />
+        <Route path="/addproduct" Component={AddItem} />
       </Routes>
     </>
   );

@@ -28,6 +28,9 @@ const Navbar = () => {
           <Link to="/dashboard" className="p-2 hover:underline">
             Dashboard
           </Link>
+          <Link to="/addproduct" className="p-2 hover:underline">
+            Add Product
+          </Link>
         </div>
 
         <div className="flex flex-row gap-2  ">
