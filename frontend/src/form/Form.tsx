@@ -1,47 +1,88 @@
+import axios from "axios";
+
 import { useState } from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { Button } from "@/components/ui/button";
+import upload from "/images/upload.png";
+import { useRef } from "react";
+
+interface formData {
+  title: string;
+  category: string;
+  rate: number;
+
+  photos: File[];
+  // Add other fields as needed
+  description: string;
+  rentalPeriod: string;
+  // availabilityDates: string;
+  pickupLocation: string;
+  specialInstructions: string;
+  agreement: boolean;
+  liabilityWaiver: boolean;
+}
 
 const RentProductForm = () => {
-  const [formState, setFormState] = useState({
+  const [formData, setFormData] = useState<formData>({
     title: "",
-    productDescription: "",
+    photos: [],
+    description: "",
     category: "",
-    price: "",
+    rate: 0,
     rentalPeriod: "",
-    availabilityDates: "",
-    securityDeposit: "",
-    cancellationPolicy: "",
-    ownerName: "",
-    contactEmail: "",
-    contactPhone: "",
+    // availabilityDates: "",
     pickupLocation: "",
-    deliveryOptions: "",
-    deliveryAddress: "",
     specialInstructions: "",
     agreement: false,
     liabilityWaiver: false,
-    photos: [],
   });
 
+  const uploadRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = () => {
+    if (uploadRef.current) {
+      uploadRef.current.click();
+    }
+  };
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormState({
-      ...formState,
+    console.log(value);
+    setFormData({
+      ...formData,
       [name]: type === "checkbox" ? checked : value,
     });
   };
 
   const handleFileChange = (e) => {
-    setFormState({
-      ...formState,
-      photos: [...formState.photos, ...e.target.files],
+    setFormData({
+      ...formData,
+      photos: [...formData.photos, ...Array.from(e.target.files[0])],
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const fromPayload = new FormData();
+    Object.keys(formData).forEach((key) => {
+      fromPayload.append(key, formData[key]);
+    });
+
     // Handle form submission
+
+    try {
+      const response = await axios.post(
+        "localhost:5137/item/additem",
+        fromPayload,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log("Submitting Error", error);
+    }
   };
 
   return (
@@ -55,7 +96,7 @@ const RentProductForm = () => {
             type="text"
             name="title"
             placeholder="Add Title"
-            value={formState.title}
+            value={formData.title}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -63,26 +104,54 @@ const RentProductForm = () => {
         </Slot>
         <Slot className="mb-4">
           <div className="flex items-center justify-center">
-            <input
-              type="file"
-              name="photos"
-              placeholder="Upload photo of item"
-              required
-              value={formState.photos}
-              onChange={handleChange}
-              className="w-full h-40 flex  px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
+            <div
+              onClick={handleImageUpload}
+              className="w-full h-40 flex flex-col cursor-pointer px-4 py-2 border items-center justify-center rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            >
+              <img src={upload} alt="upload" className="h-20 w-20 " />
+              <p className="">choose a photo</p>
+              <input
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                name="photos"
+                placeholder="Upload photo of item"
+                required
+                // value={formData.photos}
+                ref={uploadRef}
+                className="hidden"
+              />
+              <div className="upload-div">
+                {formData.photos.map((photo, index) => {
+                  const photoURL = URL.createObjectURL(photo);
+                  return (
+                    <img
+                      key={index}
+                      src={photoURL}
+                      alt={`Upload ${index}`}
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "cover",
+                        margin: "5px",
+                      }}
+                      onLoad={() => URL.revokeObjectURL(photoURL)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </Slot>
         <Slot className="mb-4">
-          <textarea
+          <input
+            type="text"
             name="productDescription"
             placeholder="Item Description"
-            value={formState.productDescription}
+            value={formData.description}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-            rows="4"
           />
         </Slot>
         <Slot className="mb-4">
@@ -90,7 +159,7 @@ const RentProductForm = () => {
             type="text"
             name="category"
             placeholder="Category"
-            value={formState.category}
+            value={formData.category}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -99,9 +168,9 @@ const RentProductForm = () => {
         <Slot className="mb-4">
           <input
             type="number"
-            name="price"
-            placeholder="Rental Price"
-            value={formState.price}
+            name="rate"
+            placeholder="Rental Rate (Rs./day)"
+            value={formData.rate}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -112,52 +181,30 @@ const RentProductForm = () => {
             type="text"
             name="rentalPeriod"
             placeholder="Max. Rental Period"
-            value={formState.rentalPeriod}
+            value={formData.rentalPeriod}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
         </Slot>
-        <Slot className="mb-4">
+        {/* <Slot className="mb-4">
           <input
             type="date"
             name="availabilityDates"
             placeholder="Availability Dates"
-            value={formState.availabilityDates}
+            value={formData.availabilityDates}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
-        </Slot>
+        </Slot> */}
 
-        <Slot className="mb-4">
-          <input
-            type="email"
-            name="contactEmail"
-            placeholder="Contact Email"
-            value={formState.contactEmail}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
-        </Slot>
-        <Slot className="mb-4">
-          <input
-            type="tel"
-            name="contactPhone"
-            placeholder="Contact Phone Number"
-            value={formState.contactPhone}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
-        </Slot>
         <Slot className="mb-4">
           <input
             type="text"
             name="pickupLocation"
             placeholder="Pickup Location"
-            value={formState.pickupLocation}
+            value={formData.pickupLocation}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -168,7 +215,7 @@ const RentProductForm = () => {
           <textarea
             name="specialInstructions"
             placeholder="Special Instructions"
-            value={formState.specialInstructions}
+            value={formData.specialInstructions}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
@@ -178,7 +225,7 @@ const RentProductForm = () => {
             <input
               type="checkbox"
               name="agreement"
-              checked={formState.agreement}
+              checked={formData.agreement}
               onChange={handleChange}
               className="mr-2"
             />
@@ -190,7 +237,7 @@ const RentProductForm = () => {
             <input
               type="checkbox"
               name="liabilityWaiver"
-              checked={formState.liabilityWaiver}
+              checked={formData.liabilityWaiver}
               onChange={handleChange}
               className="mr-2"
             />

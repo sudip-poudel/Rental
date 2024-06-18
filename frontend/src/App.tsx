@@ -6,9 +6,35 @@ import Signinpage from "./pages/Signinpage";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
+import { useEffect } from "react";
+import getUserCookies from "./helpers/getUserCookie";
+import { setUser } from "./store/auth/authSlice";
+import { useDispatch } from "react-redux";
 import AddItem from "./pages/AddItem";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const isLoggedin = getUserCookies().token ? true : false;
+    console.log(isLoggedin);
+
+    if (isLoggedin) {
+      const authstate = {
+        token: getUserCookies().token,
+        userdata: JSON.parse(decodeURIComponent(getUserCookies().userdata)),
+      };
+      console.log("loggedin");
+      console.log(
+        {
+          userdata: JSON.parse(decodeURIComponent(getUserCookies().userdata)),
+          token: getUserCookies().token,
+        },
+        "data"
+      );
+      dispatch(setUser(authstate));
+    }
+  }, []);
   return (
     <>
       <Routes>

@@ -4,6 +4,12 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Eye } from "lucide-react";
 import { EyeOff } from "lucide-react";
+import { fetchUserDetails, signupUser } from "@/api/api";
+import type { Dispatch } from "redux";
+
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/auth/authSlice";
+import getUserCookies from "@/helpers/getUserCookie";
 
 //type definitions for Error handling
 type ErrorType = {
@@ -13,6 +19,7 @@ type ErrorType = {
 
 //signup component
 const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
+  const dispatch: Dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState<ErrorType[]>([]);
   const [nameError, setNameError] = useState<ErrorType[]>([]);
@@ -74,7 +81,7 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
     });
   };
 
-  const handleSubmitEvent = (event) => {
+  const handleSubmitEvent = async (event) => {
     event.preventDefault();
 
     if (signupInput.name === "") {
@@ -96,7 +103,23 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
       console.log(emailError);
     }
     if (emailError.length === 0 && passwordError.length === 0) {
-      // sent through api
+      const response = await signupUser(signupInput);
+      console.log(response);
+      if (response === "Signuo successful") {
+        // const userInfo =
+
+        const authState: {
+          token: string;
+          userdata: { id: string; name: string; email: string };
+        } = {
+          token: getUserCookies().token,
+          userdata: JSON.parse(decodeURIComponent(getUserCookies().userdata)),
+        };
+        console.log(authState);
+
+        dispatch(setUser(authState));
+        console.log(response);
+      }
     }
   };
 
@@ -166,6 +189,7 @@ const Signup = ({ signupWithFacebook, signupWithGoogle }) => {
               required
               className="w-full px-4 py-2  focus:outline-none focus:ring-2 focus:ring-blue-600 focus:rounded-lg"
             />
+
             <span
               className="absolute right-3 top-3 cursor-pointer"
               onClick={() => setShowPassword(!showPassword)}

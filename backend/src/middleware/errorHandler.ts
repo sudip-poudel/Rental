@@ -25,8 +25,8 @@ const errorHandler = (
     });
   } else if (err instanceof TypeError) {
     return res.status(400).json({ error: "Type Error: Bad request" });
+  } else {
+    // res.status(500).json({ error: "Internal Server Error" });
   }
-
-  res.status(500).json({ error: "Internal Server Error" });
 };
 export { errorHandler };
