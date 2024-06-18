@@ -1,10 +1,12 @@
 import { logoutUser } from "@/api/api";
+import { logout } from "@/store/auth/authSlice";
 import { LogOut, Settings, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 
 const ProfileDropDown = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const dispatch = useDispatch();
   const node = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = (e) => {
@@ -33,7 +35,9 @@ const ProfileDropDown = () => {
   const handleLogout = async (e) => {
     e.preventDefault();
     const response = await logoutUser();
-    console.log(response);
+    if (response.success) {
+      dispatch(logout());
+    }
   };
 
   return (

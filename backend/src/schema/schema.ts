@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -29,7 +29,7 @@ export const users = pgTable(
   },
   (table) => {
     return {
-      emailIndex: index("emainIndex").on(table.email),
+      emailIndex: index("emailIndex").on(table.email),
     };
   }
 );
@@ -39,6 +39,8 @@ export const item = pgTable("item", {
   description: text("description").notNull(),
   category: varchar("category", { length: 255 }).notNull(),
   created_at: timestamp("created_at").notNull().defaultNow(),
+  rate: real("rate").notNull(),
+  pictureUrl: text("picture_url").notNull(),
   addedBy: uuid("added_by")
     .notNull()
     .references(() => users.id),

@@ -20,3 +20,12 @@ export type ISignupData = {
 export type RootState = {
   auth: IAuthState;
 };
+export type ILoginData = {
+  email: string;
+  password: string;
+};
+
+export type IUserLoginResponse = {
+  success: boolean;
+  message: string;
+};
