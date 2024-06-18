@@ -33,13 +33,14 @@ export const users = pgTable(
     };
   }
 );
-//TODO add picture and rate for item
 export const item = pgTable("item", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
   category: varchar("category", { length: 255 }).notNull(),
   created_at: timestamp("created_at").notNull().defaultNow(),
+  rate: real("rate").notNull(),
+  pictureUrl: text("picture_url").notNull(),
   addedBy: uuid("added_by")
     .notNull()
     .references(() => users.id),

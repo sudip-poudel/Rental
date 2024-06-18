@@ -15,6 +15,13 @@
       "when": 1718015636123,
       "tag": "0001_next_thanos",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1718630892747,
+      "tag": "0002_concerned_george_stacy",
+      "breakpoints": true
     }
   ]
 }

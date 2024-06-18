@@ -15,6 +15,7 @@ app.use(
 );
 app.use(express.json());
 app.use("/user", require("./route/userRoute"));
+app.use("/item", require("./route/itemsRoute"));
 app.use(errorHandler);
 
 app.get("/", (req: Request, res: Response) => {
