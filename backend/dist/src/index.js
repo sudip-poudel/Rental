@@ -8,10 +8,12 @@ require("dotenv").config();
 const app = express();
 app.use(cookieParser());
 app.use(cors({
-    origin: ["http://localhost:5173", "https://rental-ruby.vercel.app/"],
+    origin: "*",
     credentials: true,
+    METHODS: "GET, POST, PUT, DELETE",
 }));
 app.use(express.json());
+app.options("*", cors());
 app.use("/user", require("./route/userRoute"));
 app.use("/item", require("./route/itemsRoute"));
 app.use(errorHandler_1.errorHandler);
