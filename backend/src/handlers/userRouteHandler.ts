@@ -152,7 +152,9 @@ export const oAuth2Server = async (
   // TODO: Maybe, validate state
   const { code } = req.query;
 
-  const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
+  // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
+  const REDIRECT_URI = "https://rental-ruby.vercel.app/user/oauthsuccess";
+
   // Ask for Access Token
   const data = {
     code,
