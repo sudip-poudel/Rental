@@ -2,20 +2,20 @@ import { Request, Response } from "express";
 import { errorHandler } from "./middleware/errorHandler";
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
-const app = express();
 const cookieParser = require("cookie-parser");
+require("dotenv").config();
 
+const app = express();
 app.use(cookieParser());
-
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173"],
     credentials: true,
   })
 );
 app.use(express.json());
 app.use("/user", require("./route/userRoute"));
+app.use("/item", require("./route/itemsRoute"));
 app.use(errorHandler);
 
 app.get("/", (req: Request, res: Response) => {

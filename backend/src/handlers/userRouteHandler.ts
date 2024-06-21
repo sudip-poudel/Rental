@@ -5,11 +5,7 @@ import { eq } from "drizzle-orm";
 import { generateToken } from "../helper/generateToken";
 const bcrypt = require("bcrypt");
 
-const handleSignup = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const handleSignup = async (req: Request, res: Response) => {
   const {
     email,
     password,
@@ -17,14 +13,18 @@ const handleSignup = async (
   }: { email: string; password: string; name: string } = req.body;
   console.log(email, password, name);
   if (!email || !password) {
-    return res.status(400).send("Username and password are required");
+    return res
+      .status(400)
+      .send({ success: false, message: "Username and password are required" });
   }
   try {
     const user = await db.query.users.findFirst({
       where: eq(users.email, email),
     });
     if (user) {
-      return res.status(400).send("User already exists");
+      return res
+        .status(400)
+        .send({ success: false, message: "User already exists" });
     }
     const hashedPassword: string = await bcrypt.hash(password, 10);
 
@@ -48,17 +48,21 @@ const handleSignup = async (
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).send("Signup successful");
+    res.status(200).send({ success: true, message: "Signup successful" });
     return;
   } catch (error) {
-    return res.send("Internal server error");
+    return res.status(404).send("Internal server error");
   }
 };
 
-const handleSignin = async (req: Request, res: Response) => {
+const handleLogin = async (req: Request, res: Response) => {
   const { email, password }: { email: string; password: string } = req.body;
+  console.log(req.body);
+
   if (!email || !password) {
-    return res.status(400).send("Username and password are required");
+    return res
+      .status(400)
+      .send({ success: false, messege: "Username and password are required" });
   }
   try {
     const user = await db.query.users.findFirst({
@@ -71,19 +75,31 @@ const handleSignin = async (req: Request, res: Response) => {
       },
     });
     if (!user) {
-      return res.status(400).send("User not found");
+      return res
+        .status(400)
+        .send({ success: false, message: "User not found" });
     }
-    const isValid = await bcrypt.compare(password, user.password);
+    const isValid: boolean = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      return res.status(400).send("Invalid password");
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid password" });
     }
     const token = generateToken({ id: user.id });
-    return res
-      .status(200)
-      .send(user)
-      .cookie("token", token, {
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
+    const stringifiedUserData = JSON.stringify({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    });
+
+    res.cookie("token", token, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.cookie("userdata", stringifiedUserData, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).send({ success: true, message: "Login successful" });
   } catch (error) {
     console.error(error);
   }
@@ -92,7 +108,7 @@ const handleSignin = async (req: Request, res: Response) => {
 const handleLogout = async (req: Request, res: Response) => {
   res.clearCookie("token");
   res.clearCookie("userdata");
-  res.status(200).send("Logged out successfully");
+  res.status(200).send({ success: true, message: "Logged out successfully" });
 };
 
-export { handleSignup, handleSignin, handleLogout };
+export { handleSignup, handleLogin, handleLogout };
