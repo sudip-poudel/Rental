@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { errorHandler } from "./middleware/errorHandler";
+import { METHODS } from "http";
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -11,6 +12,7 @@ app.use(
   cors({
     origin: ["http://localhost:5173", "https://rental-ruby.vercel.app"],
     credentials: true,
+    METHODS: "GET, POST, PUT, DELETE",
   })
 );
 app.use(express.json());
