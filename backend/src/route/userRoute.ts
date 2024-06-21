@@ -10,4 +10,5 @@ const router = express.Router();
 router.post("/signup", isLoggedOut, handleSignup);
 router.post("/login", isLoggedOut, handleLogin);
 router.get("/logout", isLoggedIn, handleLogout);
+//TODO add a route to handle google auth
 module.exports = router;

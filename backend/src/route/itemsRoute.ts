@@ -6,3 +6,4 @@ const router = express.Router();
 
 router.get("/:id", validateToken, handleGetItem);
 router.post("/additem", handlePostItem);
+module.exports = router;

@@ -7,6 +7,7 @@ import { EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useIsLoggedin from "@/hooks/useIsLoggedin";
 import { useLogin, useSignup } from "@/api/queriesAndMutation";
+import { GoogleLogin } from "@react-oauth/google";
 
 //type definitions for Error handling
 type ErrorType = {
@@ -16,7 +17,6 @@ type ErrorType = {
 
 //signup component
 const Signup = ({
-  signupWithGoogle,
   setIsLogin,
 }: {
   signupWithGoogle: () => void;
@@ -203,13 +203,16 @@ const Signup = ({
             <span className="px-2 text-gray-600">or</span>
             <hr className="w-full border-gray-300" />
           </div>
-          <button
-            type="button"
-            onClick={signupWithGoogle}
-            className="w-full  text-black py-2 rounded-lg hover:bg-blue-300   mb-2"
-          >
-            Continue with Google
-          </button>
+          <GoogleLogin
+            onSuccess={(credentials) => {
+              console.log(credentials);
+            }}
+            onError={() => {
+              console.log("error");
+            }}
+            width={315}
+            logo_alignment="center"
+          />
         </form>
         <p className="mt-6 text-center flex">
           Already have an account?{" "}
@@ -227,7 +230,6 @@ const Signup = ({
 
 //login component
 const Login = ({
-  loginWithGoogle,
   setIsLogin,
 }: {
   loginWithGoogle: () => void;
@@ -362,13 +364,16 @@ const Login = ({
             <span className="px-2 text-gray-600">or</span>
             <hr className="w-full border-gray-300" />
           </div>
-          <button
-            type="button"
-            onClick={loginWithGoogle}
-            className="w-full  text-black py-2 rounded-lg hover:bg-blue-300   mb-2"
-          >
-            Continue with Google
-          </button>
+          <GoogleLogin
+            onSuccess={(credentials) => {
+              console.log(credentials);
+            }}
+            onError={() => {
+              console.log("error");
+            }}
+            width={315}
+            logo_alignment="center"
+          />
         </form>
         <p className="mt-6 text-center flex">
           Don't have an account?{" "}
@@ -410,7 +415,7 @@ const Signinpage = () => {
     <div className="min-h-screen">
       <Navbar />
       <div className="flex flex-col items-center justify-center">
-        <div className="flex items-center justify-around  w-96 h-16 rounded-sm mb-4 ">
+        <div className="flex items-center justify-around w-96 h-16 rounded-sm mb-4">
           <div className="w-1/2 mx-1">
             <Button
               onClick={() => setIsLogin(true)}
