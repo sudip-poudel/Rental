@@ -19,7 +19,7 @@ export const users = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     name: varchar("name", { length: 255 }).notNull(),
     email: varchar("email", { length: 255 }).notNull().unique(),
-    password: text("password").notNull(),
+    password: text("password"),
     created_at: timestamp("created_at").notNull().defaultNow(),
     rating: real("rating").notNull().default(0.0),
     role: userRole("user_role").default("user"),
@@ -71,6 +71,13 @@ export const itemCategory = pgTable("item_category", {
   categoryId: uuid("category_id")
     .notNull()
     .references(() => category.id),
+});
+export const itemLocation = pgTable("item_location", {
+  itemId: uuid("item_id")
+    .notNull()
+    .references(() => item.id),
+  latitude: real("latitude").notNull(),
+  longitude: real("longitude").notNull(),
 });
 
 export const UserItemsRelation = relations(users, ({ one, many }) => {

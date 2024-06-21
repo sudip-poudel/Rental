@@ -3,6 +3,13 @@ import { db } from "../db";
 import { users } from "../schema/schema";
 import { eq } from "drizzle-orm";
 import { generateToken } from "../helper/generateToken";
+import {
+  GOOGLE_ACCESS_TOKEN_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_OAUTH_URL,
+} from "../config";
+import { loginHelper } from "../helper/loginHelper";
 const bcrypt = require("bcrypt");
 
 const handleSignup = async (req: Request, res: Response) => {
@@ -109,6 +116,97 @@ const handleLogout = async (req: Request, res: Response) => {
   res.clearCookie("token");
   res.clearCookie("userdata");
   res.status(200).send({ success: true, message: "Logged out successfully" });
+};
+
+//* Google Auth*//
+
+export const oAuthHandler = (_: Request, res: Response) => {
+  const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
+
+  const GOOGLE_OAUTH_SCOPES = [
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/userinfo.email",
+  ];
+
+  // Prevent CSRF and more
+  const state = "some_state";
+
+  const scopes = GOOGLE_OAUTH_SCOPES.join(" ");
+  console.log(scopes);
+
+  // Generate url from auth request
+  // (A pattern, check docs)
+  const GOOGLE_OAUTH_CONSENT_SCREEN_URL = `${GOOGLE_OAUTH_URL}?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&access_type=offline&response_type=code&state=${state}&scope=${scopes}`;
+
+  // Redirect to concent page
+  res.redirect(GOOGLE_OAUTH_CONSENT_SCREEN_URL);
+};
+
+export const oAuth2Server = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // Get code out of query (Authorization Code)
+  // TODO: Maybe, validate state
+  const { code } = req.query;
+
+  const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
+  // Ask for Access Token
+  const data = {
+    code,
+    client_id: GOOGLE_CLIENT_ID,
+    client_secret: GOOGLE_CLIENT_SECRET,
+    redirect_uri: REDIRECT_URI,
+    grant_type: "authorization_code",
+  };
+
+  // Exchange authorization code for access token & id_token
+  const response = await fetch(GOOGLE_ACCESS_TOKEN_URL as string, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+
+  const access_token_data = await response.json();
+
+  const { id_token } = access_token_data;
+
+  // verify and extract the information in the id token
+  const token_info_response = await fetch(
+    `${process.env.GOOGLE_TOKEN_INFO_URL}?id_token=${id_token}`
+  );
+
+  // TODO: TYPE
+  const token_info_response_json = await token_info_response.json();
+  console.log(token_info_response_json);
+
+  const { name, email } = token_info_response_json;
+  console.log(name, email);
+  try {
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
+      columns: {
+        id: true,
+        email: true,
+        name: true,
+      },
+    });
+    if (user) {
+      const resp = loginHelper(user, res);
+      if (resp.success) {
+        res.redirect("http://localhost:5173");
+      }
+    }
+    //it there is no user with the email, create a new user
+    const data = await db
+      .insert(users)
+      .values({ email: email, name: name })
+      .returning({ id: users.id, name: users.name, email: users.email });
+    const resp = loginHelper(data[0], res);
+    if (resp.success) res.redirect("http://localhost:5173");
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export { handleSignup, handleLogin, handleLogout };
