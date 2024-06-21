@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Eye } from "lucide-react";
 import { EyeOff } from "lucide-react";
-import { fetchUserDetails, signupUser } from "@/api/api";
+import { signupUser } from "@/api/api";
 import type { Dispatch } from "redux";
 
 import { useDispatch } from "react-redux";
