@@ -109,7 +109,7 @@ const handleLogout = async (req, res) => {
 exports.handleLogout = handleLogout;
 //* Google Auth*//
 const oAuthHandler = (_, res) => {
-    const REDIRECT_URI = "https://rental-ruby.vercel.app/user/oauthsuccess";
+    const REDIRECT_URI = "https://rental-backend-five.vercel.app/user/oauthsuccess";
     // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
     const GOOGLE_OAUTH_SCOPES = [
         "https://www.googleapis.com/auth/userinfo.profile",
@@ -122,6 +122,7 @@ const oAuthHandler = (_, res) => {
     // Generate url from auth request
     // (A pattern, check docs)
     const GOOGLE_OAUTH_CONSENT_SCREEN_URL = `${config_1.GOOGLE_OAUTH_URL}?client_id=${config_1.GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&access_type=offline&response_type=code&state=${state}&scope=${scopes}`;
+    console.log(GOOGLE_OAUTH_CONSENT_SCREEN_URL);
     // Redirect to concent page
     res.redirect(GOOGLE_OAUTH_CONSENT_SCREEN_URL);
 };
@@ -130,7 +131,8 @@ const oAuth2Server = async (req, res, next) => {
     // Get code out of query (Authorization Code)
     // TODO: Maybe, validate state
     const { code } = req.query;
-    const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
+    // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
+    const REDIRECT_URI = "https://rental-backend-five.vercel.app/user/oauthsuccess";
     // Ask for Access Token
     const data = {
         code,
