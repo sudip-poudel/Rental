@@ -109,7 +109,8 @@ const handleLogout = async (req, res) => {
 exports.handleLogout = handleLogout;
 //* Google Auth*//
 const oAuthHandler = (_, res) => {
-    const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
+    const REDIRECT_URI = "https://rental-ruby.vercel.app/user/oauthsuccess";
+    // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
     const GOOGLE_OAUTH_SCOPES = [
         "https://www.googleapis.com/auth/userinfo.profile",
         "https://www.googleapis.com/auth/userinfo.email",
@@ -164,7 +165,8 @@ const oAuth2Server = async (req, res, next) => {
         if (user) {
             const resp = (0, loginHelper_1.loginHelper)(user, res);
             if (resp.success) {
-                res.redirect("http://localhost:5173");
+                // res.redirect("http://localhost:5173");
+                res.redirect("https://rental-ruby.vercel.app/");
             }
         }
         //it there is no user with the email, create a new user
@@ -173,8 +175,10 @@ const oAuth2Server = async (req, res, next) => {
             .values({ email: email, name: name })
             .returning({ id: schema_1.users.id, name: schema_1.users.name, email: schema_1.users.email });
         const resp = (0, loginHelper_1.loginHelper)(data[0], res);
-        if (resp.success)
-            res.redirect("http://localhost:5173");
+        if (resp.success) {
+            // res.redirect("http://localhost:5173")
+            res.redirect("https://rental-ruby.vercel.app/");
+        }
     }
     catch (error) {
         console.log(error);

@@ -396,7 +396,9 @@ const Signinpage = () => {
   }, [isLoggedIn]);
 
   const loginWithGoogle = () => {
-    window.location.href = "http://localhost:3000/user/googleoauth";
+    // window.location.href = "http://localhost:3000/user/googleoauth";
+    window.location.href =
+      "https://rental-backend-five.vercel.app/user/googleoauth";
   };
 
   return isLoggedIn ? (
