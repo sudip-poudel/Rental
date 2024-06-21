@@ -9,7 +9,7 @@ const app = express();
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://rental-ruby.vercel.app/"],
+    origin: ["http://localhost:5173", "https://rental-ruby.vercel.app"],
     credentials: true,
   })
 );
