@@ -10,28 +10,22 @@ import { useEffect } from "react";
 import getUserCookies from "./helpers/getUserCookie";
 import { setUser } from "./store/auth/authSlice";
 import { useDispatch } from "react-redux";
+import useIsLoggedin from "./hooks/useIsLoggedin";
 import AddItem from "./pages/AddItem";
 
 function App() {
   const dispatch = useDispatch();
+  const isLoggedin = useIsLoggedin();
 
   useEffect(() => {
     const isLoggedin = getUserCookies().token ? true : false;
-    console.log(isLoggedin);
 
     if (isLoggedin) {
       const authstate = {
         token: getUserCookies().token,
         userdata: JSON.parse(decodeURIComponent(getUserCookies().userdata)),
       };
-      console.log("loggedin");
-      console.log(
-        {
-          userdata: JSON.parse(decodeURIComponent(getUserCookies().userdata)),
-          token: getUserCookies().token,
-        },
-        "data"
-      );
+
       dispatch(setUser(authstate));
     }
   }, []);
@@ -47,7 +41,7 @@ function App() {
           element={
             <ProtectedRoute
               authenticationPath="/signin"
-              isAuthenticated={false}
+              isAuthenticated={isLoggedin}
               Component={Dashboard}
             />
           }

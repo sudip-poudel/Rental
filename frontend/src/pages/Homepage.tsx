@@ -1,4 +1,5 @@
 import Footer from "@/components/Footer";
+import Items from "@/components/Items";
 import Navbar from "@/components/Navbar";
 import Search from "@/components/Search";
 
@@ -7,6 +8,7 @@ const Homepage = () => {
     <>
       <Navbar />
       <Search />
+      <Items />
       <Footer />
     </>
   );

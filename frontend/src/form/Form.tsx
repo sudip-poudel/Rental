@@ -5,25 +5,10 @@ import { Slot } from "@radix-ui/react-slot";
 import { Button } from "@/components/ui/button";
 import upload from "/images/upload.png";
 import { useRef } from "react";
-
-interface formData {
-  title: string;
-  category: string;
-  rate: number;
-
-  photos: File[];
-  // Add other fields as needed
-  description: string;
-  rentalPeriod: string;
-  // availabilityDates: string;
-  pickupLocation: string;
-  specialInstructions: string;
-  agreement: boolean;
-  liabilityWaiver: boolean;
-}
+import { IFormData } from "@/types/types";
 
 const RentProductForm = () => {
-  const [formData, setFormData] = useState<formData>({
+  const [formData, setFormData] = useState<IFormData>({
     title: "",
     photos: [],
     description: "",
@@ -46,7 +31,7 @@ const RentProductForm = () => {
   };
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    console.log(value);
+    // console.log(value);
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,
@@ -56,33 +41,48 @@ const RentProductForm = () => {
   const handleFileChange = (e) => {
     setFormData({
       ...formData,
-      photos: [...formData.photos, ...Array.from(e.target.files[0])],
+      photos: [...formData.photos, ...Array.from(e.target.files)] as File[],
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const fromPayload = new FormData();
-    Object.keys(formData).forEach((key) => {
-      fromPayload.append(key, formData[key]);
-    });
+    console.log(e.target.files);
+    const fromPayload = new FormData(e.target);
+    console.log(typeof fromPayload);
+    for (let [key, value] of fromPayload) {
+      console.log(`${key}: ${value}`);
+    }
+
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_URL}/item/additem`,
+      fromPayload,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log(response);
+    // Object.keys(formData).forEach((key) => {
+    //   fromPayload.append(key, formData[key]);
+    // });
 
     // Handle form submission
 
-    try {
-      const response = await axios.post(
-        "localhost:5137/item/additem",
-        fromPayload,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.log("Submitting Error", error);
-    }
+    // try {
+    //   console.log(fromPayload.get("photos"));
+    //   let data = {};
+    //   for (const key of fromPayload.keys()) {
+    //     data = { ...data, [key]: fromPayload.get(key) };
+    //     // console.log(key);
+    //     // console.log(fromPayload.get(key));
+    //   }
+    // console.log(data);
+    //   console.log(response.data);
+    // } catch (error) {
+    //   console.log("Submitting Error", error);
+    // }
   };
 
   return (
@@ -90,7 +90,7 @@ const RentProductForm = () => {
       <h1 className="text-2xl font-bold mb-6 text-center">
         Rent Out Your Items
       </h1>
-      <form onSubmit={handleSubmit}>
+      <form name="addItemForm" onSubmit={handleSubmit}>
         <Slot className="mb-4">
           <input
             type="text"
@@ -146,7 +146,7 @@ const RentProductForm = () => {
         <Slot className="mb-4">
           <input
             type="text"
-            name="productDescription"
+            name="description"
             placeholder="Item Description"
             value={formData.description}
             onChange={handleChange}

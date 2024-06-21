@@ -11,7 +11,6 @@ const initialState: IAuthState = {
   userToken: null, // for storing the JWT
   success: false, // for monitoring the registration process.
 };
-console.log("hasjdfsd");
 
 const authSlice = createSlice({
   name: "auth",
@@ -23,14 +22,22 @@ const authSlice = createSlice({
         payload: { userdata, token },
       }: { payload: { userdata: IUserInfo; token: string | null } }
     ) => {
-      console.log("fhsadjfkjads");
-
       state.userInfo = userdata;
       state.userToken = token;
+    },
+    logout: (state: IAuthState) => {
+      state.userInfo = {
+        name: "",
+        email: "",
+        profilePic: "",
+        id: "",
+      };
+      state.userToken = null;
+      state.success = false;
     },
   },
 });
 
-export const { setUser } = authSlice.actions;
+export const { setUser, logout } = authSlice.actions;
 
 export default authSlice.reducer;
