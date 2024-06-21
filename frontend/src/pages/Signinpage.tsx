@@ -7,7 +7,6 @@ import { EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useIsLoggedin from "@/hooks/useIsLoggedin";
 import { useLogin, useSignup } from "@/api/queriesAndMutation";
-import { GoogleLogin } from "@react-oauth/google";
 
 //type definitions for Error handling
 type ErrorType = {
@@ -17,6 +16,7 @@ type ErrorType = {
 
 //signup component
 const Signup = ({
+  signupWithGoogle,
   setIsLogin,
 }: {
   signupWithGoogle: () => void;
@@ -194,7 +194,6 @@ const Signup = ({
               {signupuser.error.message}
             </p>
           )}
-
           <Button type="submit" className="w-full text-lg">
             Signup
           </Button>
@@ -202,17 +201,14 @@ const Signup = ({
             <hr className=" w-full border-gray-300" />
             <span className="px-2 text-gray-600">or</span>
             <hr className="w-full border-gray-300" />
-          </div>
-          <GoogleLogin
-            onSuccess={(credentials) => {
-              console.log(credentials);
-            }}
-            onError={() => {
-              console.log("error");
-            }}
-            width={315}
-            logo_alignment="center"
-          />
+          </div>{" "}
+          <Button
+            type="button"
+            onClick={() => signupWithGoogle()}
+            className="w-full text-lg bg-red-500"
+          >
+            Continue with Google
+          </Button>
         </form>
         <p className="mt-6 text-center flex">
           Already have an account?{" "}
@@ -231,6 +227,7 @@ const Signup = ({
 //login component
 const Login = ({
   setIsLogin,
+  loginWithGoogle,
 }: {
   loginWithGoogle: () => void;
   setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
@@ -364,16 +361,13 @@ const Login = ({
             <span className="px-2 text-gray-600">or</span>
             <hr className="w-full border-gray-300" />
           </div>
-          <GoogleLogin
-            onSuccess={(credentials) => {
-              console.log(credentials);
-            }}
-            onError={() => {
-              console.log("error");
-            }}
-            width={315}
-            logo_alignment="center"
-          />
+          <Button
+            type="button"
+            onClick={() => loginWithGoogle()}
+            className="w-full text-lg bg-transparent border-2 text-black hover:text-white"
+          >
+            Continue with Google
+          </Button>
         </form>
         <p className="mt-6 text-center flex">
           Don't have an account?{" "}
@@ -402,11 +396,7 @@ const Signinpage = () => {
   }, [isLoggedIn]);
 
   const loginWithGoogle = () => {
-    window.location.href = "/auth/google";
-  };
-
-  const signupWithGoogle = () => {
-    window.location.href = "/auth/google";
+    window.location.href = "http://localhost:3000/user/googleoauth";
   };
 
   return isLoggedIn ? (
@@ -438,7 +428,7 @@ const Signinpage = () => {
             <Login loginWithGoogle={loginWithGoogle} setIsLogin={setIsLogin} />
           ) : (
             <Signup
-              signupWithGoogle={signupWithGoogle}
+              signupWithGoogle={loginWithGoogle}
               setIsLogin={setIsLogin}
             />
           )}
