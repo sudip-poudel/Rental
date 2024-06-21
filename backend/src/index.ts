@@ -16,6 +16,7 @@ app.use(
   })
 );
 app.use(express.json());
+app.options("*", cors());
 app.use("/user", require("./route/userRoute"));
 app.use("/item", require("./route/itemsRoute"));
 app.use(errorHandler);
