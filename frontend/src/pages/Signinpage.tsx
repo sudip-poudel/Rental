@@ -194,7 +194,6 @@ const Signup = ({
               {signupuser.error.message}
             </p>
           )}
-
           <Button type="submit" className="w-full text-lg">
             Signup
           </Button>
@@ -202,14 +201,14 @@ const Signup = ({
             <hr className=" w-full border-gray-300" />
             <span className="px-2 text-gray-600">or</span>
             <hr className="w-full border-gray-300" />
-          </div>
-          <button
+          </div>{" "}
+          <Button
             type="button"
-            onClick={signupWithGoogle}
-            className="w-full  text-black py-2 rounded-lg hover:bg-blue-300   mb-2"
+            onClick={() => signupWithGoogle()}
+            className="w-full text-lg bg-red-500"
           >
             Continue with Google
-          </button>
+          </Button>
         </form>
         <p className="mt-6 text-center flex">
           Already have an account?{" "}
@@ -227,8 +226,8 @@ const Signup = ({
 
 //login component
 const Login = ({
-  loginWithGoogle,
   setIsLogin,
+  loginWithGoogle,
 }: {
   loginWithGoogle: () => void;
   setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
@@ -362,13 +361,13 @@ const Login = ({
             <span className="px-2 text-gray-600">or</span>
             <hr className="w-full border-gray-300" />
           </div>
-          <button
+          <Button
             type="button"
-            onClick={loginWithGoogle}
-            className="w-full  text-black py-2 rounded-lg hover:bg-blue-300   mb-2"
+            onClick={() => loginWithGoogle()}
+            className="w-full text-lg bg-transparent border-2 text-black hover:text-white"
           >
             Continue with Google
-          </button>
+          </Button>
         </form>
         <p className="mt-6 text-center flex">
           Don't have an account?{" "}
@@ -397,11 +396,9 @@ const Signinpage = () => {
   }, [isLoggedIn]);
 
   const loginWithGoogle = () => {
-    window.location.href = "/auth/google";
-  };
-
-  const signupWithGoogle = () => {
-    window.location.href = "/auth/google";
+    window.location.href = "http://localhost:3000/user/googleoauth";
+    // window.location.href =
+    //   "https://rental-backend-five.vercel.app/user/googleoauth";
   };
 
   return isLoggedIn ? (
@@ -410,7 +407,7 @@ const Signinpage = () => {
     <div className="min-h-screen">
       <Navbar />
       <div className="flex flex-col items-center justify-center">
-        <div className="flex items-center justify-around  w-96 h-16 rounded-sm mb-4 ">
+        <div className="flex items-center justify-around w-96 h-16 rounded-sm mb-4">
           <div className="w-1/2 mx-1">
             <Button
               onClick={() => setIsLogin(true)}
@@ -433,7 +430,7 @@ const Signinpage = () => {
             <Login loginWithGoogle={loginWithGoogle} setIsLogin={setIsLogin} />
           ) : (
             <Signup
-              signupWithGoogle={signupWithGoogle}
+              signupWithGoogle={loginWithGoogle}
               setIsLogin={setIsLogin}
             />
           )}
