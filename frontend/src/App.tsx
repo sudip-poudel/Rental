@@ -11,6 +11,7 @@ import getUserCookies from "./helpers/getUserCookie";
 import { setUser } from "./store/auth/authSlice";
 import { useDispatch } from "react-redux";
 import useIsLoggedin from "./hooks/useIsLoggedin";
+import AddItem from "./pages/AddItem";
 
 function App() {
   const dispatch = useDispatch();
@@ -45,6 +46,7 @@ function App() {
             />
           }
         />
+        <Route path="/addproduct" Component={AddItem} />
       </Routes>
     </>
   );

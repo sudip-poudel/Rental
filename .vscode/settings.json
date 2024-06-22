@@ -1,3 +1,5 @@
 {
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "files.autoSaveWhenNoErrors": true,
+  "prettier.embeddedLanguageFormatting": "off"
 }

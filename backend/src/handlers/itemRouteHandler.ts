@@ -12,5 +12,10 @@ export const handleGetItem = async (req: Request, res: Response) => {
 //TODO handle the route to post item data along with picture
 export const handlePostItem = async (req: Request, res: Response) => {
   const itemData = req.body;
+  console.log(req.body);
+  
+
   res.json(itemData);
 };
+
+

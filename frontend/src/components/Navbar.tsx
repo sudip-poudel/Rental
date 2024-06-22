@@ -58,6 +58,9 @@ const Navbar = () => {
           >
             Dashboard
           </Link>
+          <Link to="/addproduct" className="p-2 hover:underline">
+            Add Product
+          </Link>
         </div>
 
         {isLoggedin ? (

@@ -29,3 +29,19 @@ export type IUserLoginResponse = {
   success: boolean;
   message: string;
 };
+
+export type IFormData = {
+  title: string;
+  category: string;
+  rate: number;
+
+  photos: File[];
+  // Add other fields as needed
+  description: string;
+  rentalPeriod: string;
+  // availabilityDates: string;
+  pickupLocation: string;
+  specialInstructions: string;
+  agreement: boolean;
+  liabilityWaiver: boolean;
+};
