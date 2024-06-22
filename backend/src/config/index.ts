@@ -8,6 +8,7 @@ const {
   GOOGLE_CLIENT_SECRET,
   GOOGLE_OAUTH_URL,
 } = process.env as Record<string, string>;
+const ENV: "DEV" | "PROD" = process.env.ENV as "DEV" | "PROD";
 export {
   JWT_SECRET,
   CLOUDINARY_CLOUD_NAME,
@@ -16,5 +17,6 @@ export {
   GOOGLE_ACCESS_TOKEN_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
+  ENV,
   GOOGLE_OAUTH_URL,
 };

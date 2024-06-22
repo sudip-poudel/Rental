@@ -4,6 +4,7 @@ import { users } from "../schema/schema";
 import { eq } from "drizzle-orm";
 import { generateToken } from "../helper/generateToken";
 import {
+  ENV,
   GOOGLE_ACCESS_TOKEN_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
@@ -122,7 +123,9 @@ const handleLogout = async (req: Request, res: Response) => {
 
 export const oAuthHandler = (_: Request, res: Response) => {
   const REDIRECT_URI =
-    "https://rental-backend-five.vercel.app/user/oauthsuccess";
+    ENV === "PROD"
+      ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
+      : "http://localhost:3000/user/oauthsuccess";
   // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
 
   const GOOGLE_OAUTH_SCOPES = [
@@ -156,7 +159,9 @@ export const oAuth2Server = async (
 
   // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
   const REDIRECT_URI =
-    "https://rental-backend-five.vercel.app/user/oauthsuccess";
+    ENV === "PROD"
+      ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
+      : "http://localhost:3000/user/oauthsuccess";
 
   // Ask for Access Token
   const data = {
@@ -201,7 +206,13 @@ export const oAuth2Server = async (
       const resp = loginHelper(user, res);
       if (resp.success) {
         // res.redirect("http://localhost:5173");
-        res.redirect("https://rental-ruby.vercel.app/");
+        res.redirect(
+          `${
+            ENV === "PROD"
+              ? "https://rental-ruby.vercel.app/"
+              : "http://localhost:5173"
+          }`
+        );
       }
     }
     //it there is no user with the email, create a new user
@@ -212,7 +223,13 @@ export const oAuth2Server = async (
     const resp = loginHelper(data[0], res);
     if (resp.success) {
       // res.redirect("http://localhost:5173")
-      res.redirect("https://rental-ruby.vercel.app/");
+      res.redirect(
+        `${
+          ENV === "PROD"
+            ? "https://rental-ruby.vercel.app/"
+            : "http://localhost:5173"
+        }`
+      );
     }
   } catch (error) {
     console.log(error);

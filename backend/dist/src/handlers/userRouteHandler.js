@@ -109,7 +109,9 @@ const handleLogout = async (req, res) => {
 exports.handleLogout = handleLogout;
 //* Google Auth*//
 const oAuthHandler = (_, res) => {
-    const REDIRECT_URI = "https://rental-backend-five.vercel.app/user/oauthsuccess";
+    const REDIRECT_URI = config_1.ENV === "PROD"
+        ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
+        : "http://localhost:3000/user/oauthsuccess";
     // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
     const GOOGLE_OAUTH_SCOPES = [
         "https://www.googleapis.com/auth/userinfo.profile",
@@ -132,7 +134,9 @@ const oAuth2Server = async (req, res, next) => {
     // TODO: Maybe, validate state
     const { code } = req.query;
     // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
-    const REDIRECT_URI = "https://rental-backend-five.vercel.app/user/oauthsuccess";
+    const REDIRECT_URI = config_1.ENV === "PROD"
+        ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
+        : "http://localhost:3000/user/oauthsuccess";
     // Ask for Access Token
     const data = {
         code,
@@ -168,7 +172,9 @@ const oAuth2Server = async (req, res, next) => {
             const resp = (0, loginHelper_1.loginHelper)(user, res);
             if (resp.success) {
                 // res.redirect("http://localhost:5173");
-                res.redirect("https://rental-ruby.vercel.app/");
+                res.redirect(`${config_1.ENV === "PROD"
+                    ? "https://rental-ruby.vercel.app/"
+                    : "http://localhost:5173"}`);
             }
         }
         //it there is no user with the email, create a new user
@@ -179,7 +185,9 @@ const oAuth2Server = async (req, res, next) => {
         const resp = (0, loginHelper_1.loginHelper)(data[0], res);
         if (resp.success) {
             // res.redirect("http://localhost:5173")
-            res.redirect("https://rental-ruby.vercel.app/");
+            res.redirect(`${config_1.ENV === "PROD"
+                ? "https://rental-ruby.vercel.app/"
+                : "http://localhost:5173"}`);
         }
     }
     catch (error) {
