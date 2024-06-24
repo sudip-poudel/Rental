@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ItemCategoryRelation = exports.UserItemsRelation = exports.itemLocation = exports.itemCategory = exports.category = exports.rentals = exports.item = exports.users = exports.userRole = void 0;
+exports.ItemCategoryRelation = exports.UserItemsRelation = exports.itemLocationRelation = exports.itemLocation = exports.itemCategoryTableRelations = exports.itemCategory = exports.category = exports.rentalsTableRelations = exports.rentals = exports.itemRelations = exports.item = exports.users = exports.userRole = void 0;
 const drizzle_orm_1 = require("drizzle-orm");
 const pg_core_1 = require("drizzle-orm/pg-core");
 exports.userRole = (0, pg_core_1.pgEnum)("userRole", ["admin", "user"]);
@@ -28,9 +28,20 @@ exports.item = (0, pg_core_1.pgTable)("item", {
     created_at: (0, pg_core_1.timestamp)("created_at").notNull().defaultNow(),
     rate: (0, pg_core_1.real)("rate").notNull(),
     pictureUrl: (0, pg_core_1.text)("picture_url").notNull(),
+    initaialDeposite: (0, pg_core_1.real)("initial_deposit"),
     addedBy: (0, pg_core_1.uuid)("added_by")
         .notNull()
         .references(() => exports.users.id),
+});
+exports.itemRelations = (0, drizzle_orm_1.relations)(exports.item, ({ one, many }) => {
+    return {
+        user: one(exports.users, {
+            fields: [exports.item.addedBy],
+            references: [exports.users.id],
+        }),
+        category: many(exports.category),
+        rentals: one(exports.rentals),
+    };
 });
 exports.rentals = (0, pg_core_1.pgTable)("rentals", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
@@ -44,17 +55,39 @@ exports.rentals = (0, pg_core_1.pgTable)("rentals", {
     rentEnd: (0, pg_core_1.timestamp)("returned_at"),
     isReturned: (0, pg_core_1.boolean)("is_returned").default(false),
 });
+exports.rentalsTableRelations = (0, drizzle_orm_1.relations)(exports.rentals, ({ one, many }) => {
+    return {
+        item: one(exports.item, {
+            fields: [exports.rentals.item],
+            references: [exports.item.id],
+        }),
+        rentedBy: one(exports.users, {
+            fields: [exports.rentals.rentedBy],
+            references: [exports.users.id],
+        }),
+    };
+});
 exports.category = (0, pg_core_1.pgTable)("category", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
-    name: (0, pg_core_1.varchar)("name", { length: 255 }).notNull(),
+    name: (0, pg_core_1.varchar)("name", { length: 255 }).notNull().unique(),
 });
 exports.itemCategory = (0, pg_core_1.pgTable)("item_category", {
+    id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     itemId: (0, pg_core_1.uuid)("item_id")
         .notNull()
         .references(() => exports.item.id),
     categoryId: (0, pg_core_1.uuid)("category_id")
         .notNull()
         .references(() => exports.category.id),
+});
+exports.itemCategoryTableRelations = (0, drizzle_orm_1.relations)(exports.itemCategory, ({ one, many }) => {
+    return {
+        item: many(exports.item),
+        category: one(exports.category, {
+            fields: [exports.itemCategory.categoryId],
+            references: [exports.category.id],
+        }),
+    };
 });
 exports.itemLocation = (0, pg_core_1.pgTable)("item_location", {
     itemId: (0, pg_core_1.uuid)("item_id")
@@ -63,6 +96,12 @@ exports.itemLocation = (0, pg_core_1.pgTable)("item_location", {
     latitude: (0, pg_core_1.real)("latitude").notNull(),
     longitude: (0, pg_core_1.real)("longitude").notNull(),
 });
+exports.itemLocationRelation = (0, drizzle_orm_1.relations)(exports.itemLocation, ({ one, many }) => ({
+    item: one(exports.item, {
+        fields: [exports.itemLocation.itemId],
+        references: [exports.item.id],
+    }),
+}));
 exports.UserItemsRelation = (0, drizzle_orm_1.relations)(exports.users, ({ one, many }) => {
     return {
         items: many(exports.item),

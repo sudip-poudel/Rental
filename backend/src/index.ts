@@ -1,12 +1,10 @@
 import { Request, Response } from "express";
 import { errorHandler } from "./middleware/errorHandler";
-import path from "path";
+import { insertCategory } from "./seed";
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
-const multer = require("multer");
-const fs = require("fs");
 
 const app = express();
 
@@ -17,6 +15,7 @@ app.use(
     METHODS: "GET, POST, PUT, DELETE",
   })
 );
+app.use(cookieParser());
 app.use(express.json());
 app.options("*", cors());
 app.use("/user", require("./route/userRoute"));
@@ -31,3 +30,4 @@ app.get("/", (req: Request, res: Response) => {
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
+// insertCategory();

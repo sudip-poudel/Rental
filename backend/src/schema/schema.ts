@@ -4,6 +4,7 @@ import {
   index,
   pgEnum,
   pgTable,
+  primaryKey,
   real,
   text,
   timestamp,
@@ -41,9 +42,20 @@ export const item = pgTable("item", {
   created_at: timestamp("created_at").notNull().defaultNow(),
   rate: real("rate").notNull(),
   pictureUrl: text("picture_url").notNull(),
+  initaialDeposite: real("initial_deposit"),
   addedBy: uuid("added_by")
     .notNull()
     .references(() => users.id),
+});
+export const itemRelations = relations(item, ({ one, many }) => {
+  return {
+    user: one(users, {
+      fields: [item.addedBy],
+      references: [users.id],
+    }),
+    category: many(category),
+    rentals: one(rentals),
+  };
 });
 
 export const rentals = pgTable("rentals", {
@@ -59,12 +71,26 @@ export const rentals = pgTable("rentals", {
   isReturned: boolean("is_returned").default(false),
 });
 
+export const rentalsTableRelations = relations(rentals, ({ one, many }) => {
+  return {
+    item: one(item, {
+      fields: [rentals.item],
+      references: [item.id],
+    }),
+    rentedBy: one(users, {
+      fields: [rentals.rentedBy],
+      references: [users.id],
+    }),
+  };
+});
+
 export const category = pgTable("category", {
   id: uuid("id").primaryKey().defaultRandom(),
-  name: varchar("name", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
 });
 
 export const itemCategory = pgTable("item_category", {
+  id: uuid("id").primaryKey().defaultRandom(),
   itemId: uuid("item_id")
     .notNull()
     .references(() => item.id),
@@ -72,6 +98,20 @@ export const itemCategory = pgTable("item_category", {
     .notNull()
     .references(() => category.id),
 });
+
+export const itemCategoryTableRelations = relations(
+  itemCategory,
+  ({ one, many }) => {
+    return {
+      item: many(item),
+      category: one(category, {
+        fields: [itemCategory.categoryId],
+        references: [category.id],
+      }),
+    };
+  }
+);
+
 export const itemLocation = pgTable("item_location", {
   itemId: uuid("item_id")
     .notNull()
@@ -79,6 +119,15 @@ export const itemLocation = pgTable("item_location", {
   latitude: real("latitude").notNull(),
   longitude: real("longitude").notNull(),
 });
+export const itemLocationRelation = relations(
+  itemLocation,
+  ({ one, many }) => ({
+    item: one(item, {
+      fields: [itemLocation.itemId],
+      references: [item.id],
+    }),
+  })
+);
 
 export const UserItemsRelation = relations(users, ({ one, many }) => {
   return {

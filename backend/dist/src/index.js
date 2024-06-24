@@ -6,12 +6,12 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const app = express();
-app.use(cookieParser());
 app.use(cors({
     origin: ["http://localhost:5173", "https://rental-ruby.vercel.app"],
     credentials: true,
     METHODS: "GET, POST, PUT, DELETE",
 }));
+app.use(cookieParser());
 app.use(express.json());
 app.options("*", cors());
 app.use("/user", require("./route/userRoute"));
@@ -23,3 +23,4 @@ app.get("/", (req, res) => {
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
 });
+// insertCategory();
