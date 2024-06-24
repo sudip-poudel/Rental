@@ -42,7 +42,7 @@ export const item = pgTable("item", {
   created_at: timestamp("created_at").notNull().defaultNow(),
   rate: real("rate").notNull(),
   pictureUrl: text("picture_url").notNull(),
-  initaialDeposite: real("initial_deposit"),
+  initialDeposit: real("initial_deposit"),
   addedBy: uuid("added_by")
     .notNull()
     .references(() => users.id),
@@ -113,11 +113,13 @@ export const itemCategoryTableRelations = relations(
 );
 
 export const itemLocation = pgTable("item_location", {
+  id: uuid("id").primaryKey().defaultRandom(),
   itemId: uuid("item_id")
     .notNull()
     .references(() => item.id),
   latitude: real("latitude").notNull(),
   longitude: real("longitude").notNull(),
+  location: text("location").notNull(),
 });
 export const itemLocationRelation = relations(
   itemLocation,

@@ -22,6 +22,10 @@ export const insertCategory = async () => {
       name: "Specialty Items",
     },
   ];
-  const res = await db.insert(category).values(data).returning();
+  const res = await db.insert(category).values({ name: "Others" }).returning();
   console.log(res);
+};
+export const getcat = async () => {
+  const test = await db.select().from(category);
+  console.log(test);
 };

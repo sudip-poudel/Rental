@@ -1,4 +1,8 @@
-import { handleGetItem, handlePostItem } from "../handlers/itemRouteHandler";
+import {
+  handleGetCategory,
+  handleGetItem,
+  handlePostItem,
+} from "../handlers/itemRouteHandler";
 import validateToken from "../middleware/validateToken";
 
 const express = require("express");
@@ -9,6 +13,7 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+router.post("/additem", validateToken, upload.single("photos"), handlePostItem);
+router.get("/getcategory", validateToken, handleGetCategory);
 router.get("/:id", validateToken, handleGetItem);
-router.post("/additem", upload.single("photos"), handlePostItem);
 module.exports = router;
