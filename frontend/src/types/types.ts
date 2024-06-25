@@ -40,8 +40,17 @@ export type IFormData = {
   description: string;
   rentalPeriod: string;
   // availabilityDates: string;
-  pickupLocation: string;
+  pickupLocation: {
+    location: string;
+    latitude: number;
+    longitude: number;
+  };
   specialInstructions: string;
   agreement: boolean;
   liabilityWaiver: boolean;
+};
+
+export type ICategoryType = {
+  id: string;
+  name: string;
 };
