@@ -72,7 +72,7 @@ const logoutUser = async () => {
 };
 const handleForgetPassword = async (email: string) => {
   try {
-    const response: AxiosResponse = await axios.post(
+    const response: AxiosResponse<IUserLoginResponse> = await axios.post(
       `${import.meta.env.VITE_API_URL}/user/forgetpassword`,
       {
         email,
