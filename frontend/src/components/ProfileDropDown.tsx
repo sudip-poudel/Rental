@@ -34,6 +34,7 @@ const ProfileDropDown = () => {
 
   const handleLogout = async (e) => {
     e.preventDefault();
+
     const response = await logoutUser();
     if (response.success) {
       dispatch(logout());

@@ -12,5 +12,4 @@ cloudinary.v2.config({
   api_secret: CLOUDINARY_API_SECRET as string,
   secure: true,
 });
-
 module.exports = cloudinary;

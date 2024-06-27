@@ -1,9 +1,13 @@
-import { useMutation } from "@tanstack/react-query";
-import { loginUser, logoutUser, signupUser } from "./api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { fetchCategoryDetails, loginUser, logoutUser, signupUser } from "./api";
 import getUserCookies from "@/helpers/getUserCookie";
 import { logout, setUser } from "@/store/auth/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
+export enum QUERY_KYES {
+  getCategory = "CATEGORY",
+}
 
 export const useLogin = () => {
   const dispatch = useDispatch();
@@ -55,5 +59,13 @@ export const useLogout = () => {
         navigate("/login");
       }
     },
+  });
+};
+
+export const useGetCategories = () => {
+  return useQuery({
+    queryKey: [QUERY_KYES.getCategory],
+    staleTime: 1000 * 60 * 60 * 24 * 7,
+    queryFn: fetchCategoryDetails,
   });
 };

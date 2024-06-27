@@ -5,7 +5,10 @@ import { Slot } from "@radix-ui/react-slot";
 import { Button } from "@/components/ui/button";
 import upload from "/images/upload.png";
 import { useRef } from "react";
-import { IFormData } from "@/types/types";
+import { ICategoryType, IFormData } from "@/types/types";
+import { useGetCategories } from "@/api/queriesAndMutation";
+import Modal from "@/components/modal";
+import { MapPopup } from "@/components/Map";
 
 const RentProductForm = () => {
   const [formData, setFormData] = useState<IFormData>({
@@ -16,11 +19,17 @@ const RentProductForm = () => {
     rate: 0,
     rentalPeriod: "",
     // availabilityDates: "",
-    pickupLocation: "",
+    pickupLocation: {
+      location: "",
+      latitude: 0,
+      longitude: 0,
+    },
     specialInstructions: "",
     agreement: false,
     liabilityWaiver: false,
   });
+  const [showPopup, setShowPopup] = useState(false);
+  const { data: category, isFetched } = useGetCategories();
 
   const uploadRef = useRef<HTMLInputElement>(null);
 
@@ -47,10 +56,13 @@ const RentProductForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
+
     console.log(e.target.files);
     const fromPayload = new FormData(e.target);
+    fromPayload.set("pickupLocation", JSON.stringify(formData.pickupLocation));
     console.log(typeof fromPayload);
-    for (let [key, value] of fromPayload) {
+    for (const [key, value] of fromPayload) {
       console.log(`${key}: ${value}`);
     }
 
@@ -61,36 +73,22 @@ const RentProductForm = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       }
     );
     console.log(response);
-    // Object.keys(formData).forEach((key) => {
-    //   fromPayload.append(key, formData[key]);
-    // });
-
-    // Handle form submission
-
-    // try {
-    //   console.log(fromPayload.get("photos"));
-    //   let data = {};
-    //   for (const key of fromPayload.keys()) {
-    //     data = { ...data, [key]: fromPayload.get(key) };
-    //     // console.log(key);
-    //     // console.log(fromPayload.get(key));
-    //   }
-    // console.log(data);
-    //   console.log(response.data);
-    // } catch (error) {
-    //   console.log("Submitting Error", error);
-    // }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+    <div className=" mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
       <h1 className="text-2xl font-bold mb-6 text-center">
         Rent Out Your Items
       </h1>
-      <form name="addItemForm" onSubmit={handleSubmit}>
+      <form
+        name="addItemForm"
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1  md:grid-cols-2 gap-2"
+      >
         <Slot className="mb-4">
           <input
             type="text"
@@ -99,11 +97,22 @@ const RentProductForm = () => {
             value={formData.title}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full h-16 px-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
         </Slot>
         <Slot className="mb-4">
-          <div className="flex items-center justify-center">
+          <input
+            type="number"
+            name="rate"
+            placeholder="Rental Rate (Rs./day)"
+            value={formData.rate}
+            onChange={handleChange}
+            required
+            className="w-full  h-16 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+        </Slot>
+        <Slot className="mb-4">
+          <div className="flex flex-col items-center justify-center">
             <div
               onClick={handleImageUpload}
               className="w-full h-40 flex flex-col cursor-pointer px-4 py-2 border items-center justify-center rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -121,7 +130,7 @@ const RentProductForm = () => {
                 ref={uploadRef}
                 className="hidden"
               />
-              <div className="upload-div">
+              <div className="upload-div relative">
                 {formData.photos.map((photo, index) => {
                   const photoURL = URL.createObjectURL(photo);
                   return (
@@ -155,27 +164,23 @@ const RentProductForm = () => {
           />
         </Slot>
         <Slot className="mb-4">
-          <input
-            type="text"
+          <select
             name="category"
-            placeholder="Category"
             value={formData.category}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
+          >
+            <option value="">Select Category</option>
+            {isFetched &&
+              (category as ICategoryType[]).map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+          </select>
         </Slot>
-        <Slot className="mb-4">
-          <input
-            type="number"
-            name="rate"
-            placeholder="Rental Rate (Rs./day)"
-            value={formData.rate}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
-        </Slot>
+
         <Slot className="mb-4">
           <input
             type="text"
@@ -204,12 +209,21 @@ const RentProductForm = () => {
             type="text"
             name="pickupLocation"
             placeholder="Pickup Location"
-            value={formData.pickupLocation}
+            value={formData.pickupLocation.location}
             onChange={handleChange}
+            onClick={() => {
+              setShowPopup(!showPopup);
+            }}
             required
+            readOnly
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
         </Slot>
+        {showPopup && (
+          <Modal setShowModal={setShowPopup}>
+            <MapPopup handleChange={setFormData} />
+          </Modal>
+        )}
 
         <Slot className="mb-4">
           <textarea

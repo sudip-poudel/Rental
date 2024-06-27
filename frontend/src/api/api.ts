@@ -1,4 +1,9 @@
-import { ILoginData, ISignupData, IUserLoginResponse } from "@/types/types";
+import {
+  ICategoryType,
+  ILoginData,
+  ISignupData,
+  IUserLoginResponse,
+} from "@/types/types";
 import axios, { AxiosResponse } from "axios";
 
 const fetchUserDetails = async (data) => {
@@ -60,6 +65,28 @@ const logoutUser = async () => {
       }
     );
     const result = response.data;
+
+    return result;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An unknown error occurred");
+    }
+  }
+};
+//** Items API **//
+
+const fetchCategoryDetails = async () => {
+  try {
+    const response: AxiosResponse<ICategoryType[]> = await axios.get(
+      `${import.meta.env.VITE_API_URL}/item/getcategory`,
+      {
+        withCredentials: true,
+      }
+    );
+    const result = response.data;
+
     return result;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -70,4 +97,10 @@ const logoutUser = async () => {
   }
 };
 
-export { fetchUserDetails, signupUser, loginUser, logoutUser };
+export {
+  fetchUserDetails,
+  signupUser,
+  loginUser,
+  logoutUser,
+  fetchCategoryDetails,
+};
