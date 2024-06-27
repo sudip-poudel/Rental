@@ -5,13 +5,18 @@ import { eq } from "drizzle-orm";
 import { generateToken } from "../helper/generateToken";
 import {
   ENV,
+  FRONTEND_URL,
+  GMAIL_ID,
+  GMAIL_PASS,
   GOOGLE_ACCESS_TOKEN_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_OAUTH_URL,
 } from "../config";
 import { loginHelper } from "../helper/loginHelper";
+const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const handleSignup = async (req: Request, res: Response) => {
   const {
@@ -236,4 +241,58 @@ export const oAuth2Server = async (
   }
 };
 
-export { handleSignup, handleLogin, handleLogout };
+//forgetpassword handler
+const handleForgetPassword = async (req: Request, res: Response) => {
+  const { email }: { email: string } = req.body;
+  if (!email) {
+    return res
+      .status(400)
+      .send({ success: false, message: "Email is required" });
+  }
+  try {
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
+    if (!user) {
+      return res
+        .status(400)
+        .send({ success: false, message: "User not found" });
+    }
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, {
+      expiresIn: "1h",
+    });
+    //send email to the user with a link to reset password
+    const resetURL = `${FRONTEND_URL}/resetpassword/${token}`;
+    //create tranponder for nodemailer
+    const transponder = nodemailer.createTransport({
+      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+
+      auth: {
+        user: GMAIL_ID,
+        pass: GMAIL_PASS,
+      },
+    });
+    const mailOptions = {
+      from: GMAIL_ID,
+      to: email,
+      subject: "Password Reset",
+      text: `Click on the link to reset your password ${resetURL}`,
+    };
+
+    //send email
+
+    await transponder.sendMail(mailOptions, (error: any, info: any) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log("Email sent: " + info.response);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export { handleSignup, handleLogin, handleLogout, handleForgetPassword };
