@@ -9,11 +9,12 @@ interface Item {
   created_at: string;
   location: string;
   rate: number;
+
 }
 
-const Card = ({ item, className }: { item: Item; className?: string }) => {
+const Card = ({ item, className, onClick }: { item: Item; className?: string; onClick: React.MouseEventHandler  <HTMLElement>}) => {
   return (
-    <div
+    <div onClick={onClick}
       className={`w-full sm:w-[95%] transform transition duration-500 ease-in-out hover:scale-105 ${className}`}
     >
       <img
