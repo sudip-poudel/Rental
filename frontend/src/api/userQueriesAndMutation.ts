@@ -1,5 +1,10 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { fetchCategoryDetails, loginUser, logoutUser, signupUser } from "./api";
+import { useMutation } from "@tanstack/react-query";
+import {
+  handleForgetPassword,
+  loginUser,
+  logoutUser,
+  signupUser,
+} from "./userApi";
 import getUserCookies from "@/helpers/getUserCookie";
 import { logout, setUser } from "@/store/auth/authSlice";
 import { useDispatch } from "react-redux";
@@ -62,10 +67,11 @@ export const useLogout = () => {
   });
 };
 
-export const useGetCategories = () => {
-  return useQuery({
-    queryKey: [QUERY_KYES.getCategory],
-    staleTime: 1000 * 60 * 60 * 24 * 7,
-    queryFn: fetchCategoryDetails,
+export const useForgetPassword = () => {
+  return useMutation({
+    mutationFn: async (email: string) => {
+      const response = await handleForgetPassword(email);
+      return response;
+    },
   });
 };

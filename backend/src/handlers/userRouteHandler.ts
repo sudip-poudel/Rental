@@ -289,6 +289,7 @@ const handleForgetPassword = async (req: Request, res: Response) => {
         console.log(error);
       }
       console.log("Email sent: " + info.response);
+      res.send(201).json({ success: true, message: "Email sent" });
     });
   } catch (error) {
     console.error(error);

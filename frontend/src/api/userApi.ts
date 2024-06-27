@@ -1,9 +1,4 @@
-import {
-  ICategoryType,
-  ILoginData,
-  ISignupData,
-  IUserLoginResponse,
-} from "@/types/types";
+import { ILoginData, ISignupData, IUserLoginResponse } from "@/types/types";
 import axios, { AxiosResponse } from "axios";
 
 const fetchUserDetails = async (data) => {
@@ -75,19 +70,18 @@ const logoutUser = async () => {
     }
   }
 };
-//** Items API **//
-
-const fetchCategoryDetails = async () => {
+const handleForgetPassword = async (email: string) => {
   try {
-    const response: AxiosResponse<ICategoryType[]> = await axios.get(
-      `${import.meta.env.VITE_API_URL}/item/getcategory`,
+    const response: AxiosResponse = await axios.post(
+      `${import.meta.env.VITE_API_URL}/user/forgetpassword`,
+      {
+        email,
+      },
       {
         withCredentials: true,
       }
     );
-    const result = response.data;
-
-    return result;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data.message);
@@ -102,5 +96,5 @@ export {
   signupUser,
   loginUser,
   logoutUser,
-  fetchCategoryDetails,
+  handleForgetPassword,
 };

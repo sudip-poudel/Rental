@@ -12,6 +12,7 @@ import { setUser } from "./store/auth/authSlice";
 import { useDispatch } from "react-redux";
 import useIsLoggedin from "./hooks/useIsLoggedin";
 import AddItem from "./pages/AddItem";
+import ForgetPassword from "./pages/ForgetPassword";
 
 function App() {
   const dispatch = useDispatch();
@@ -46,7 +47,17 @@ function App() {
             />
           }
         />
-        <Route path="/addproduct" Component={AddItem} />
+        <Route
+          path="/addproduct"
+          element={
+            <ProtectedRoute
+              authenticationPath="/signin"
+              isAuthenticated={isLoggedin}
+              Component={AddItem}
+            />
+          }
+        />
+        <Route path="/forgetpassword" element={<ForgetPassword />} />
       </Routes>
     </>
   );

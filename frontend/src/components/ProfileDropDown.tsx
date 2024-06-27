@@ -1,4 +1,4 @@
-import { logoutUser } from "@/api/api";
+import { logoutUser } from "@/api/userApi";
 import { logout } from "@/store/auth/authSlice";
 import { LogOut, Settings, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
