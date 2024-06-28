@@ -10,6 +10,7 @@ const {
   GMAIL_ID,
   GMAIL_PASS,
   FRONTEND_URL,
+  BACKEND_URL,
 } = process.env as Record<string, string>;
 const ENV: "DEV" | "PROD" = process.env.ENV as "DEV" | "PROD";
 export {
@@ -25,4 +26,5 @@ export {
   GMAIL_ID,
   FRONTEND_URL,
   GMAIL_PASS,
+  BACKEND_URL,
 };

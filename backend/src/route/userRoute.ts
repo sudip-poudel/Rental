@@ -5,6 +5,8 @@ import {
   oAuthHandler,
   oAuth2Server,
   handleForgetPassword,
+  verifyUpdatePassword,
+  updatePasswordHandler,
 } from "../handlers/userRouteHandler";
 import { isLoggedIn, isLoggedOut } from "../middleware/userVerify";
 const express = require("express");
@@ -18,4 +20,6 @@ router.get("/googleoauth", oAuthHandler);
 router.get("/oauthsuccess", oAuth2Server);
 //TODO handle forget password
 router.post("/forgetpassword", isLoggedOut, handleForgetPassword);
+router.post("/updatepassword", updatePasswordHandler);
+router.get("/updatepassword/:token", verifyUpdatePassword);
 module.exports = router;

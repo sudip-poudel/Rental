@@ -14,6 +14,7 @@ import useIsLoggedin from "./hooks/useIsLoggedin";
 import AddItem from "./pages/AddItem";
 import ForgetPassword from "./pages/ForgetPassword";
 import Itempage from "./pages/Itempage";
+import UpdatePassword from "./pages/UpdatePassword";
 
 function App() {
   const dispatch = useDispatch();
@@ -60,6 +61,8 @@ function App() {
         />
         <Route path="/itempage/:id" element={<Itempage />} />
         <Route path="/forgetpassword" element={<ForgetPassword />} />
+        <Route path="/updatepassword" element={<UpdatePassword />} />
+        <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </>
   );

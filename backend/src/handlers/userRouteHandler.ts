@@ -4,6 +4,7 @@ import { users } from "../schema/schema";
 import { eq } from "drizzle-orm";
 import { generateToken } from "../helper/generateToken";
 import {
+  BACKEND_URL,
   ENV,
   FRONTEND_URL,
   GMAIL_ID,
@@ -259,10 +260,16 @@ const handleForgetPassword = async (req: Request, res: Response) => {
         .send({ success: false, message: "User not found" });
     }
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, {
-      expiresIn: "1h",
+      expiresIn: "15m",
     });
+    //insert the token in user table to check its validity
+    await db
+      .update(users)
+      .set({ resetPasswordToken: token })
+      .where(eq(users.id, user.id));
+
     //send email to the user with a link to reset password
-    const resetURL = `${FRONTEND_URL}/resetpassword/${token}`;
+    const resetURL = `${BACKEND_URL}/user/updatepassword/${token}`;
     //create tranponder for nodemailer
     const transponder = nodemailer.createTransport({
       service: "gmail",
@@ -296,4 +303,55 @@ const handleForgetPassword = async (req: Request, res: Response) => {
   }
 };
 
-export { handleSignup, handleLogin, handleLogout, handleForgetPassword };
+const verifyUpdatePassword = async (req: Request, res: Response) => {
+  const { token } = req.params;
+  if (!token) {
+    return res.redirect(`${FRONTEND_URL}/signin`);
+  }
+  console.log(token);
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    console.log(decoded);
+
+    if (!decoded) {
+      return res.redirect(`${FRONTEND_URL}/signin`);
+    }
+    const userId = (decoded as { id: string; iat: string }).id;
+
+    const resetToken = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+      columns: {
+        resetPasswordToken: true,
+        email: true,
+      },
+    });
+    console.log(resetToken, typeof resetToken);
+
+    if (resetToken?.resetPasswordToken !== null && resetToken) {
+      const tkn: string = resetToken.resetPasswordToken as string;
+      console.log(tkn);
+
+      if (tkn == token) {
+        return res.redirect(
+          `${FRONTEND_URL}/updatepassword?token=${token}?email=${resetToken.email}`
+        );
+      }
+      res.redirect(`${FRONTEND_URL}/fdkfjalksdjflkjsdlfkjsdljf`);
+    }
+    return res.redirect(`${FRONTEND_URL}/signin`);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const updatePasswordHandler = async () => {};
+
+export {
+  handleSignup,
+  handleLogin,
+  handleLogout,
+  handleForgetPassword,
+  verifyUpdatePassword,
+  updatePasswordHandler,
+};
