@@ -1,13 +1,19 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleLogout = exports.handleLogin = exports.handleSignup = exports.oAuth2Server = exports.oAuthHandler = void 0;
+exports.updatePasswordHandler = exports.verifyUpdatePassword = exports.handleForgetPassword = exports.handleLogout = exports.handleLogin = exports.handleSignup = exports.oAuth2Server = exports.oAuthHandler = void 0;
 const db_1 = require("../db");
 const schema_1 = require("../schema/schema");
 const drizzle_orm_1 = require("drizzle-orm");
 const generateToken_1 = require("../helper/generateToken");
 const config_1 = require("../config");
 const loginHelper_1 = require("../helper/loginHelper");
+const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
+// const jwt = require("jsonwebtoken");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const handleSignup = async (req, res) => {
     const { email, password, name, } = req.body;
     console.log(email, password, name);
@@ -195,3 +201,151 @@ const oAuth2Server = async (req, res, next) => {
     }
 };
 exports.oAuth2Server = oAuth2Server;
+//forgetpassword handler
+const handleForgetPassword = async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res
+            .status(400)
+            .send({ success: false, message: "Email is required" });
+    }
+    try {
+        const user = await db_1.db.query.users.findFirst({
+            where: (0, drizzle_orm_1.eq)(schema_1.users.email, email),
+        });
+        if (!user) {
+            return res
+                .status(400)
+                .send({ success: false, message: "User not found" });
+        }
+        const token = jsonwebtoken_1.default.sign({ id: user.id }, process.env.JWT_SECRET, {
+            expiresIn: "15m",
+        });
+        //insert the token in user table to check its validity
+        await db_1.db
+            .update(schema_1.users)
+            .set({ resetPasswordToken: token })
+            .where((0, drizzle_orm_1.eq)(schema_1.users.id, user.id));
+        //send email to the user with a link to reset password
+        const resetURL = `${config_1.BACKEND_URL}/user/updatepassword/${token}`;
+        //create tranponder for nodemailer
+        const transponder = nodemailer.createTransport({
+            service: "gmail",
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            auth: {
+                user: config_1.GMAIL_ID,
+                pass: config_1.GMAIL_PASS,
+            },
+        });
+        const mailOptions = {
+            from: config_1.GMAIL_ID,
+            to: email,
+            subject: "Password Reset",
+            text: `Click on the link to reset your password ${resetURL}`,
+        };
+        //send email
+        await transponder.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+            }
+            console.log("Email sent: " + info.response);
+            res.send(201).json({ success: true, message: "Email sent" });
+        });
+    }
+    catch (error) {
+        console.error(error);
+    }
+};
+exports.handleForgetPassword = handleForgetPassword;
+const verifyUpdatePassword = async (req, res) => {
+    const { token } = req.params;
+    if (!token) {
+        return res.redirect(`${config_1.FRONTEND_URL}/signin`);
+    }
+    console.log(token);
+    try {
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        console.log(decoded, "fasdfasd");
+        if (!decoded) {
+            return res.redirect(`${config_1.FRONTEND_URL}/signin`);
+        }
+        const userId = decoded.id;
+        const resetToken = await db_1.db.query.users.findFirst({
+            where: (0, drizzle_orm_1.eq)(schema_1.users.id, userId),
+            columns: {
+                resetPasswordToken: true,
+                email: true,
+            },
+        });
+        console.log(resetToken, typeof resetToken);
+        if (resetToken?.resetPasswordToken !== null && resetToken) {
+            const tkn = resetToken.resetPasswordToken;
+            console.log(tkn);
+            if (tkn == token) {
+                return res.redirect(`${config_1.FRONTEND_URL}/updatepassword?token=${token}&email=${resetToken.email}`);
+            }
+            res.redirect(`${config_1.FRONTEND_URL}/fdkfjalksdjflkjsdlfkjsdljf`);
+        }
+        return res.redirect(`${config_1.FRONTEND_URL}/signin`);
+    }
+    catch (error) {
+        console.error(error);
+    }
+};
+exports.verifyUpdatePassword = verifyUpdatePassword;
+const updatePasswordHandler = async (req, res) => {
+    const { password, token } = req.body;
+    console.log(password, token);
+    if (!password || !token) {
+        return res
+            .status(400)
+            .send({ success: false, message: "Password and token are required" });
+    }
+    if (password.length < 6) {
+        return res.status(400).send({
+            success: false,
+            message: "Password must be at least 6 characters",
+        });
+    }
+    try {
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        if (!decoded) {
+            return res.status(400).send({ success: false, message: "Invalid token" });
+        }
+        const resetUrl = await db_1.db.query.users.findFirst({
+            where: (0, drizzle_orm_1.eq)(schema_1.users.id, decoded.id),
+            columns: {
+                resetPasswordToken: true,
+            },
+        });
+        if (resetUrl?.resetPasswordToken !== token) {
+            return res.status(400).send({ success: false, message: "Invalid token" });
+        }
+        const userId = decoded.id;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await db_1.db
+            .update(schema_1.users)
+            .set({ password: hashedPassword, resetPasswordToken: null })
+            .where((0, drizzle_orm_1.eq)(schema_1.users.id, userId));
+        res
+            .status(200)
+            .send({ success: true, message: "Password updated successfully" });
+    }
+    catch (error) {
+        if (error instanceof jsonwebtoken_1.default.TokenExpiredError) {
+            return res.status(400).send({ success: false, message: "Token expired" });
+        }
+        else if (error instanceof jsonwebtoken_1.default.JsonWebTokenError) {
+            return res.status(400).send({ success: false, message: "Invalid token" });
+        }
+        else if (error instanceof jsonwebtoken_1.default.NotBeforeError) {
+            return res
+                .status(400)
+                .send({ success: false, message: "Token not active" });
+        }
+        console.error(error);
+    }
+};
+exports.updatePasswordHandler = updatePasswordHandler;

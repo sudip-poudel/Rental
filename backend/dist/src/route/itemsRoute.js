@@ -10,6 +10,7 @@ const router = express.Router();
 const multer = require("multer");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+router.post("/additem", validateToken_1.default, upload.single("photos"), itemRouteHandler_1.handlePostItem);
+router.get("/getcategory", validateToken_1.default, itemRouteHandler_1.handleGetCategory);
 router.get("/:id", validateToken_1.default, itemRouteHandler_1.handleGetItem);
-router.post("/additem", upload.single("photos"), itemRouteHandler_1.handlePostItem);
 module.exports = router;

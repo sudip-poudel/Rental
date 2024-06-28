@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import camera from "/images/camera.png";
 import for_rent from "/images/for_rent.png";
 import Card from "@/components/ui/card";
-import { MapPin,PhoneCall } from "lucide-react";
+import { MapPin, PhoneCall } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 // import Items from "@/components/Items";
 const Itempage = () => {
@@ -14,9 +14,9 @@ const Itempage = () => {
 
   // console.log(result);
   const similarItems = sampleItems.filter(
-    (item) => item.category === result.category
+    (item) => item.category === result?.category
   );
-  const relatedItems = similarItems.filter((item) => item.id !== result.id);
+  const relatedItems = similarItems.filter((item) => item.id !== result?.id);
   // console.log(similarItems);
   const navigate = useNavigate();
   const handleCard = (id) => {
@@ -50,7 +50,11 @@ const Itempage = () => {
                   <div className="mt-2 flex">
                     <MapPin size={18} /> {result.location}
                   </div>
-                   <div className="mt-2 cursor-pointer"> <PhoneCall size={18} /> {result.contact}</div>
+                  <div className="mt-2 cursor-pointer">
+                    {" "}
+                    //TODO add contact field
+                    <PhoneCall size={18} /> {12345678}
+                  </div>
                 </div>
               </div>
             </div>
