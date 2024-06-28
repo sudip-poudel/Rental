@@ -17,7 +17,7 @@ const Navbar = () => {
   const location = useLocation();
   return (
     <>
-      <nav className={`flex flex-row justify-between px-3 items-center`}>
+      <nav className={`flex flex-row  ml-10 justify-between px-3 items-center`}>
         <Link to={"/"}>
           <div className={`flex flex-col popins-title`}>
             <p className={`p-0 m-0`}>RENT</p>
@@ -58,9 +58,9 @@ const Navbar = () => {
           >
             Dashboard
           </Link>
-          <Link to="/addproduct" className="p-2 hover:underline">
+          {/* <Link to="/addproduct" className="p-2 hover:underline">
             Add Product
-          </Link>
+          </Link> */}
         </div>
 
         {isLoggedin ? (

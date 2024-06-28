@@ -48,7 +48,7 @@ function App() {
           }
         />
         <Route path="/addproduct" Component={AddItem} />
-        <Route path="/itempage/:id" Component={Itempage}/>
+        <Route path="/itempage/:id" Component={Itempage}/>                        
       </Routes>
     </>
   );
