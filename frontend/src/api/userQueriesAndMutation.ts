@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import {
   handleForgetPassword,
+  handleUpdatePassword,
   loginUser,
   logoutUser,
   signupUser,
@@ -72,6 +73,20 @@ export const useForgetPassword = () => {
     mutationFn: async (email: string) => {
       const response = await handleForgetPassword(email);
       return response;
+    },
+  });
+};
+
+export const useUpdatePassword = () => {
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: async (data: { password: string; token: string }) => {
+      const response = await handleUpdatePassword(data.password, data.token);
+
+      return response;
+    },
+    onSuccess: () => {
+      navigate("/signin");
     },
   });
 };

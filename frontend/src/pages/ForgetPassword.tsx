@@ -3,8 +3,9 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Countdown from "react-countdown";
+import useIsLoggedin from "@/hooks/useIsLoggedin";
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState("");
@@ -42,6 +43,8 @@ const ForgetPassword = () => {
       );
     }
   };
+  const isLoggedin = useIsLoggedin();
+  if (isLoggedin) return <Navigate to="/" replace />;
 
   return (
     <div>

@@ -91,10 +91,33 @@ const handleForgetPassword = async (email: string) => {
   }
 };
 
+const handleUpdatePassword = async (password: string, token: string) => {
+  try {
+    const response: AxiosResponse<IUserLoginResponse> = await axios.post(
+      `${import.meta.env.VITE_API_URL}/user/updatepassword`,
+      {
+        password,
+        token,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An unknown error occurred");
+    }
+  }
+};
+
 export {
   fetchUserDetails,
   signupUser,
   loginUser,
   logoutUser,
   handleForgetPassword,
+  handleUpdatePassword,
 };

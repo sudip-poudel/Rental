@@ -17,7 +17,8 @@ import {
 import { loginHelper } from "../helper/loginHelper";
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const handleSignup = async (req: Request, res: Response) => {
   const {
@@ -311,13 +312,16 @@ const verifyUpdatePassword = async (req: Request, res: Response) => {
   console.log(token);
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-    console.log(decoded);
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as JwtPayload;
+    console.log(decoded, "fasdfasd");
 
     if (!decoded) {
       return res.redirect(`${FRONTEND_URL}/signin`);
     }
-    const userId = (decoded as { id: string; iat: string }).id;
+    const userId = decoded.id;
 
     const resetToken = await db.query.users.findFirst({
       where: eq(users.id, userId),
@@ -334,7 +338,7 @@ const verifyUpdatePassword = async (req: Request, res: Response) => {
 
       if (tkn == token) {
         return res.redirect(
-          `${FRONTEND_URL}/updatepassword?token=${token}?email=${resetToken.email}`
+          `${FRONTEND_URL}/updatepassword?token=${token}&email=${resetToken.email}`
         );
       }
       res.redirect(`${FRONTEND_URL}/fdkfjalksdjflkjsdlfkjsdljf`);
@@ -345,7 +349,62 @@ const verifyUpdatePassword = async (req: Request, res: Response) => {
   }
 };
 
-const updatePasswordHandler = async () => {};
+const updatePasswordHandler = async (req: Request, res: Response) => {
+  const { password, token } = req.body;
+  console.log(password, token);
+
+  if (!password || !token) {
+    return res
+      .status(400)
+      .send({ success: false, message: "Password and token are required" });
+  }
+  if (password.length < 6) {
+    return res.status(400).send({
+      success: false,
+      message: "Password must be at least 6 characters",
+    });
+  }
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as JwtPayload;
+
+    if (!decoded) {
+      return res.status(400).send({ success: false, message: "Invalid token" });
+    }
+    const resetUrl = await db.query.users.findFirst({
+      where: eq(users.id, decoded.id),
+      columns: {
+        resetPasswordToken: true,
+      },
+    });
+    if (resetUrl?.resetPasswordToken !== token) {
+      return res.status(400).send({ success: false, message: "Invalid token" });
+    }
+    const userId = decoded.id;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await db
+      .update(users)
+      .set({ password: hashedPassword, resetPasswordToken: null })
+      .where(eq(users.id, userId));
+    res
+      .status(200)
+      .send({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(400).send({ success: false, message: "Token expired" });
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(400).send({ success: false, message: "Invalid token" });
+    } else if (error instanceof jwt.NotBeforeError) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Token not active" });
+    }
+
+    console.error(error);
+  }
+};
 
 export {
   handleSignup,
