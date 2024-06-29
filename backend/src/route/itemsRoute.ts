@@ -2,6 +2,7 @@ import {
   handleGetCategory,
   handleGetItem,
   handlePostItem,
+  handleSearch,
 } from "../handlers/itemRouteHandler";
 import validateToken from "../middleware/validateToken";
 
@@ -16,4 +17,5 @@ const upload = multer({ storage: storage });
 router.post("/additem", validateToken, upload.single("photos"), handlePostItem);
 router.get("/getcategory", validateToken, handleGetCategory);
 router.get("/:id", validateToken, handleGetItem);
+router.ger("/:search", validateToken, handleSearch);
 module.exports = router;

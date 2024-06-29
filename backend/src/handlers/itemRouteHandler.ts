@@ -68,3 +68,16 @@ export const handleGetCategory = async (_: Request, res: Response) => {
     console.log(error);
   }
 };
+
+
+export const handleSearch = async (req: Request, res: Response) => {
+  const search=req.params.search.toLowerCase();
+  try {
+    const searchedItem = await db.select().from(item).where(eq(item.title, search));
+    return res.json(searchedItem)
+  }
+  catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Failed to search items" });
+  }
+}

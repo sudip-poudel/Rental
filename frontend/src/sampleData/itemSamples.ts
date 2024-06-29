@@ -7,6 +7,7 @@ const sampleItems = [
     created_at: "2023-06-16T12:00:00.000Z",
     location: "Location A",
     rate: 10,
+    
   },
   {
     id: "b2c3d4e5-f6g7-8h9i-j0a1",

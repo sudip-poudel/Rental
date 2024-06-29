@@ -259,12 +259,14 @@ const RentProductForm = () => {
           </label>
         </Slot>
         <Slot className="mb-4"></Slot>
-        <Slot className="mt-6">
-          <Button type="submit" className="w-full text-lg">
+      </form>
+      <Slot className="mt-6">
+        <div className=" flex items-center justify-center">
+          <Button type="submit" className="w-full sm:w-1/4 text-lg">
             Submit
           </Button>
-        </Slot>
-      </form>
+        </div>
+      </Slot>
     </div>
   );
 };
