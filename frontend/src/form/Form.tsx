@@ -58,10 +58,6 @@ const RentProductForm = () => {
   useEffect(() => {
     setFormData((prev) => ({ ...prev, rentalPeriod: date }));
   }, [date]);
-
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
   const handleFileChange = (e) => {
     setFormData({
       ...formData,
@@ -71,12 +67,13 @@ const RentProductForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
 
     console.log(e.target.files);
     const fromPayload = new FormData(e.target);
     fromPayload.set("pickupLocation", JSON.stringify(formData.pickupLocation));
-    console.log(typeof fromPayload);
+    formData.photos.forEach((photo) => {
+      fromPayload.append("photos", photo);
+    });
     for (const [key, value] of fromPayload) {
       console.log(`${key}: ${value}`);
     }
@@ -326,14 +323,15 @@ const RentProductForm = () => {
           </label>
         </Slot>
         <Slot className="mb-4"></Slot>
+
+        <Slot className="mt-6">
+          <div className=" flex items-center justify-center">
+            <Button type="submit" className="w-full sm:w-1/4 text-lg">
+              Submit
+            </Button>
+          </div>
+        </Slot>
       </form>
-      <Slot className="mt-6">
-        <div className=" flex items-center justify-center">
-          <Button type="submit" className="w-full sm:w-1/4 text-lg">
-            Submit
-          </Button>
-        </div>
-      </Slot>
     </div>
   );
 };
