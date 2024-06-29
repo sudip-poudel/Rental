@@ -21,6 +21,8 @@ router.post(
   handlePostItem
 );
 router.get("/getcategory", validateToken, handleGetCategory);
-router.get("/:id", validateToken, handleGetItem);
-router.get("/:search", validateToken, handleSearch);
+
+router.get("/id/:id", validateToken, handleGetItem);
+router.get("/search/:search", validateToken, handleSearch);
+
 module.exports = router;

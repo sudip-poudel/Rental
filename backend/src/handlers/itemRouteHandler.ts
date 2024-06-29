@@ -80,8 +80,13 @@ export const handleGetCategory = async (_: Request, res: Response) => {
   }
 };
 
+
+//to search the item from the item collection with similar keywords in title
 export const handleSearch = async (req: Request, res: Response) => {
+
   const search = req.params.search.toLowerCase();
+  console.log(search);
+
   try {
     const searchedItem = await db
       .select()
