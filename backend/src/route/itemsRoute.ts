@@ -16,6 +16,6 @@ const upload = multer({ storage: storage });
 
 router.post("/additem", validateToken, upload.single("photos"), handlePostItem);
 router.get("/getcategory", validateToken, handleGetCategory);
-router.get("/:id", validateToken, handleGetItem);
-router.ger("/:search", validateToken, handleSearch);
+router.get("/id/:id", validateToken, handleGetItem);
+router.get("/search/:search", validateToken, handleSearch);
 module.exports = router;
