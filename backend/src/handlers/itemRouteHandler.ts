@@ -29,7 +29,7 @@ export const handlePostItem = async (req: Request, res: Response) => {
         rate: itemData.rate,
         pictureUrl: cldRes.secure_url,
         //TODO remove 90 and add initial deposit in the form
-        initialDeposit: itemData.initaialDeposite || 90,
+        initialDeposit: itemData.initialDeposit || 90,
         addedBy: req.params.userId,
       };
       console.log(itemdetails);
