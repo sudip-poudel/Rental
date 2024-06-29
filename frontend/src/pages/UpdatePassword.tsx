@@ -38,7 +38,6 @@ const UpdatePassword = () => {
     return <Navigate to={"/"} replace />;
   }
   const handleSubmit = () => {
-    // TODO: Implement password update logic
     updatePassword(
       { password, token },
       { onError: (error) => setError(error.message) }
