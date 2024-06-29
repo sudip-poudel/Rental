@@ -2,14 +2,15 @@ import blobpic1 from "/images/blobpic1.png";
 import blobpic2 from "/images/blobpic2.png";
 import { Button } from "./ui/button";
 import { useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Search = () => {
   const [searchItem, setSearchItem] = useState("");
 
-  const [searchResult, setSearchResult] = useState([]);
 
-  const [isloading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
+
 
   const handleSearch = (e) => {
     setSearchItem(e.target.value);
@@ -18,29 +19,10 @@ const Search = () => {
 
   const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    navigate('/searchresults?searchterm='+searchItem,{replace: true});
+    
     console.log("Search submitted:", searchItem);
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/item/search/${searchItem}`,
-        {
-          withCredentials: true,
-        }
-      );
-
-      console.log("this is response:", response);
-      if (response.data) {
-        console.log(`response data`, response.data);
-        const searchedItems = response.data;
-        setSearchResult(searchedItems);
-        console.log(`search result`, searchResult);
-      }
-
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
+    
   };
 
   return (
@@ -60,7 +42,7 @@ const Search = () => {
             <input
               type="text"
               className="w-3/4 h-12 border-gray-400 border-[0.1px]  rounded-2xl pl-2"
-              placeholder={isloading ? "Searching..." : "Search for items..."}
+              placeholder= "Search for items..."
               onChange={handleSearch}
             />
             <Button type="submit" className="font-bold h-12 w-1/4">
