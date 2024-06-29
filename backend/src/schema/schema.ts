@@ -38,10 +38,12 @@ export const item = pgTable("item", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
-  category: varchar("category", { length: 255 }).notNull(),
+  category: uuid("category")
+    .references(() => category.id)
+    .notNull(),
   created_at: timestamp("created_at").notNull().defaultNow(),
   rate: real("rate").notNull(),
-  pictureUrl: text("picture_url").notNull(),
+  pictureUrl: text("picture_url").array().notNull(),
   initialDeposit: real("initial_deposit"),
   addedBy: uuid("added_by")
     .notNull()
@@ -53,7 +55,10 @@ export const itemRelations = relations(item, ({ one, many }) => {
       fields: [item.addedBy],
       references: [users.id],
     }),
-    category: many(category),
+    category: one(category, {
+      fields: [item.category],
+      references: [category.id],
+    }),
     rentals: one(rentals),
   };
 });
