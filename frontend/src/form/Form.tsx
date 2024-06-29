@@ -1,5 +1,3 @@
-import axios from "axios";
-
 import { useEffect, useState } from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { Button } from "@/components/ui/button";
@@ -8,10 +6,12 @@ import { useRef } from "react";
 import { ICategoryType, IFormData } from "@/types/types";
 import Modal from "@/components/modal";
 import { MapPopup } from "@/components/Map";
-import { useGetCategories } from "@/api/itemsQueriesAndMutation";
+import { useAddItem, useGetCategories } from "@/api/itemsQueriesAndMutation";
 import DateRangePicker from "@/components/DateRangePicker";
 import { addDays } from "date-fns";
 import { DateRange } from "react-day-picker";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
 
 const RentProductForm = () => {
   const [formData, setFormData] = useState<IFormData>({
@@ -21,7 +21,6 @@ const RentProductForm = () => {
     category: "",
     rate: 0,
     rentalPeriod: undefined,
-    // availabilityDates: "",
     pickupLocation: {
       location: "",
       latitude: 0,
@@ -33,6 +32,8 @@ const RentProductForm = () => {
   });
   const [showPopup, setShowPopup] = useState(false);
   const { data: category, isFetched } = useGetCategories();
+  const { mutate: addItem, isPending } = useAddItem();
+  const { toast } = useToast();
 
   const uploadRef = useRef<HTMLInputElement>(null);
 
@@ -68,31 +69,56 @@ const RentProductForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(e.target.files);
     const fromPayload = new FormData(e.target);
     fromPayload.set("pickupLocation", JSON.stringify(formData.pickupLocation));
     formData.photos.forEach((photo) => {
       fromPayload.append("photos", photo);
     });
-    for (const [key, value] of fromPayload) {
-      console.log(`${key}: ${value}`);
-    }
-
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_URL}/item/additem`,
-      fromPayload,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true,
-      }
-    );
-    console.log(response);
+    addItem(fromPayload, {
+      onError: (error) => {
+        toast({ title: "Error adding item", description: error.message });
+        setFormData({
+          title: "",
+          photos: [],
+          description: "",
+          category: "",
+          rate: 0,
+          rentalPeriod: undefined,
+          pickupLocation: {
+            location: "",
+            latitude: 0,
+            longitude: 0,
+          },
+          specialInstructions: "",
+          agreement: false,
+          liabilityWaiver: false,
+        });
+      },
+      onSuccess: () => {
+        setFormData({
+          title: "",
+          photos: [],
+          description: "",
+          category: "",
+          rate: 0,
+          rentalPeriod: undefined,
+          pickupLocation: {
+            location: "",
+            latitude: 0,
+            longitude: 0,
+          },
+          specialInstructions: "",
+          agreement: false,
+          liabilityWaiver: false,
+        });
+        toast({ title: "Item added successfully" });
+      },
+    });
   };
 
   return (
     <div className=" mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+      <Toaster />
       <h1 className="text-2xl font-bold mb-6 text-center">
         Rent Out Your Items
       </h1>
@@ -324,9 +350,21 @@ const RentProductForm = () => {
         </Slot>
         <Slot className="mb-4"></Slot>
 
-        <Slot className="mt-6">
-          <div className=" flex items-center justify-center">
-            <Button type="submit" className="w-full sm:w-1/4 text-lg">
+        <Slot className="mt-6 w-full">
+          <div className="w-full flex items-center justify-center">
+            <Button
+              type="submit"
+              className="w-full sm:w-1/4 text-lg disabled:cursor-not-allowed"
+              disabled={isPending}
+            >
+              {isPending && (
+                <img
+                  src="/images/loader.png"
+                  height={18}
+                  width={18}
+                  className="mr-2"
+                />
+              )}
               Submit
             </Button>
           </div>
