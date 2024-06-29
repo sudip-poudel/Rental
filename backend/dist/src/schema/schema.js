@@ -25,10 +25,12 @@ exports.item = (0, pg_core_1.pgTable)("item", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     title: (0, pg_core_1.varchar)("title", { length: 255 }).notNull(),
     description: (0, pg_core_1.text)("description").notNull(),
-    category: (0, pg_core_1.varchar)("category", { length: 255 }).notNull(),
+    category: (0, pg_core_1.uuid)("category")
+        .references(() => exports.category.id)
+        .notNull(),
     created_at: (0, pg_core_1.timestamp)("created_at").notNull().defaultNow(),
     rate: (0, pg_core_1.real)("rate").notNull(),
-    pictureUrl: (0, pg_core_1.text)("picture_url").notNull(),
+    pictureUrl: (0, pg_core_1.text)("picture_url").array().notNull(),
     initialDeposit: (0, pg_core_1.real)("initial_deposit"),
     addedBy: (0, pg_core_1.uuid)("added_by")
         .notNull()
@@ -40,7 +42,10 @@ exports.itemRelations = (0, drizzle_orm_1.relations)(exports.item, ({ one, many 
             fields: [exports.item.addedBy],
             references: [exports.users.id],
         }),
-        category: many(exports.category),
+        category: one(exports.category, {
+            fields: [exports.item.category],
+            references: [exports.category.id],
+        }),
         rentals: one(exports.rentals),
     };
 });

@@ -10,7 +10,6 @@ import { useEffect } from "react";
 import getUserCookies from "./helpers/getUserCookie";
 import { setUser } from "./store/auth/authSlice";
 import { useDispatch } from "react-redux";
-import useIsLoggedin from "./hooks/useIsLoggedin";
 import AddItem from "./pages/AddItem";
 import ForgetPassword from "./pages/ForgetPassword";
 import Itempage from "./pages/Itempage";
@@ -19,7 +18,7 @@ import SearchResults from "./pages/SearchResults";
 
 function App() {
   const dispatch = useDispatch();
-  const isLoggedin = useIsLoggedin();
+  const isLoggedin = getUserCookies().token ? true : false;
 
   useEffect(() => {
     const isLoggedin = getUserCookies().token ? true : false;

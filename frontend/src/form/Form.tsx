@@ -1,6 +1,4 @@
-import axios from "axios";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { Button } from "@/components/ui/button";
 import upload from "/images/upload.png";
@@ -8,7 +6,12 @@ import { useRef } from "react";
 import { ICategoryType, IFormData } from "@/types/types";
 import Modal from "@/components/modal";
 import { MapPopup } from "@/components/Map";
-import { useGetCategories } from "@/api/itemsQueriesAndMutation";
+import { useAddItem, useGetCategories } from "@/api/itemsQueriesAndMutation";
+import DateRangePicker from "@/components/DateRangePicker";
+import { addDays } from "date-fns";
+import { DateRange } from "react-day-picker";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
 
 const RentProductForm = () => {
   const [formData, setFormData] = useState<IFormData>({
@@ -17,8 +20,7 @@ const RentProductForm = () => {
     description: "",
     category: "",
     rate: 0,
-    rentalPeriod: "",
-    // availabilityDates: "",
+    rentalPeriod: undefined,
     pickupLocation: {
       location: "",
       latitude: 0,
@@ -30,6 +32,8 @@ const RentProductForm = () => {
   });
   const [showPopup, setShowPopup] = useState(false);
   const { data: category, isFetched } = useGetCategories();
+  const { mutate: addItem, isPending } = useAddItem();
+  const { toast } = useToast();
 
   const uploadRef = useRef<HTMLInputElement>(null);
 
@@ -47,6 +51,14 @@ const RentProductForm = () => {
     });
   };
 
+  const [date, handleDateChange] = useState<DateRange | undefined>({
+    from: new Date(2022, 0, 20),
+    to: addDays(new Date(2022, 0, 20), 20),
+  });
+
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, rentalPeriod: date }));
+  }, [date]);
   const handleFileChange = (e) => {
     setFormData({
       ...formData,
@@ -56,31 +68,57 @@ const RentProductForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
 
-    console.log(e.target.files);
     const fromPayload = new FormData(e.target);
     fromPayload.set("pickupLocation", JSON.stringify(formData.pickupLocation));
-    console.log(typeof fromPayload);
-    for (const [key, value] of fromPayload) {
-      console.log(`${key}: ${value}`);
-    }
-
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_URL}/item/additem`,
-      fromPayload,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true,
-      }
-    );
-    console.log(response);
+    formData.photos.forEach((photo) => {
+      fromPayload.append("photos", photo);
+    });
+    addItem(fromPayload, {
+      onError: (error) => {
+        toast({ title: "Error adding item", description: error.message });
+        setFormData({
+          title: "",
+          photos: [],
+          description: "",
+          category: "",
+          rate: 0,
+          rentalPeriod: undefined,
+          pickupLocation: {
+            location: "",
+            latitude: 0,
+            longitude: 0,
+          },
+          specialInstructions: "",
+          agreement: false,
+          liabilityWaiver: false,
+        });
+      },
+      onSuccess: () => {
+        setFormData({
+          title: "",
+          photos: [],
+          description: "",
+          category: "",
+          rate: 0,
+          rentalPeriod: undefined,
+          pickupLocation: {
+            location: "",
+            latitude: 0,
+            longitude: 0,
+          },
+          specialInstructions: "",
+          agreement: false,
+          liabilityWaiver: false,
+        });
+        toast({ title: "Item added successfully" });
+      },
+    });
   };
 
   return (
     <div className=" mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+      <Toaster />
       <h1 className="text-2xl font-bold mb-6 text-center">
         Rent Out Your Items
       </h1>
@@ -90,29 +128,53 @@ const RentProductForm = () => {
         className="grid grid-cols-1  md:grid-cols-2 gap-2"
       >
         <Slot className="mb-4">
-          <input
-            type="text"
-            name="title"
-            placeholder="Add Title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-            className="w-full h-16 px-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
+          <div>
+            <label
+              htmlFor="title"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Title:
+            </label>
+            <input
+              id="title"
+              type="text"
+              name="title"
+              placeholder="Add Title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+              className="w-full h-16 px-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+          </div>
         </Slot>
         <Slot className="mb-4">
-          <input
-            type="number"
-            name="rate"
-            placeholder="Rental Rate (Rs./day)"
-            value={formData.rate}
-            onChange={handleChange}
-            required
-            className="w-full  h-16 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
+          <div>
+            <label
+              htmlFor="rate"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Rental Rate (Rs./day):
+            </label>
+            <input
+              id="rate"
+              type="number"
+              name="rate"
+              placeholder="Rental Rate (Rs./day)"
+              value={formData.rate}
+              onChange={handleChange}
+              required
+              className="w-full h-16 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+          </div>
         </Slot>
         <Slot className="mb-4">
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col justify-center">
+            <label
+              htmlFor="photos"
+              className="block text-gray-700 text-sm font-bold mb-2 cursor-pointer text-left"
+            >
+              Photos:
+            </label>
             <div
               onClick={handleImageUpload}
               className="w-full h-40 flex flex-col cursor-pointer px-4 py-2 border items-center justify-center rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -120,6 +182,7 @@ const RentProductForm = () => {
               <img src={upload} alt="upload" className="h-20 w-20 " />
               <p className="">choose a photo</p>
               <input
+                id="photos"
                 type="file"
                 multiple
                 onChange={handleFileChange}
@@ -130,7 +193,7 @@ const RentProductForm = () => {
                 ref={uploadRef}
                 className="hidden"
               />
-              <div className="upload-div relative">
+              <div className="flex flex-row relative">
                 {formData.photos.map((photo, index) => {
                   const photoURL = URL.createObjectURL(photo);
                   return (
@@ -138,12 +201,7 @@ const RentProductForm = () => {
                       key={index}
                       src={photoURL}
                       alt={`Upload ${index}`}
-                      style={{
-                        width: "100px",
-                        height: "100px",
-                        objectFit: "cover",
-                        margin: "5px",
-                      }}
+                      className="h-20 w-20 object-cover rounded-lg"
                       onLoad={() => URL.revokeObjectURL(photoURL)}
                     />
                   );
@@ -153,71 +211,90 @@ const RentProductForm = () => {
           </div>
         </Slot>
         <Slot className="mb-4">
-          <input
-            type="text"
-            name="description"
-            placeholder="Item Description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
+          <div className="flex flex-col h3/4">
+            <label
+              htmlFor="description"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Description:
+            </label>
+            <input
+              id="description"
+              type="text"
+              name="description"
+              placeholder="Item Description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 h-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+          </div>
         </Slot>
         <Slot className="mb-4">
-          <select
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          >
-            <option value="">Select Category</option>
-            {isFetched &&
-              (category as ICategoryType[]).map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-          </select>
+          <div>
+            <label
+              htmlFor="category"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Category:
+            </label>
+            <select
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            >
+              <option value="">Select Category</option>
+              {isFetched &&
+                (category as ICategoryType[]).map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+            </select>
+          </div>
         </Slot>
 
         <Slot className="mb-4">
-          <input
-            type="text"
-            name="rentalPeriod"
-            placeholder="Max. Rental Period"
-            value={formData.rentalPeriod}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
+          <div>
+            <label
+              htmlFor="rentalPeriod"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Max. Rental Period:
+            </label>
+            <DateRangePicker
+              handleDateChange={handleDateChange}
+              date={formData.rentalPeriod}
+            />
+          </div>
         </Slot>
-        {/* <Slot className="mb-4">
-          <input
-            type="date"
-            name="availabilityDates"
-            placeholder="Availability Dates"
-            value={formData.availabilityDates}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
-        </Slot> */}
 
         <Slot className="mb-4">
-          <input
-            type="text"
-            name="pickupLocation"
-            placeholder="Pickup Location"
-            value={formData.pickupLocation.location}
-            onChange={handleChange}
-            onClick={() => {
-              setShowPopup(!showPopup);
-            }}
-            required
-            readOnly
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
+          <div className="h-3/4">
+            <label
+              htmlFor="pickupLocation"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Pickup Location:
+            </label>
+            <input
+              id="pickupLocation"
+              type="text"
+              name="pickupLocation"
+              placeholder="Pickup Location"
+              value={formData.pickupLocation.location}
+              onChange={handleChange}
+              onClick={() => {
+                setShowPopup(!showPopup);
+              }}
+              required
+              readOnly
+              className="w-full px-4 py-2 border rounded-lg h-full focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+          </div>
         </Slot>
         {showPopup && (
           <Modal setShowModal={setShowPopup}>
@@ -226,25 +303,38 @@ const RentProductForm = () => {
         )}
 
         <Slot className="mb-4">
-          <textarea
-            name="specialInstructions"
-            placeholder="Special Instructions"
-            value={formData.specialInstructions}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
-        </Slot>
-        <Slot className="mb-4">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              name="agreement"
-              checked={formData.agreement}
+          <div className="h-3/4">
+            <label
+              htmlFor="specialInstructions"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Special Instructions:
+            </label>
+            <textarea
+              id="specialInstructions"
+              name="specialInstructions"
+              placeholder="Special Instructions"
+              value={formData.specialInstructions}
               onChange={handleChange}
-              className="mr-2"
+              className="w-full px-4 py-2 border h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
-            I agree to the terms and conditions
-          </label>
+          </div>
+        </Slot>
+
+        <Slot className="mb-4">
+          <div>
+            <label htmlFor="agreement" className="flex items-center">
+              <input
+                id="agreement"
+                type="checkbox"
+                name="agreement"
+                checked={formData.agreement}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              I agree to the terms and conditions
+            </label>
+          </div>
         </Slot>
         <Slot className="mb-4">
           <label className="flex items-center">
@@ -259,14 +349,27 @@ const RentProductForm = () => {
           </label>
         </Slot>
         <Slot className="mb-4"></Slot>
+
+        <Slot className="mt-6 w-full">
+          <div className="w-full flex items-center justify-center">
+            <Button
+              type="submit"
+              className="w-full sm:w-1/4 text-lg disabled:cursor-not-allowed"
+              disabled={isPending}
+            >
+              {isPending && (
+                <img
+                  src="/images/loader.png"
+                  height={18}
+                  width={18}
+                  className="mr-2"
+                />
+              )}
+              Submit
+            </Button>
+          </div>
+        </Slot>
       </form>
-      <Slot className="mt-6">
-        <div className=" flex items-center justify-center">
-          <Button type="submit" className="w-full sm:w-1/4 text-lg">
-            Submit
-          </Button>
-        </div>
-      </Slot>
     </div>
   );
 };
