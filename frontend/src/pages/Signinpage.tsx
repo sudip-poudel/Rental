@@ -4,9 +4,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Eye, Loader2 } from "lucide-react";
 import { EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useIsLoggedin from "@/hooks/useIsLoggedin";
-import { useLogin, useSignup } from "@/api/queriesAndMutation";
+import { useLogin, useSignup } from "@/api/userQueriesAndMutation";
 
 //type definitions for Error handling
 type ErrorType = {
@@ -339,6 +339,11 @@ const Login = ({
             >
               {showPassword ? <EyeOff /> : <Eye />}
             </span>
+            <Link to={"/forgetpassword"}>
+              <p className="text-xs ml-2 hover:underline hover:text-blue-700 text-right">
+                Forgot Password
+              </p>
+            </Link>
 
             {passwordError.length > 0 && (
               <p className="text-red-700">{passwordError[0].errorMessage}</p>
@@ -404,7 +409,7 @@ const Signinpage = () => {
   return isLoggedIn ? (
     ""
   ) : (
-    <div className="min-h-screen">
+    <div className="">
       <Navbar />
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center justify-around w-96 h-16 rounded-sm mb-4">

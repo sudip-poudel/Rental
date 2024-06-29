@@ -4,14 +4,21 @@ import { users } from "../schema/schema";
 import { eq } from "drizzle-orm";
 import { generateToken } from "../helper/generateToken";
 import {
+  BACKEND_URL,
   ENV,
+  FRONTEND_URL,
+  GMAIL_ID,
+  GMAIL_PASS,
   GOOGLE_ACCESS_TOKEN_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_OAUTH_URL,
 } from "../config";
 import { loginHelper } from "../helper/loginHelper";
+const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
+// const jwt = require("jsonwebtoken");
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const handleSignup = async (req: Request, res: Response) => {
   const {
@@ -236,4 +243,174 @@ export const oAuth2Server = async (
   }
 };
 
-export { handleSignup, handleLogin, handleLogout };
+//forgetpassword handler
+const handleForgetPassword = async (req: Request, res: Response) => {
+  const { email }: { email: string } = req.body;
+  if (!email) {
+    return res
+      .status(400)
+      .send({ success: false, message: "Email is required" });
+  }
+  try {
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
+    if (!user) {
+      return res
+        .status(400)
+        .send({ success: false, message: "User not found" });
+    }
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, {
+      expiresIn: "15m",
+    });
+    //insert the token in user table to check its validity
+    await db
+      .update(users)
+      .set({ resetPasswordToken: token })
+      .where(eq(users.id, user.id));
+
+    //send email to the user with a link to reset password
+    const resetURL = `${BACKEND_URL}/user/updatepassword/${token}`;
+    //create tranponder for nodemailer
+    const transponder = nodemailer.createTransport({
+      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+
+      auth: {
+        user: GMAIL_ID,
+        pass: GMAIL_PASS,
+      },
+    });
+    const mailOptions = {
+      from: GMAIL_ID,
+      to: email,
+      subject: "Password Reset",
+      text: `Click on the link to reset your password ${resetURL}`,
+    };
+
+    //send email
+
+    await transponder.sendMail(mailOptions, (error: any, info: any) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log("Email sent: " + info.response);
+      res.send(201).json({ success: true, message: "Email sent" });
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const verifyUpdatePassword = async (req: Request, res: Response) => {
+  const { token } = req.params;
+  if (!token) {
+    return res.redirect(`${FRONTEND_URL}/signin`);
+  }
+  console.log(token);
+
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as JwtPayload;
+    console.log(decoded, "fasdfasd");
+
+    if (!decoded) {
+      return res.redirect(`${FRONTEND_URL}/signin`);
+    }
+    const userId = decoded.id;
+
+    const resetToken = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+      columns: {
+        resetPasswordToken: true,
+        email: true,
+      },
+    });
+    console.log(resetToken, typeof resetToken);
+
+    if (resetToken?.resetPasswordToken !== null && resetToken) {
+      const tkn: string = resetToken.resetPasswordToken as string;
+      console.log(tkn);
+
+      if (tkn == token) {
+        return res.redirect(
+          `${FRONTEND_URL}/updatepassword?token=${token}&email=${resetToken.email}`
+        );
+      }
+      res.redirect(`${FRONTEND_URL}/fdkfjalksdjflkjsdlfkjsdljf`);
+    }
+    return res.redirect(`${FRONTEND_URL}/signin`);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const updatePasswordHandler = async (req: Request, res: Response) => {
+  const { password, token } = req.body;
+  console.log(password, token);
+
+  if (!password || !token) {
+    return res
+      .status(400)
+      .send({ success: false, message: "Password and token are required" });
+  }
+  if (password.length < 6) {
+    return res.status(400).send({
+      success: false,
+      message: "Password must be at least 6 characters",
+    });
+  }
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as JwtPayload;
+
+    if (!decoded) {
+      return res.status(400).send({ success: false, message: "Invalid token" });
+    }
+    const resetUrl = await db.query.users.findFirst({
+      where: eq(users.id, decoded.id),
+      columns: {
+        resetPasswordToken: true,
+      },
+    });
+    if (resetUrl?.resetPasswordToken !== token) {
+      return res.status(400).send({ success: false, message: "Invalid token" });
+    }
+    const userId = decoded.id;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await db
+      .update(users)
+      .set({ password: hashedPassword, resetPasswordToken: null })
+      .where(eq(users.id, userId));
+    res
+      .status(200)
+      .send({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(400).send({ success: false, message: "Token expired" });
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(400).send({ success: false, message: "Invalid token" });
+    } else if (error instanceof jwt.NotBeforeError) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Token not active" });
+    }
+
+    console.error(error);
+  }
+};
+
+export {
+  handleSignup,
+  handleLogin,
+  handleLogout,
+  handleForgetPassword,
+  verifyUpdatePassword,
+  updatePasswordHandler,
+};

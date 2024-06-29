@@ -4,7 +4,6 @@ import {
   index,
   pgEnum,
   pgTable,
-  primaryKey,
   real,
   text,
   timestamp,
@@ -27,6 +26,7 @@ export const users = pgTable(
     profileUrl: text("profile_url").default(""),
     totalGivenRent: real("total_given_rent").default(0),
     totalTakenRent: real("total_taken_rent").default(0),
+    resetPasswordToken: text("reset_password_token"),
   },
   (table) => {
     return {

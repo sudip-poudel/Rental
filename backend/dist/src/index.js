@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const errorHandler_1 = require("./middleware/errorHandler");
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -16,11 +15,10 @@ app.use(express.json());
 app.options("*", cors());
 app.use("/user", require("./route/userRoute"));
 app.use("/item", require("./route/itemsRoute"));
-app.use(errorHandler_1.errorHandler);
+// app.use(errorHandler);
 app.get("/", (req, res) => {
     res.send("Hello World home!");
 });
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
 });
-// insertCategory();

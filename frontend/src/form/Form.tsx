@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import upload from "/images/upload.png";
 import { useRef } from "react";
 import { ICategoryType, IFormData } from "@/types/types";
-import { useGetCategories } from "@/api/queriesAndMutation";
 import Modal from "@/components/modal";
 import { MapPopup } from "@/components/Map";
+import { useGetCategories } from "@/api/itemsQueriesAndMutation";
 
 const RentProductForm = () => {
   const [formData, setFormData] = useState<IFormData>({

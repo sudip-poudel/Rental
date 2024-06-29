@@ -7,14 +7,19 @@ const config_1 = require("../config");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const validateToken = (req, res, next) => {
     const token = req.cookies?.token;
+    console.log(token);
     if (!token) {
+        console.log(token);
         return res.status(401).send({ success: false, messege: "Please Login" });
     }
     const decoded = jsonwebtoken_1.default.verify(token, config_1.JWT_SECRET);
+    console.log(decoded);
     if (!decoded) {
         return res.status(401).send({ success: false, messege: "Unauthorized" });
     }
-    req.body.userId = decoded.id;
+    req.params.userId = decoded.id;
+    console.log(req.body.userId);
+    console.log(decoded);
     next();
 };
 exports.default = validateToken;

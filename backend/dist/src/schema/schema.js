@@ -15,6 +15,7 @@ exports.users = (0, pg_core_1.pgTable)("users", {
     profileUrl: (0, pg_core_1.text)("profile_url").default(""),
     totalGivenRent: (0, pg_core_1.real)("total_given_rent").default(0),
     totalTakenRent: (0, pg_core_1.real)("total_taken_rent").default(0),
+    resetPasswordToken: (0, pg_core_1.text)("reset_password_token"),
 }, (table) => {
     return {
         emailIndex: (0, pg_core_1.index)("emailIndex").on(table.email),
@@ -28,7 +29,7 @@ exports.item = (0, pg_core_1.pgTable)("item", {
     created_at: (0, pg_core_1.timestamp)("created_at").notNull().defaultNow(),
     rate: (0, pg_core_1.real)("rate").notNull(),
     pictureUrl: (0, pg_core_1.text)("picture_url").notNull(),
-    initaialDeposite: (0, pg_core_1.real)("initial_deposit"),
+    initialDeposit: (0, pg_core_1.real)("initial_deposit"),
     addedBy: (0, pg_core_1.uuid)("added_by")
         .notNull()
         .references(() => exports.users.id),
@@ -90,11 +91,13 @@ exports.itemCategoryTableRelations = (0, drizzle_orm_1.relations)(exports.itemCa
     };
 });
 exports.itemLocation = (0, pg_core_1.pgTable)("item_location", {
+    id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     itemId: (0, pg_core_1.uuid)("item_id")
         .notNull()
         .references(() => exports.item.id),
     latitude: (0, pg_core_1.real)("latitude").notNull(),
     longitude: (0, pg_core_1.real)("longitude").notNull(),
+    location: (0, pg_core_1.text)("location").notNull(),
 });
 exports.itemLocationRelation = (0, drizzle_orm_1.relations)(exports.itemLocation, ({ one, many }) => ({
     item: one(exports.item, {
