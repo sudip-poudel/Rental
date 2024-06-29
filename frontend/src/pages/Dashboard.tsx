@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { Link } from "react-router-dom";
 import camera from "/images/camera.png";
+import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   return (
@@ -18,9 +19,9 @@ const Dashboard = () => {
               <p>Total Earnings: $500</p>
             </div>
             <Link to="/addproduct">
-              <button className="bg-blue-500 text-white px-4 py-2 rounded">
+              <Button className=" text-white px-4 py-2 rounded">
                 Add New Item
-              </button>{" "}
+              </Button>{" "}
             </Link>
           </div>
         </header>
@@ -33,34 +34,34 @@ const Dashboard = () => {
               <img
                 src={camera}
                 alt="Item"
-                className="w-full h-32 object-cover rounded transform transition duration-1000 ease-in-out hover:scale-105 hover:object-contain "
+                className="w-full h-52 object-cover rounded transform transition duration-1000 ease-in-out hover:scale-105 hover:object-contain "
               />
               <h3 className="mt-2 font-bold">Item Title</h3>
               <p>Status: Available</p>
               <div className="mt-2 flex justify-between">
-                <button className="bg-green-500 text-white px-2 py-1 rounded">
+                <Button className=" text-white px-2 py-1 rounded">
                   Edit
-                </button>
-                <button className="bg-red-500 text-white px-2 py-1 rounded">
+                </Button>
+                <Button className=" text-white px-2 py-1 rounded">
                   Delete
-                </button>
+                </Button>
               </div>
             </div>
             <div className="bg-white p-4 rounded shadow">
               <img
-                src="/images/item.jpg"
+                src={camera}
                 alt="Item"
-                className="w-full h-32 object-cover rounded"
+                className="w-full h-52 object-cover rounded transform transition duration-1000 ease-in-out hover:scale-105 hover:object-contain"
               />
               <h3 className="mt-2 font-bold">Item Title</h3>
               <p>Status: Available</p>
               <div className="mt-2 flex justify-between">
-                <button className="bg-green-500 text-white px-2 py-1 rounded">
+                <Button className=" text-white px-2 py-1 rounded">
                   Edit
-                </button>
-                <button className="bg-red-500 text-white px-2 py-1 rounded">
+                </Button>
+                <Button className=" text-white px-2 py-1 rounded">
                   Delete
-                </button>
+                </Button>
               </div>
             </div>
           </div>

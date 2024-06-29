@@ -8,6 +8,7 @@ import Card from "@/components/ui/card";
 import { MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 // import Items from "@/components/Items";
+// import sampleUsers from "@/sampleUser/userSamples";
 const Itempage = () => {
   const { id } = useParams();
   const result = sampleItems.find((item) => item.id === id);
@@ -18,6 +19,10 @@ const Itempage = () => {
   );
   const relatedItems = similarItems.filter((item) => item.id !== result?.id);
   // console.log(similarItems);
+
+
+  
+
   const navigate = useNavigate();
   const handleCard = (id) => {
     // console.log("card clicked");
@@ -40,13 +45,13 @@ const Itempage = () => {
                   alt="for_rent image"
                   className="h-10 w-10"
                 />
-                <div className="border rounded-md text-2xl  font-bold mt-2">
+                <div className=" text-2xl  font-bold mt-2">
                   {result.title}
                 </div>
-                <div className="text-lg mt-2">{result.description}</div>
-                <div className="flex flex-col border rounded-md bg-white p-5">
-                  {/* <div className="mt-2">{result.category}</div> */}
+                <div className="mt-2 flex flex-col border rounded-md shadow-md bg-white p-5">
                   <div className="mt-2">Rs.{result.rate}</div>
+                <div className="text-lg mt-2">{result.description}</div>
+                  {/* <div className="mt-2">{result.category}</div> */}
                   <div className="mt-2 flex">
                     <MapPin size={18} /> {result.location}
                   </div>
@@ -57,6 +62,7 @@ const Itempage = () => {
           </div>
         )}
       </div>
+      <div>this is map</div>
       <div className="mt-12 ml-10 font-bold">Related Items:</div>
       <div className=" mt-12 grid place-content-center place-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
         {relatedItems.map((item, i) => (
