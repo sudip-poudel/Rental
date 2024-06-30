@@ -32,11 +32,14 @@ const SearchResults = () => {
       }
     };
     fetchItem();
-  }, []);0
+  }, []);
+  console.log(isloading);
 
   return (
     <div>
-      {searchResult.map((item, idx) =><div>{item.title}</div>)}
+      {searchResult.map((item) => (
+        <div>{item}</div>
+      ))}
     </div>
   );
 };
