@@ -6,7 +6,7 @@ import Signinpage from "./pages/Signinpage";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import getUserCookies from "./helpers/getUserCookie";
 import { setUser } from "./store/auth/authSlice";
 import { useDispatch } from "react-redux";
@@ -15,10 +15,11 @@ import ForgetPassword from "./pages/ForgetPassword";
 import Itempage from "./pages/Itempage";
 import UpdatePassword from "./pages/UpdatePassword";
 import SearchResults from "./pages/SearchResults";
+import useIsLoggedin from "./hooks/useIsLoggedin";
 
 function App() {
   const dispatch = useDispatch();
-  const isLoggedin = getUserCookies().token ? true : false;
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const isLoggedin = getUserCookies().token ? true : false;
@@ -31,7 +32,18 @@ function App() {
 
       dispatch(setUser(authstate));
     }
+    setIsLoading(false);
   }, []);
+  const isLoggedin = useIsLoggedin();
+
+  if (isLoading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center">
+        <img src="/images/loaderBlack.svg" alt="loading.." />
+      </div>
+    );
+  }
+
   return (
     <>
       <Routes>
