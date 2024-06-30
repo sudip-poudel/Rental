@@ -401,7 +401,9 @@ const Signinpage = () => {
   }, [isLoggedIn]);
 
   const loginWithGoogle = () => {
-    window.location.href = "http://localhost:3000/user/googleoauth";
+    window.location.href = `${
+      import.meta.env.VITE_BACKEND_URL as string
+    }/user/googleoauth`;
     // window.location.href =
     //   "https://rental-backend-five.vercel.app/user/googleoauth";
   };
