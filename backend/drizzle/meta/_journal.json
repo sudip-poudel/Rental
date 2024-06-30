@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1716991221647,
-      "tag": "0000_spicy_raza",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1718015636123,
-      "tag": "0001_next_thanos",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1718630892747,
-      "tag": "0002_concerned_george_stacy",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1718965991999,
-      "tag": "0003_old_crusher_hogan",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1719199448125,
-      "tag": "0004_glossy_ultimo",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1719199557796,
-      "tag": "0005_yielding_leper_queen",
+      "when": 1719662337195,
+      "tag": "0000_rich_vin_gonzales",
       "breakpoints": true
     }
   ]

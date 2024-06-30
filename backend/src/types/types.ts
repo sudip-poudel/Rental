@@ -16,7 +16,7 @@ export type IItem = {
   category: string;
   created_at?: Date;
   rate: number;
-  pictureUrl: string;
+  pictureUrl: string[];
   initialDeposit: number;
   addedBy: string;
 };
