@@ -89,11 +89,13 @@ const handleLogin = async (req, res) => {
                 .send({ success: false, message: "Invalid password" });
         }
         const token = (0, generateToken_1.generateToken)({ id: user.id });
+        console.log("testing");
         const stringifiedUserData = JSON.stringify({
             id: user.id,
             name: user.name,
             email: user.email,
         });
+        console.log(stringifiedUserData);
         res.cookie("token", token, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
@@ -115,9 +117,10 @@ const handleLogout = async (req, res) => {
 exports.handleLogout = handleLogout;
 //* Google Auth*//
 const oAuthHandler = (_, res) => {
-    const REDIRECT_URI = config_1.ENV === "PROD"
-        ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
-        : "http://localhost:3000/user/oauthsuccess";
+    const REDIRECT_URI = `${config_1.FRONTEND_URL}/user/oauthsuccess`;
+    // ENV === "PROD"
+    //   ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
+    //   : "http://localhost:3000/user/oauthsuccess";
     // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
     const GOOGLE_OAUTH_SCOPES = [
         "https://www.googleapis.com/auth/userinfo.profile",
@@ -140,9 +143,10 @@ const oAuth2Server = async (req, res, next) => {
     // TODO: Maybe, validate state
     const { code } = req.query;
     // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
-    const REDIRECT_URI = config_1.ENV === "PROD"
-        ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
-        : "http://localhost:3000/user/oauthsuccess";
+    const REDIRECT_URI = `${config_1.FRONTEND_URL}/user/oauthsuccess`;
+    // ENV === "PROD"
+    //   ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
+    //   : "http://localhost:3000/user/oauthsuccess";
     // Ask for Access Token
     const data = {
         code,
@@ -191,9 +195,7 @@ const oAuth2Server = async (req, res, next) => {
         const resp = (0, loginHelper_1.loginHelper)(data[0], res);
         if (resp.success) {
             // res.redirect("http://localhost:5173")
-            res.redirect(`${config_1.ENV === "PROD"
-                ? "https://rental-ruby.vercel.app/"
-                : "http://localhost:5173"}`);
+            res.redirect(`${config_1.FRONTEND_URL}`);
         }
     }
     catch (error) {

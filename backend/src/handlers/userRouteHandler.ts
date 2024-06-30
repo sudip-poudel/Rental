@@ -101,11 +101,14 @@ const handleLogin = async (req: Request, res: Response) => {
         .send({ success: false, message: "Invalid password" });
     }
     const token = generateToken({ id: user.id });
+    console.log("testing");
+
     const stringifiedUserData = JSON.stringify({
       id: user.id,
       name: user.name,
       email: user.email,
     });
+    console.log(stringifiedUserData);
 
     res.cookie("token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -129,10 +132,10 @@ const handleLogout = async (req: Request, res: Response) => {
 //* Google Auth*//
 
 export const oAuthHandler = (_: Request, res: Response) => {
-  const REDIRECT_URI =
-    ENV === "PROD"
-      ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
-      : "http://localhost:3000/user/oauthsuccess";
+  const REDIRECT_URI = `${FRONTEND_URL}/user/oauthsuccess`;
+  // ENV === "PROD"
+  //   ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
+  //   : "http://localhost:3000/user/oauthsuccess";
   // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
 
   const GOOGLE_OAUTH_SCOPES = [
@@ -165,10 +168,10 @@ export const oAuth2Server = async (
   const { code } = req.query;
 
   // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
-  const REDIRECT_URI =
-    ENV === "PROD"
-      ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
-      : "http://localhost:3000/user/oauthsuccess";
+  const REDIRECT_URI = `${FRONTEND_URL}/user/oauthsuccess`;
+  // ENV === "PROD"
+  //   ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
+  //   : "http://localhost:3000/user/oauthsuccess";
 
   // Ask for Access Token
   const data = {
@@ -230,13 +233,7 @@ export const oAuth2Server = async (
     const resp = loginHelper(data[0], res);
     if (resp.success) {
       // res.redirect("http://localhost:5173")
-      res.redirect(
-        `${
-          ENV === "PROD"
-            ? "https://rental-ruby.vercel.app/"
-            : "http://localhost:5173"
-        }`
-      );
+      res.redirect(`${FRONTEND_URL}`);
     }
   } catch (error) {
     console.log(error);

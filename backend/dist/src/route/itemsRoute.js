@@ -12,6 +12,6 @@ const storage = multer_1.default.memoryStorage();
 const upload = (0, multer_1.default)({ storage: storage });
 router.post("/additem", validateToken_1.default, upload.array("photos", 5), itemRouteHandler_1.handlePostItem);
 router.get("/getcategory", validateToken_1.default, itemRouteHandler_1.handleGetCategory);
-router.get("/:id", validateToken_1.default, itemRouteHandler_1.handleGetItem);
-router.get("/:search", validateToken_1.default, itemRouteHandler_1.handleSearch);
+router.get("/id/:id", validateToken_1.default, itemRouteHandler_1.handleGetItem);
+router.get("/search/:search", validateToken_1.default, itemRouteHandler_1.handleSearch);
 module.exports = router;
