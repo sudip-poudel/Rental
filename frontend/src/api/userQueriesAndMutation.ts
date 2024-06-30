@@ -41,6 +41,8 @@ export const useSignup = () => {
   return useMutation({
     mutationFn: signupUser,
     onSuccess: () => {
+      console.log("signup success");
+
       const authState: {
         token: string;
         userdata: { id: string; name: string; email: string };
@@ -48,7 +50,10 @@ export const useSignup = () => {
         token: getUserCookies().token,
         userdata: JSON.parse(decodeURIComponent(getUserCookies().userdata)),
       };
+      console.log(authState, "fasdfasd");
+
       dispatch(setUser(authState));
+
       navigate("/");
     },
   });
