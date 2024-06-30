@@ -19,14 +19,14 @@ export const loginHelper = (
 
   res.cookie("token", token, {
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    domain: BACKEND_URL,
+    domain: ".rental-backend-five.vercel.app",
     secure: true,
     sameSite: "none",
     path: "/",
   });
   res.cookie("userdata", stringifiedUserData, {
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    domain: BACKEND_URL,
+    domain: ".rental-backend-five.vercel.app",
     secure: true,
     sameSite: "none",
     path: "/",
