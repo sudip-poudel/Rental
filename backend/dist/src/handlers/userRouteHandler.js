@@ -117,7 +117,7 @@ const handleLogout = async (req, res) => {
 exports.handleLogout = handleLogout;
 //* Google Auth*//
 const oAuthHandler = (_, res) => {
-    const REDIRECT_URI = `${config_1.FRONTEND_URL}/user/oauthsuccess`;
+    const REDIRECT_URI = `${config_1.BACKEND_URL}/user/oauthsuccess`;
     // ENV === "PROD"
     //   ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
     //   : "http://localhost:3000/user/oauthsuccess";
@@ -143,7 +143,7 @@ const oAuth2Server = async (req, res, next) => {
     // TODO: Maybe, validate state
     const { code } = req.query;
     // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
-    const REDIRECT_URI = `${config_1.FRONTEND_URL}/user/oauthsuccess`;
+    const REDIRECT_URI = `${config_1.BACKEND_URL}/user/oauthsuccess`;
     // ENV === "PROD"
     //   ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
     //   : "http://localhost:3000/user/oauthsuccess";
@@ -182,9 +182,7 @@ const oAuth2Server = async (req, res, next) => {
             const resp = (0, loginHelper_1.loginHelper)(user, res);
             if (resp.success) {
                 // res.redirect("http://localhost:5173");
-                res.redirect(`${config_1.ENV === "PROD"
-                    ? "https://rental-ruby.vercel.app/"
-                    : "http://localhost:5173"}`);
+                res.redirect(`${config_1.FRONTEND_URL}`);
             }
         }
         //it there is no user with the email, create a new user
