@@ -20,6 +20,7 @@ const bcrypt = require("bcrypt");
 // const jwt = require("jsonwebtoken");
 import jwt, { JwtPayload } from "jsonwebtoken";
 
+//** Auth Routes */
 const handleSignup = async (req: Request, res: Response) => {
   const {
     email,
@@ -397,6 +398,34 @@ const updatePasswordHandler = async (req: Request, res: Response) => {
   }
 };
 
+/** User Routes */
+
+const getUserById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  console.log(id);
+  try {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, id),
+      columns: {
+        id: true,
+        email: true,
+        name: true,
+        profileUrl: true,
+        totalGivenRent: true,
+        totalTakenRent: true,
+      },
+    });
+    if (!user) {
+      return res
+        .status(400)
+        .send({ success: false, message: "User not found" });
+    }
+    res.status(200).send({ success: true, data: user });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export {
   handleSignup,
   handleLogin,
@@ -404,4 +433,5 @@ export {
   handleForgetPassword,
   verifyUpdatePassword,
   updatePasswordHandler,
+  getUserById,
 };
