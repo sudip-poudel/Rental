@@ -3,6 +3,7 @@ import { logout } from "@/store/auth/authSlice";
 import { LogOut, Settings, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
 const ProfileDropDown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,10 +63,10 @@ const ProfileDropDown = () => {
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               role="menuitem"
             >
-              <p className="flex items-center gap-2">
+              <Link to={"/profile"} className="flex items-center gap-2">
                 <User width={20} />
                 Profile
-              </p>
+              </Link>
             </a>
             <a
               href="#"

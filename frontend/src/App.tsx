@@ -16,6 +16,7 @@ import Itempage from "./pages/Itempage";
 import UpdatePassword from "./pages/UpdatePassword";
 import SearchResults from "./pages/SearchResults";
 import useIsLoggedin from "./hooks/useIsLoggedin";
+import UserProfile from "./pages/UserProfile";
 
 function App() {
   const dispatch = useDispatch();
@@ -81,6 +82,16 @@ function App() {
               authenticationPath="/signin"
               isAuthenticated={isLoggedin}
               Component={SearchResults}
+            />
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute
+              authenticationPath="/signin"
+              isAuthenticated={isLoggedin}
+              Component={UserProfile}
             />
           }
         />
