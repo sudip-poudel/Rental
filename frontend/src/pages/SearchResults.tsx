@@ -2,42 +2,60 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+import { SearchResultItem } from "@/types/types";
+
+
 const SearchResults = () => {
-  const { searcterm } = useParams();
+  const { searchterm } = useParams();
+  console.log(searchterm);
 
   const [searchResult, setSearchResult] = useState([]);
-  const [isloading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const fetchItem = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/item/search/${searcterm}`,
-          {
-            withCredentials: true,
-          }
-        );
+    if (searchterm) {
 
-        console.log("this is response:", response);
-        if (response.data) {
-          console.log(`response data`, response.data);
-          const searchedItems = response.data;
-          setSearchResult(searchedItems);
-          console.log(`search result`, searchResult);
+   
+      const fetchItem = async () => {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/item/search/${searchterm}`,
+            {
+              withCredentials: true,
+            }
+          );
+          const responsData = response.data;
+          console.log(responsData);
+          if (response.data.length > 0) {
+            setSearchResult(responsData);
+          }
+        
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchItem();
-  }, []);0
+      };
+      fetchItem();
+    }
+  }, [searchterm]);
+  0;
 
   return (
-    <div>
-      {searchResult.map((item, idx) =><div>{item.title}</div>)}
-    </div>
+    <>
+      {isLoading ? (
+        <div className="flex items-center justify-center h-screen">
+          <h1>Loading...</h1>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center h-screen">
+          <h1>This is Search Result page:</h1>
+          {searchResult.map((item:SearchResultItem, idx) => (
+            <div key={idx}>{item.title}</div>
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 

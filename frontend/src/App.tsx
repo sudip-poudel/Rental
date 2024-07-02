@@ -64,7 +64,7 @@ function App() {
         <Route path="/forgetpassword" element={<ForgetPassword />} />
         <Route path="/updatepassword" element={<UpdatePassword />} />
         <Route
-          path="/searchresults"
+          path="/searchresults/:searchterm"
           element={
             <ProtectedRoute
               authenticationPath="/signin"
