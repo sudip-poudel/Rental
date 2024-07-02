@@ -11,9 +11,17 @@ const loginHelper = (user, res) => {
     });
     res.cookie("token", token, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
+        domain: ".rental-backend-five.vercel.app",
+        secure: true,
+        sameSite: "none",
+        path: "/",
     });
     res.cookie("userdata", stringifiedUserData, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
+        domain: ".rental-backend-five.vercel.app",
+        secure: true,
+        sameSite: "none",
+        path: "/",
     });
     return { success: true };
 };

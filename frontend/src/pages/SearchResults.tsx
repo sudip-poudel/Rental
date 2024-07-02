@@ -3,20 +3,20 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 import { SearchResultItem } from "@/types/types";
-
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const SearchResults = () => {
-  const { searchterm } = useParams();
+  const { searchterm } = useParams<{ searchterm: string }>(); // Correct typing for useParams
   console.log(searchterm);
 
-  const [searchResult, setSearchResult] = useState([]);
+  const [searchResult, setSearchResult] = useState<SearchResultItem[]>([]); // Use correct type for searchResult
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (searchterm) {
-
-   
       const fetchItem = async () => {
+        setIsLoading(true); // Set loading state to true before starting the fetch
         try {
           const response = await axios.get(
             `${import.meta.env.VITE_API_URL}/item/search/${searchterm}`,
@@ -28,33 +28,35 @@ const SearchResults = () => {
           console.log(responsData);
           if (response.data.length > 0) {
             setSearchResult(responsData);
+          } else {
+            setSearchResult([]); // Handle case where there are no results
           }
-        
         } catch (error) {
           console.log(error);
         } finally {
-          setIsLoading(false);
+          setIsLoading(false); // Set loading state to false after the fetch completes
         }
       };
       fetchItem();
     }
-  }, [searchterm]);
-  0;
+  }, [searchterm]); // Add searchterm to dependency array
+
+  console.log(isLoading);
 
   return (
     <>
-      {isLoading ? (
-        <div className="flex items-center justify-center h-screen">
-          <h1>Loading...</h1>
-        </div>
-      ) : (
-        <div className="flex items-center justify-center h-screen">
-          <h1>This is Search Result page:</h1>
-          {searchResult.map((item:SearchResultItem, idx) => (
-            <div key={idx}>{item.title}</div>
-          ))}
-        </div>
-      )}
+      <Navbar />
+      <div className="h-screen flex justify-center items-center">
+        {" "}
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : (
+          searchResult.map((item: SearchResultItem) => (
+            <div key={item.id}>{item.title}</div> // Assuming item has 'id' and 'name' properties
+          ))
+        )}
+      </div>
+      <Footer />
     </>
   );
 };

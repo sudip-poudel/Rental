@@ -1,3 +1,5 @@
+import { DateRange } from "react-day-picker";
+
 export type IUserInfo = {
   name: string;
   email: string;
@@ -38,7 +40,7 @@ export type IFormData = {
   photos: File[];
   // Add other fields as needed
   description: string;
-  rentalPeriod: string;
+  rentalPeriod: DateRange | undefined;
   // availabilityDates: string;
   pickupLocation: {
     location: string;

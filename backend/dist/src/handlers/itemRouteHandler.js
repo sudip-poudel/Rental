@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleGetCategory = exports.handlePostItem = exports.handleGetItem = void 0;
+exports.handleSearch = exports.handleGetCategory = exports.handlePostItem = exports.handleGetItem = void 0;
 const db_1 = require("../db");
 const drizzle_orm_1 = require("drizzle-orm");
 const schema_1 = require("../schema/schema");
@@ -16,22 +16,32 @@ exports.handleGetItem = handleGetItem;
 const handlePostItem = async (req, res) => {
     const itemData = req.body;
     try {
-        if (req.file) {
-            const b64 = Buffer.from(req.file?.buffer).toString("base64");
-            let dataURI = ("data:" + req?.file.mimetype) + ";base64," + b64;
-            const cldRes = await (0, handleCloudinaryUpload_1.handleItemImageUpload)(dataURI);
-            console.log(req.body, "test");
+        if (req.files) {
+            const uploadedPhotos = req.files;
+            console.log(uploadedPhotos);
+            if (uploadedPhotos.length === 0) {
+                return res
+                    .status(400)
+                    .json({ success: false, message: "No image uploaded" });
+            }
+            let urls = [];
+            for (const photo of uploadedPhotos) {
+                const b64 = Buffer.from(photo.buffer).toString("base64");
+                let dataURI = ("data:" + photo.mimetype) + ";base64," + b64;
+                const cldRes = await (0, handleCloudinaryUpload_1.handleItemImageUpload)(dataURI);
+                urls.push(cldRes.secure_url);
+                console.log(cldRes.secure_url, "test");
+            }
+            //TODO remove 90 and add initial deposit in the form
             const itemdetails = {
                 title: itemData.title,
                 description: itemData.description,
                 category: itemData.category,
                 rate: itemData.rate,
-                pictureUrl: cldRes.secure_url,
-                //TODO remove 90 and add initial deposit in the form
-                initialDeposit: itemData.initaialDeposite || 90,
+                pictureUrl: urls,
+                initialDeposit: itemData.initialDeposit || 90,
                 addedBy: req.params.userId,
             };
-            console.log(itemdetails);
             //TODO handle category first then handle this
             const newItem = await db_1.db
                 .insert(schema_1.item)
@@ -70,3 +80,20 @@ const handleGetCategory = async (_, res) => {
     }
 };
 exports.handleGetCategory = handleGetCategory;
+//to search the item from the item collection with similar keywords in title
+const handleSearch = async (req, res) => {
+    const search = req.params.search.toLowerCase();
+    console.log(search);
+    try {
+        const searchedItem = await db_1.db
+            .select()
+            .from(schema_1.item)
+            .where((0, drizzle_orm_1.eq)(schema_1.item.title, search));
+        return res.json(searchedItem);
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Failed to search items" });
+    }
+};
+exports.handleSearch = handleSearch;

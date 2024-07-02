@@ -18,6 +18,8 @@ const signupUser = async (data: ISignupData) => {
       }
     );
     const returnData = response.data;
+    console.log(returnData);
+
     return returnData;
   } catch (error) {
     if (axios.isAxiosError(error)) {
