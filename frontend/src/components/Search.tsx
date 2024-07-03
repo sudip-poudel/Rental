@@ -7,22 +7,19 @@ import { useNavigate } from "react-router-dom";
 const Search = () => {
   const [searchItem, setSearchItem] = useState("");
 
-
-
   const navigate = useNavigate();
-
 
   const handleSearch = (e) => {
     setSearchItem(e.target.value);
   };
-  
-  console.log("search item; ",searchItem);
+
+  console.log("search item; ", searchItem);
   const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(`/searchresults/${searchItem}`,{replace: true});
-    
+
+    navigate(`/searchresults/${searchItem}`, { replace: true });
+
     console.log("Search submitted:", searchItem);
-    
   };
 
   return (
@@ -42,8 +39,9 @@ const Search = () => {
             <input
               type="text"
               className="w-3/4 h-12 border-gray-400 border-[0.1px]  rounded-2xl pl-2"
-              placeholder= "Search for items..."
+              placeholder="Search for items..."
               onChange={handleSearch}
+              required
             />
             <Button type="submit" className="font-bold h-12 w-1/4">
               Search

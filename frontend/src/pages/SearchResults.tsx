@@ -29,7 +29,8 @@ const SearchResults = () => {
           if (response.data.length > 0) {
             setSearchResult(responsData);
           } else {
-            setSearchResult([]); // Handle case where there are no results
+            setSearchResult([]);
+            // Handle case where there are no results
           }
         } catch (error) {
           console.log(error);
@@ -50,10 +51,13 @@ const SearchResults = () => {
         {" "}
         {isLoading ? (
           <div>Loading...</div>
-        ) : (
+        ) : searchResult.length > 0 ? (
           searchResult.map((item: SearchResultItem) => (
-            <div key={item.id}>{item.title}</div> // Assuming item has 'id' and 'name' properties
+            // Assuming item has 'id' and 'title' properties
+            <div key={item.id}>{item.title}</div>
           ))
+        ) : (
+          <div>There is no such item for rent</div>
         )}
       </div>
       <Footer />
