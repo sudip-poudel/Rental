@@ -17,6 +17,7 @@ import UpdatePassword from "./pages/UpdatePassword";
 import SearchResults from "./pages/SearchResults";
 import useIsLoggedin from "./hooks/useIsLoggedin";
 import UserProfile from "./pages/UserProfile";
+import AppLayout from "./components/AppLayout";
 
 function App() {
   const dispatch = useDispatch();
@@ -48,54 +49,56 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route path="/signin" Component={Signinpage} />
-        <Route path="/about" Component={About} />
-        <Route path="/contact" Component={Contact} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute
-              authenticationPath="/signin"
-              isAuthenticated={isLoggedin}
-              Component={Dashboard}
-            />
-          }
-        />
-        <Route
-          path="/addproduct"
-          element={
-            <ProtectedRoute
-              authenticationPath="/signin"
-              isAuthenticated={isLoggedin}
-              Component={AddItem}
-            />
-          }
-        />
-        <Route path="/itempage/:id" element={<Itempage />} />
-        <Route path="/forgetpassword" element={<ForgetPassword />} />
-        <Route path="/updatepassword" element={<UpdatePassword />} />
-        <Route
-          path="/searchresults"
-          element={
-            <ProtectedRoute
-              authenticationPath="/signin"
-              isAuthenticated={isLoggedin}
-              Component={SearchResults}
-            />
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute
-              authenticationPath="/signin"
-              isAuthenticated={isLoggedin}
-              Component={UserProfile}
-            />
-          }
-        />
-        <Route path="*" element={<h1>404 Not Found</h1>} />
+        <Route element={<AppLayout />} path="/">
+          <Route path="/" element={<Homepage />} />
+          <Route path="/signin" Component={Signinpage} />
+          <Route path="/about" Component={About} />
+          <Route path="/contact" Component={Contact} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute
+                authenticationPath="/signin"
+                isAuthenticated={isLoggedin}
+                Component={Dashboard}
+              />
+            }
+          />
+          <Route
+            path="/addproduct"
+            element={
+              <ProtectedRoute
+                authenticationPath="/signin"
+                isAuthenticated={isLoggedin}
+                Component={AddItem}
+              />
+            }
+          />
+          <Route path="/itempage/:id" element={<Itempage />} />
+          <Route path="/forgetpassword" element={<ForgetPassword />} />
+          <Route path="/updatepassword" element={<UpdatePassword />} />
+          <Route
+            path="/searchresults"
+            element={
+              <ProtectedRoute
+                authenticationPath="/signin"
+                isAuthenticated={isLoggedin}
+                Component={SearchResults}
+              />
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute
+                authenticationPath="/signin"
+                isAuthenticated={isLoggedin}
+                Component={UserProfile}
+              />
+            }
+          />
+          <Route path="*" element={<h1>404 Not Found</h1>} />
+        </Route>
       </Routes>
     </>
   );

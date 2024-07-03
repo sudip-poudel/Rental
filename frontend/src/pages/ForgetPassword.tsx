@@ -1,6 +1,4 @@
 import { useForgetPassword } from "@/api/userQueriesAndMutation";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
@@ -47,8 +45,7 @@ const ForgetPassword = () => {
   if (isLoggedin) return <Navigate to="/" replace />;
 
   return (
-    <div>
-      <Navbar />
+    <>
       <div className="flex flex-row items-center ml-4 min-h-96 mb-36">
         <img
           src="/images/fgtpass2.png"
@@ -114,8 +111,7 @@ const ForgetPassword = () => {
           className="hidden sm:block w-96 h-80 "
         />
       </div>
-      <Footer />
-    </div>
+    </>
   );
 };
 

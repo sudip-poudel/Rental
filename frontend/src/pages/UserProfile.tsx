@@ -1,5 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { PenIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useSelector } from "react-redux";
+import { RootState } from "@/types/types";
 
 type User = {
   name: string;
@@ -8,9 +11,12 @@ type User = {
 };
 
 const UserProfile = () => {
+  const state = useSelector((state: RootState) => state.auth.userInfo);
+  console.log(state);
+
   const originalUserData = {
-    name: "John Doe",
-    email: "john@example.com",
+    name: state.name,
+    email: state.email,
     age: 30,
   }; // Original user data for comparison
   const [user, setUser] = useState<User>(originalUserData);
@@ -48,43 +54,79 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-lg border border-gray-200 shadow-md p-4">
-      <h2 className="text-lg font-semibold text-gray-900">User Profile</h2>
-      <div className="space-y-3 mt-4">
-        {Object.entries(user).map(([key, value]) => (
-          <div key={key} className="flex items-center justify-between">
-            {editMode[key] ? (
-              <input
-                ref={inputRefs[key]}
-                type={key === "age" ? "number" : "text"}
-                name={key}
-                value={value.toString()}
-                onChange={(e) => handleUpdate(e, key as keyof User)}
-                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                onBlur={() => toggleEdit(key as keyof User)}
+    <div className="flex flex-col items-center justify-center gap-5">
+      <h1 className="text-xl font-bold">Users Profile</h1>
+      <div className="flex flex-row items-center justify-around w-full">
+        <div className="flex flex-col ">
+          <input
+            type="file"
+            id="upload-image"
+            data-tile="Upload Image"
+            className="hidden"
+          />
+          <div className="relative w-48 h-48">
+            <label
+              htmlFor="upload-image"
+              className="cursor-pointer w-full h-full flex justify-center items-center group"
+            >
+              <img
+                src="images/blobpic1.png"
+                alt="userimage"
+                className="absolute top-0 left-0 w-full h-full object-fill rounded-full bg-black"
               />
-            ) : (
-              <>
-                <span className="text-sm text-gray-600">{`${
-                  key.charAt(0).toUpperCase() + key.slice(1)
-                }: ${value}`}</span>
-                <PenIcon
-                  className="h-5 w-5 text-gray-500 cursor-pointer"
-                  onClick={() => toggleEdit(key as keyof User)}
-                />
-              </>
-            )}
+              <div className="absolute inset-0 rounded-full flex justify-center items-center opacity-0 group-hover:opacity-100 bg-black bg-opacity-50 text-white">
+                Change Avatar
+              </div>
+            </label>
           </div>
-        ))}
-        <button
-          className={`mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md ${
-            !hasChanges() && "opacity-50 cursor-not-allowed"
-          }`}
-          disabled={!hasChanges()}
-          onClick={updateUserData}
-        >
-          Update
-        </button>
+
+          <Button type="button" className="mt-4">
+            <label htmlFor="upload-image">Choose New Avatar</label>
+          </Button>
+        </div>
+
+        <div className="w-3/5 bg-white rounded-lg border border-gray-200 shadow-md p-4 ">
+          <h2 className="text-lg font-semibold text-gray-900">
+            {originalUserData.name.charAt(0).toUpperCase() +
+              originalUserData.name.slice(1)}
+          </h2>
+          <div className="space-y-3 mt-4">
+            {Object.entries(user).map(([key, value]) => (
+              <div key={key} className="flex items-center justify-between">
+                {editMode[key] ? (
+                  <input
+                    ref={inputRefs[key]}
+                    type={key === "age" ? "number" : "text"}
+                    name={key}
+                    value={value.toString()}
+                    onChange={(e) => handleUpdate(e, key as keyof User)}
+                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    onBlur={() => toggleEdit(key as keyof User)}
+                  />
+                ) : (
+                  <>
+                    <span className="text-sm text-gray-600">{`${
+                      key.charAt(0).toUpperCase() + key.slice(1)
+                    }: ${value}`}</span>
+                    <PenIcon
+                      className="h-5 w-5 text-gray-500 cursor-pointer"
+                      onClick={() => toggleEdit(key as keyof User)}
+                    />
+                  </>
+                )}
+              </div>
+            ))}
+            <Button
+              className={`mt-4 px-4 py-2 text-white rounded-md ${
+                !hasChanges() && "opacity-50 cursor-not-allowed"
+              }`}
+              disabled={!hasChanges()}
+              onClick={updateUserData}
+            >
+              Update
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

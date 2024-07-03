@@ -1,5 +1,3 @@
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
 import sampleItems from "@/sampleData/itemSamples";
 import { useParams } from "react-router-dom";
 import camera from "/images/camera.png";
@@ -20,9 +18,6 @@ const Itempage = () => {
   const relatedItems = similarItems.filter((item) => item.id !== result?.id);
   // console.log(similarItems);
 
-
-  
-
   const navigate = useNavigate();
   const handleCard = (id) => {
     // console.log("card clicked");
@@ -31,7 +26,6 @@ const Itempage = () => {
   };
   return (
     <>
-      <Navbar />
       <div>
         {result && (
           <div className=" flex items-center justify-center">
@@ -45,17 +39,15 @@ const Itempage = () => {
                   alt="for_rent image"
                   className="h-10 w-10"
                 />
-                <div className=" text-2xl  font-bold mt-2">
-                  {result.title}
-                </div>
+                <div className=" text-2xl  font-bold mt-2">{result.title}</div>
                 <div className="mt-2 flex flex-col border rounded-md shadow-md bg-white p-5">
                   <div className="mt-2">Rs.{result.rate}</div>
-                <div className="text-lg mt-2">{result.description}</div>
+                  <div className="text-lg mt-2">{result.description}</div>
                   {/* <div className="mt-2">{result.category}</div> */}
                   <div className="mt-2 flex">
                     <MapPin size={18} /> {result.location}
                   </div>
-                   {/* <div className="mt-2 cursor-pointer"> <PhoneCall size={18} /> {result?.contact}</div> */}
+                  {/* <div className="mt-2 cursor-pointer"> <PhoneCall size={18} /> {result?.contact}</div> */}
                 </div>
               </div>
             </div>
@@ -74,7 +66,6 @@ const Itempage = () => {
           />
         ))}
       </div>
-      <Footer />
     </>
   );
 };

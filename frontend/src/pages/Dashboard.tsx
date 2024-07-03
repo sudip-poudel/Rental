@@ -1,7 +1,5 @@
 // import React from 'react';
 
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
 import { Link } from "react-router-dom";
 import camera from "/images/camera.png";
 import { Button } from "@/components/ui/button";
@@ -9,7 +7,6 @@ import { Button } from "@/components/ui/button";
 const Dashboard = () => {
   return (
     <>
-      <Navbar />
       <div className="container mx-auto p-4">
         <header className="mb-4">
           <h1 className="text-2xl font-bold">Welcome to Your Dashboard</h1>
@@ -39,9 +36,7 @@ const Dashboard = () => {
               <h3 className="mt-2 font-bold">Item Title</h3>
               <p>Status: Available</p>
               <div className="mt-2 flex justify-between">
-                <Button className=" text-white px-2 py-1 rounded">
-                  Edit
-                </Button>
+                <Button className=" text-white px-2 py-1 rounded">Edit</Button>
                 <Button className=" text-white px-2 py-1 rounded">
                   Delete
                 </Button>
@@ -56,9 +51,7 @@ const Dashboard = () => {
               <h3 className="mt-2 font-bold">Item Title</h3>
               <p>Status: Available</p>
               <div className="mt-2 flex justify-between">
-                <Button className=" text-white px-2 py-1 rounded">
-                  Edit
-                </Button>
+                <Button className=" text-white px-2 py-1 rounded">Edit</Button>
                 <Button className=" text-white px-2 py-1 rounded">
                   Delete
                 </Button>
@@ -98,8 +91,6 @@ const Dashboard = () => {
           </ul>
         </section>
       </div>
-
-      <Footer />
     </>
   );
 };
