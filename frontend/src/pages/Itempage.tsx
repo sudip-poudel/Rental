@@ -62,7 +62,6 @@ const Itempage = () => {
           </div>
         )}
       </div>
-      <div>this is map</div>
       <div className="mt-12 ml-10 font-bold">Related Items:</div>
       <div className=" mt-12 grid place-content-center place-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
         {relatedItems.map((item, i) => (
