@@ -3,6 +3,7 @@ import { PenIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
 import { RootState } from "@/types/types";
+import AvatarImageCrop from "@/components/AvatarImageCrop";
 
 type User = {
   name: string;
@@ -56,34 +57,8 @@ const UserProfile = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-5">
       <h1 className="text-xl font-bold">Users Profile</h1>
-      <div className="flex flex-row items-center justify-around w-full">
-        <div className="flex flex-col ">
-          <input
-            type="file"
-            id="upload-image"
-            data-tile="Upload Image"
-            className="hidden"
-          />
-          <div className="relative w-48 h-48">
-            <label
-              htmlFor="upload-image"
-              className="cursor-pointer w-full h-full flex justify-center items-center group"
-            >
-              <img
-                src="images/blobpic1.png"
-                alt="userimage"
-                className="absolute top-0 left-0 w-full h-full object-fill rounded-full bg-black"
-              />
-              <div className="absolute inset-0 rounded-full flex justify-center items-center opacity-0 group-hover:opacity-100 bg-black bg-opacity-50 text-white">
-                Change Avatar
-              </div>
-            </label>
-          </div>
-
-          <Button type="button" className="mt-4">
-            <label htmlFor="upload-image">Choose New Avatar</label>
-          </Button>
-        </div>
+      <div className="flex flex-col md:flex-row items-center justify-around w-full">
+        <AvatarImageCrop />
 
         <div className="w-3/5 bg-white rounded-lg border border-gray-200 shadow-md p-4 ">
           <h2 className="text-lg font-semibold text-gray-900">

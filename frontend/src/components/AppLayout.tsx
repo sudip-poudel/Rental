@@ -6,7 +6,7 @@ const AppLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className="flex-grow">
         <Outlet /> {/* This is where your page components will be rendered */}
       </main>
       <Footer />
