@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 const Items = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
-  console.log(items);
+  // console.log(items);
 
   useEffect(() => {
     const fetchItems =async () => {
