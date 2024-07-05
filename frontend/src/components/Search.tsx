@@ -35,7 +35,10 @@ const Search = () => {
           <span>the perfect item for you.</span>
         </p>
         <div className="flex flex-row w-full mt-16 gap-5">
-          <form onSubmit={handleSearchSubmit}>
+          <form
+            onSubmit={handleSearchSubmit}
+            className="w-full flex flex-row gap-1"
+          >
             <input
               type="text"
               className="w-3/4 h-12 border-gray-400 border-[0.1px]  rounded-2xl pl-2"
@@ -43,7 +46,7 @@ const Search = () => {
               onChange={handleSearch}
               required
             />
-            <Button type="submit" className="font-bold h-12 w-1/4">
+            <Button type="submit" className="font-bold h-12 w-1/4 ">
               Search
             </Button>
           </form>

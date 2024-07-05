@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
 const ContactUs = () => {
@@ -28,13 +26,13 @@ const ContactUs = () => {
   };
 
   const validateEmail = (email: string) => {
-    const regEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+    const regEx = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
     return regEx.test(email);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    let formErrors = {
+    const formErrors = {
       name: "",
       email: "",
       subject: "",
@@ -78,7 +76,6 @@ const ContactUs = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
-      <Navbar />
       <div className="flex-grow flex items-center justify-center">
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
           <h1 className="text-2xl font-bold mb-6 text-center">Contact Us</h1>
@@ -136,7 +133,6 @@ const ContactUs = () => {
           </form>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

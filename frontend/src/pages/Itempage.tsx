@@ -1,5 +1,3 @@
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
 import sampleItems from "@/sampleData/itemSamples";
 import { useParams } from "react-router-dom";
 import camera from "/images/camera.png";
@@ -34,7 +32,6 @@ const Itempage = () => {
   };
   return (
     <>
-      <Navbar />
       <div>
         {result && (
           <div className=" flex items-center justify-center">
@@ -74,7 +71,6 @@ const Itempage = () => {
           />
         ))}
       </div>
-      <Footer />
     </>
   );
 };

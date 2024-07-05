@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
@@ -47,7 +46,6 @@ const UpdatePassword = () => {
 
   return (
     <>
-      <Navbar />
       <div className="flex justify-center flex-col items-center mt-14">
         <h2 className="font-bold text-lg my-4">
           Please enter your new password:{" "}
