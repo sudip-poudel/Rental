@@ -19,6 +19,8 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 // const jwt = require("jsonwebtoken");
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { UploadApiResponse } from "cloudinary";
+import { handleAvatarImageUpload } from "../helper/handleCloudinaryUpload";
 
 //** Auth Routes */
 const handleSignup = async (req: Request, res: Response) => {
@@ -398,21 +400,51 @@ const updatePasswordHandler = async (req: Request, res: Response) => {
   }
 };
 
+/**UPDATE USER DETAILS */
+const handleUpdateUserAvater = async (req: Request, res: Response) => {
+  const photo = req.file as Express.Multer.File;
+  const userId = req.params.userId;
+  console.log(photo, "photos");
+  if (!photo) {
+    return res
+      .status(400)
+      .send({ success: false, message: "No image uploaded" });
+  }
+
+  try {
+    const b64 = Buffer.from(photo.buffer as Buffer).toString("base64");
+    let dataURI = (("data:" + photo.mimetype) as string) + ";base64," + b64;
+    const cldRes: UploadApiResponse = await handleAvatarImageUpload(dataURI);
+    const avatarUrl = cldRes.secure_url;
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+    });
+    if (!user) {
+      return res
+        .status(400)
+        .send({ success: false, message: "User not found" });
+    }
+    await db
+      .update(users)
+      .set({ profileUrl: avatarUrl })
+      .where(eq(users.id, userId));
+    res.status(200).send({ success: true, message: "Profile picture updated" });
+  } catch (error) {
+    res.status(400).send({ success: false, message: "Internal server error" });
+  }
+};
+
 /** User Routes */
 
 const getUserById = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.userId;
   console.log(id);
   try {
     const user = await db.query.users.findFirst({
       where: eq(users.id, id),
       columns: {
-        id: true,
-        email: true,
-        name: true,
-        profileUrl: true,
-        totalGivenRent: true,
-        totalTakenRent: true,
+        password: false,
       },
     });
     if (!user) {
@@ -433,5 +465,6 @@ export {
   handleForgetPassword,
   verifyUpdatePassword,
   updatePasswordHandler,
+  handleUpdateUserAvater,
   getUserById,
 };

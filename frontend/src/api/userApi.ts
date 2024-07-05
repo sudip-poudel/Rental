@@ -1,11 +1,26 @@
-import { ILoginData, ISignupData, IUserLoginResponse } from "@/types/types";
+import {
+  ILoginData,
+  ISignupData,
+  IUserDetailsResponse,
+  IUserLoginResponse,
+} from "@/types/types";
 import axios, { AxiosResponse } from "axios";
 
-const fetchUserDetails = async (data) => {
-  const response: AxiosResponse<string> = await axios.get(
-    `${import.meta.env.VITE_API_URL}/user/${data.id}`
-  );
-  console.log(response);
+const fetchCurrentUserDetails = async () => {
+  try {
+    const response: AxiosResponse<IUserDetailsResponse> = await axios.get(
+      `${import.meta.env.VITE_API_URL}/user/getUserDetails`
+    );
+    const data = response.data.data;
+    console.log(data);
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An Unknown Error Occored");
+    }
+  }
 };
 
 const signupUser = async (data: ISignupData) => {
@@ -115,11 +130,33 @@ const handleUpdatePassword = async (password: string, token: string) => {
   }
 };
 
+const updateUserAvatar = async (avatar: File) => {
+  try {
+    const formdata = new FormData();
+    formdata.append("useravatar", avatar);
+    const response: AxiosResponse<IUserLoginResponse> = await axios.post(
+      `${import.meta.env.VITE_API_URL}/user/updateavatar`,
+      formdata,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An unknown error occurred");
+    }
+  }
+};
+
 export {
-  fetchUserDetails,
+  fetchCurrentUserDetails,
   signupUser,
   loginUser,
   logoutUser,
   handleForgetPassword,
   handleUpdatePassword,
+  updateUserAvatar,
 };

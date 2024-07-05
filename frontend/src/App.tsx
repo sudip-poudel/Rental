@@ -18,6 +18,7 @@ import SearchResults from "./pages/SearchResults";
 import useIsLoggedin from "./hooks/useIsLoggedin";
 import UserProfile from "./pages/UserProfile";
 import AppLayout from "./components/AppLayout";
+import UserSetting from "./pages/UserSetting";
 
 function App() {
   const dispatch = useDispatch();
@@ -94,6 +95,16 @@ function App() {
                 authenticationPath="/signin"
                 isAuthenticated={isLoggedin}
                 Component={UserProfile}
+              />
+            }
+          />
+          <Route
+            path="/usersetting"
+            element={
+              <ProtectedRoute
+                authenticationPath="/signin"
+                isAuthenticated={isLoggedin}
+                Component={UserSetting}
               />
             }
           />

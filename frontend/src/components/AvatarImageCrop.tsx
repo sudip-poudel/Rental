@@ -11,6 +11,9 @@ import ReactCrop, {
 
 import "react-image-crop/dist/ReactCrop.css";
 import { Button } from "./ui/button";
+import { useUpdateUserAvatar } from "@/api/userQueriesAndMutation";
+import { useToast } from "./ui/use-toast";
+import { Toaster } from "./ui/toaster";
 
 // This is to demonstate how to make and center a % aspect crop
 // which is a bit trickier so we use some helper functions.
@@ -34,14 +37,23 @@ function centerAspectCrop(
   );
 }
 
-export default function AvatarImageCrop() {
+export default function AvatarImageCrop({
+  userProfileUrl,
+}: {
+  userProfileUrl: string;
+}) {
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const previewImgRef = useRef<HTMLImageElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [imgSrc, setImgSrc] = useState<string>("");
+  const [imgFile, setImgFile] = useState<File | null>(null);
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const aspect: number | undefined = 1 / 1;
+
+  const { toast } = useToast();
+
+  const { mutate: updateUserAvatar, isPending } = useUpdateUserAvatar();
 
   function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
@@ -75,7 +87,8 @@ export default function AvatarImageCrop() {
           imgRef.current,
           previewCanvasRef.current,
           previewImgRef.current,
-          completedCrop
+          completedCrop,
+          setImgFile
         );
       }
     },
@@ -85,6 +98,7 @@ export default function AvatarImageCrop() {
 
   return (
     <div className="App flex flex-col">
+      <Toaster />
       <div className="Crop-Controls">
         {/* <input type="file" accept="image/*" onChange={onSelectFile} /> */}
 
@@ -103,7 +117,7 @@ export default function AvatarImageCrop() {
             >
               <img
                 ref={previewImgRef}
-                src="images/blobpic1.png"
+                src={userProfileUrl}
                 alt="userimage"
                 className="absolute top-0 left-0 w-full h-full object-fill rounded-full bg-black"
               />
@@ -112,8 +126,11 @@ export default function AvatarImageCrop() {
               </div>
             </label>
           </div>
-          <Button type="button" className="mt-4">
-            <label htmlFor="upload-image" className="p-0 m-0">
+          <Button type="button" className="mt-4 p-0">
+            <label
+              htmlFor="upload-image"
+              className="p-0 m-0 w-full h-full cursor-pointer text-center flex items-center justify-center"
+            >
               Choose New Avatar
             </label>
           </Button>
@@ -142,16 +159,40 @@ export default function AvatarImageCrop() {
               onLoad={onImageLoad}
             />
           </ReactCrop>
-          <Button>Save Avatar</Button>
+          //TODO handle submit the avatar
+          <Button
+            type="button"
+            disabled={isPending}
+            className="disabled:bg-opacity-50"
+            onClick={(e) => {
+              e.preventDefault();
+              console.log(imgFile);
+
+              if (!completedCrop || !imgRef.current || !imgFile) {
+                return;
+              }
+              updateUserAvatar(imgFile as File, {
+                onSuccess: () => {
+                  toast({ title: "Avatar updated successfully" });
+                  setCrop(undefined);
+                  setCompletedCrop(undefined);
+                  setImgSrc("");
+                  setImgFile(null);
+                },
+                onError: (error) => {
+                  toast({
+                    title: "Avatar update failed",
+                    description: error.message,
+                  });
+                },
+              });
+            }}
+          >
+            Save Avatar
+          </Button>
         </div>
       )}
-      {!!completedCrop && (
-        <>
-          <div>
-            <canvas ref={previewCanvasRef} className="hidden" />
-          </div>
-        </>
-      )}
+      {!!completedCrop && <canvas ref={previewCanvasRef} className="hidden" />}
     </div>
   );
 }

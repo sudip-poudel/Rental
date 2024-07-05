@@ -12,7 +12,7 @@ const ProfileDropDown = () => {
 
   const handleClickOutside = (e) => {
     if (node.current?.contains(e.target)) {
-      // inside click
+      // inside clickp
       return;
     }
     // outside click
@@ -58,8 +58,7 @@ const ProfileDropDown = () => {
             aria-orientation="vertical"
             aria-labelledby="options-menu"
           >
-            <a
-              href="#"
+            <div
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               role="menuitem"
             >
@@ -67,17 +66,16 @@ const ProfileDropDown = () => {
                 <User width={20} />
                 Profile
               </Link>
-            </a>
-            <a
-              href="#"
+            </div>
+            <div
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               role="menuitem"
             >
-              <p className="flex items-center gap-2">
+              <Link to={"/usersetting"} className="flex items-center gap-2">
                 <Settings width={20} />
                 Settings
-              </p>
-            </a>
+              </Link>
+            </div>
             <button
               onClick={handleLogout}
               className="block px-4 py-2 w-full text-sm text-gray-700 hover:bg-gray-100"

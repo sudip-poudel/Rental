@@ -56,3 +56,19 @@ export type ICategoryType = {
   id: string;
   name: string;
 };
+
+export type IUserDetailsResponse = {
+  success: boolean;
+  data: {
+    id: string;
+    name: string;
+    email: string;
+    created_at: Date;
+    rating: number;
+    role: "admin" | "user" | null;
+    profileUrl: string | null;
+    totalGivenRent: number | null;
+    totalTakenRent: number | null;
+    resetPasswordToken: string | null;
+  };
+};

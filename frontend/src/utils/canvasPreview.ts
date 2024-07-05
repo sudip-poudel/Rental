@@ -7,6 +7,7 @@ export async function canvasPreview(
   canvas: HTMLCanvasElement,
   previewImg: HTMLImageElement,
   crop: PixelCrop,
+  setImage: (file: File) => void,
   scale = 1,
   rotate = 0
 ) {
@@ -68,6 +69,8 @@ export async function canvasPreview(
       throw new Error("Canvas is empty");
     }
     const url = URL.createObjectURL(blob);
+    const fileImg = new File([blob], "useravatar");
+    setImage(fileImg);
     previewImg.src = url;
   });
 }
