@@ -2,45 +2,66 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const SearchResults = () => {
-  const { searcterm } = useParams();
+import { SearchResultItem } from "@/types/types";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
-  const [searchResult, setSearchResult] = useState([]);
-  const [isloading, setIsLoading] = useState(false);
+const SearchResults = () => {
+  const { searchterm } = useParams<{ searchterm: string }>(); // Correct typing for useParams
+  console.log(searchterm);
+
+  const [searchResult, setSearchResult] = useState<SearchResultItem[]>([]); // Use correct type for searchResult
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const fetchItem = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/item/search/${searcterm}`,
-          {
-            withCredentials: true,
+    if (searchterm) {
+      const fetchItem = async () => {
+        setIsLoading(true); // Set loading state to true before starting the fetch
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/item/search/${searchterm}`,
+            {
+              withCredentials: true,
+            }
+          );
+          const responsData = response.data;
+          console.log(responsData);
+          if (response.data.length > 0) {
+            setSearchResult(responsData);
+          } else {
+            setSearchResult([]);
+            // Handle case where there are no results
           }
-        );
-
-        console.log("this is response:", response);
-        if (response.data) {
-          console.log(`response data`, response.data);
-          const searchedItems = response.data;
-          setSearchResult(searchedItems);
-          console.log(`search result`, searchResult);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false); // Set loading state to false after the fetch completes
         }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchItem();
-  }, []);
-  console.log(isloading);
+      };
+      fetchItem();
+    }
+  }, [searchterm]); // Add searchterm to dependency array
+
+  console.log(isLoading);
 
   return (
-    <div>
-      {searchResult.map((item) => (
-        <div>{item}</div>
-      ))}
-    </div>
+    <>
+      <Navbar />
+      <div className="h-screen flex justify-center items-center">
+        {" "}
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : searchResult.length > 0 ? (
+          searchResult.map((item: SearchResultItem) => (
+            // Assuming item has 'id' and 'title' properties
+            <div key={item.id}>{item.title}</div>
+          ))
+        ) : (
+          <div>There is no such item for rent</div>
+        )}
+      </div>
+      <Footer />
+    </>
   );
 };
 

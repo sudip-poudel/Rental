@@ -5,10 +5,16 @@ import for_rent from "/images/for_rent.png";
 import Card from "@/components/ui/card";
 import { MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 // import Items from "@/components/Items";
 // import sampleUsers from "@/sampleUser/userSamples";
 const Itempage = () => {
   const { id } = useParams();
+
+  useEffect(() => {
+    
+  }, []);
+
   const result = sampleItems.find((item) => item.id === id);
 
   // console.log(result);
@@ -54,7 +60,6 @@ const Itempage = () => {
           </div>
         )}
       </div>
-      <div>this is map</div>
       <div className="mt-12 ml-10 font-bold">Related Items:</div>
       <div className=" mt-12 grid place-content-center place-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
         {relatedItems.map((item, i) => (

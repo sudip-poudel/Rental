@@ -57,6 +57,19 @@ export type ICategoryType = {
   name: string;
 };
 
+
+export type SearchResultItem= {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  created_at: Date;
+  rate: number;
+  pricture_url: string;
+  initial_deposit: number;
+  added_by: string;
+
+}
 export type IUserDetailsResponse = {
   success: boolean;
   data: {

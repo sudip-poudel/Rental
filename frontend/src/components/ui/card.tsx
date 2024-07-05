@@ -9,17 +9,19 @@ interface Item {
   created_at: string;
   location: string;
   rate: number;
+  pictureUrl: string;
 
 }
 
-const Card = ({ item, className, onClick }: { item: Item; className?: string; onClick: React.MouseEventHandler  <HTMLElement>}) => {
+const Card = ({ item, className, onClick }: { item: Item; className?: string; onClick: React.MouseEventHandler<HTMLElement> }) => {
+  console.log(item.pictureUrl);
   return (
     <div onClick={onClick}
       className={`w-full sm:w-[95%] transform transition duration-500 ease-in-out hover:scale-105 ${className}`}
     >
       <img
         className="w-full h-40 object-cover"
-        src={`https://images.unsplash.com/photo-1417325384643-aac51acc9e5d`}
+        src={item.pictureUrl[0]}
         alt={item.title}
       />
       <div className="px-4 py-2">

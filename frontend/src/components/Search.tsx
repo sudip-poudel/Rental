@@ -11,12 +11,15 @@ const Search = () => {
 
   const handleSearch = (e) => {
     setSearchItem(e.target.value);
-    console.log(searchItem);
   };
 
+  console.log("search item; ", searchItem);
   const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/searchresults?searchterm=" + searchItem, { replace: true });
+
+    navigate(`/searchresults/${searchItem}`, { replace: true });
+
+    console.log("Search submitted:", searchItem);
   };
 
   return (

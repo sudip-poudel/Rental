@@ -4,13 +4,21 @@ import { eq } from "drizzle-orm";
 import { category, item, itemLocation } from "../schema/schema";
 import { handleItemImageUpload } from "../helper/handleCloudinaryUpload";
 import { UploadApiResponse } from "cloudinary";
-import { IItem } from "../types/types";
+import { IItem } from "../types/types"
 
-export const handleGetItem = async (req: Request, res: Response) => {
-  const itemId = req.params.id;
-  const itemData = await db.query.item.findFirst({
-    where: eq(item.id, itemId),
-  });
+
+
+//fetch items from database to show at the homepage
+export const handleGetItem = async (_: Request, res: Response) => {
+  // const itemId = req.params.id;
+  try {
+    const items = await db.select().from(item);
+    return res.json(items);
+
+  } catch (error) {
+    res.send(error);
+    console.log(error);
+  }
 };
 //TODO handle the route to post item data along with picture
 export const handlePostItem = async (req: Request, res: Response) => {
@@ -70,6 +78,9 @@ export const handlePostItem = async (req: Request, res: Response) => {
     console.log(error);
   }
 };
+
+
+//to get the catagory list from database
 export const handleGetCategory = async (_: Request, res: Response) => {
   try {
     const categories = await db.select().from(category);
@@ -79,6 +90,8 @@ export const handleGetCategory = async (_: Request, res: Response) => {
     console.log(error);
   }
 };
+
+
 
 
 //to search the item from the item collection with similar keywords in title
@@ -98,3 +111,5 @@ export const handleSearch = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Failed to search items" });
   }
 };
+
+
