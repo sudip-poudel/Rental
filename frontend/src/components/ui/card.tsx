@@ -14,7 +14,7 @@ interface Item {
 }
 
 const Card = ({ item, className, onClick }: { item: Item; className?: string; onClick: React.MouseEventHandler<HTMLElement> }) => {
-  console.log(item.pictureUrl);
+  // console.log(item.pictureUrl);
   return (
     <div onClick={onClick}
       className={`w-full sm:w-[95%] transform transition duration-500 ease-in-out hover:scale-105 ${className}`}

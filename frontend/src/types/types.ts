@@ -59,14 +59,16 @@ export type ICategoryType = {
 
 
 export type SearchResultItem= {
-  id: number;
+  id: string;
   title: string;
   description: string;
   category: string;
-  created_at: Date;
+  created_at: string;
   rate: number;
-  pricture_url: string;
+  pictureUrl: string;
   initial_deposit: number;
   added_by: string;
+  location: string,
+  
 
 }

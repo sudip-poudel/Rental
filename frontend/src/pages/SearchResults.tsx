@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { SearchResultItem } from "@/types/types";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Card from "@/components/ui/card";
 
 const SearchResults = () => {
   const { searchterm } = useParams<{ searchterm: string }>(); // Correct typing for useParams
@@ -43,6 +44,12 @@ const SearchResults = () => {
   }, [searchterm]); // Add searchterm to dependency array
 
   console.log(isLoading);
+  
+  const handleCard = (id) => {
+    console.log("card clicked");
+    console.log(id);
+    // Navigate to the item page using the id
+  };
 
   return (
     <>
@@ -52,9 +59,12 @@ const SearchResults = () => {
         {isLoading ? (
           <div>Loading...</div>
         ) : searchResult.length > 0 ? (
-          searchResult.map((item: SearchResultItem) => (
+          searchResult.map((item,i) => (
             // Assuming item has 'id' and 'title' properties
-            <div key={item.id}>{item.title}</div>
+            <Card onClick={handleCard.bind(this, item.id)}
+            className="rounded-lg shadow-md overflow-hidden "
+            item={item}
+            key={i}/>
           ))
         ) : (
           <div>There is no such item for rent</div>
