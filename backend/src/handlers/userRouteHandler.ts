@@ -445,6 +445,7 @@ const getUserById = async (req: Request, res: Response) => {
       where: eq(users.id, id),
       columns: {
         password: false,
+        resetPasswordToken: false,
       },
     });
     if (!user) {

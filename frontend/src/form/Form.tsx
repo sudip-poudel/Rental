@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import upload from "/images/upload.png";
 import { useRef } from "react";
 import { ICategoryType, IFormData } from "@/types/types";
-import Modal from "@/components/modal";
 import { MapPopup } from "@/components/Map";
 import { useAddItem, useGetCategories } from "@/api/itemsQueriesAndMutation";
 import DateRangePicker from "@/components/DateRangePicker";
@@ -12,6 +11,17 @@ import { addDays } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const RentProductForm = () => {
   const [formData, setFormData] = useState<IFormData>({
@@ -27,6 +37,7 @@ const RentProductForm = () => {
       longitude: 0,
     },
     specialInstructions: "",
+    initialDeposit: 0,
     agreement: false,
     liabilityWaiver: false,
   });
@@ -90,6 +101,7 @@ const RentProductForm = () => {
             longitude: 0,
           },
           specialInstructions: "",
+          initialDeposit: 0,
           agreement: false,
           liabilityWaiver: false,
         });
@@ -108,6 +120,7 @@ const RentProductForm = () => {
             longitude: 0,
           },
           specialInstructions: "",
+          initialDeposit: 0,
           agreement: false,
           liabilityWaiver: false,
         });
@@ -272,35 +285,52 @@ const RentProductForm = () => {
           </div>
         </Slot>
 
-        <Slot className="mb-4">
-          <div className="h-3/4">
-            <label
-              htmlFor="pickupLocation"
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Pickup Location:
-            </label>
-            <input
-              id="pickupLocation"
-              type="text"
-              name="pickupLocation"
-              placeholder="Pickup Location"
-              value={formData.pickupLocation.location}
-              onChange={handleChange}
-              onClick={() => {
-                setShowPopup(!showPopup);
-              }}
-              required
-              readOnly
-              className="w-full px-4 py-2 border rounded-lg h-full focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
-          </div>
-        </Slot>
-        {showPopup && (
-          <Modal setShowModal={setShowPopup}>
-            <MapPopup handleChange={setFormData} />
-          </Modal>
-        )}
+        <AlertDialog>
+          <AlertDialogTrigger>
+            <Slot className="mb-4">
+              <div className="h-3/4">
+                <label
+                  htmlFor="pickupLocation"
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  Pickup Location:
+                </label>
+                <input
+                  id="pickupLocation"
+                  type="text"
+                  name="pickupLocation"
+                  placeholder="Pickup Location"
+                  value={formData.pickupLocation.location}
+                  onChange={handleChange}
+                  onClick={() => {
+                    setShowPopup(!showPopup);
+                  }}
+                  required
+                  readOnly
+                  className="w-full px-4 py-2 border rounded-lg h-full focus:outline-none focus:ring-2 focus:ring-blue-600"
+                />
+              </div>
+            </Slot>
+          </AlertDialogTrigger>
+          <AlertDialogContent className="overflow-y-scroll">
+            <AlertDialogHeader className="h-[80%]">
+              <AlertDialogTitle className="text-center">
+                Choose Location
+              </AlertDialogTitle>
+              <AlertDialogDescription className="w-full">
+                <MapPopup handleChange={setFormData} />
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction asChild>
+                <Button type="button" onClick={() => {}}>
+                  Continue
+                </Button>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         <Slot className="mb-4">
           <div className="h-3/4">
@@ -315,6 +345,25 @@ const RentProductForm = () => {
               name="specialInstructions"
               placeholder="Special Instructions"
               value={formData.specialInstructions}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+          </div>
+        </Slot>
+        <Slot className="mb-4">
+          <div className="h-3/4">
+            <label
+              htmlFor="initialDeposit"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Initial Deposit:
+            </label>
+            <input
+              id="initialDeposit"
+              type="number"
+              name="initialDeposit"
+              placeholder="Initial Deposit"
+              value={formData.initialDeposit}
               onChange={handleChange}
               className="w-full px-4 py-2 border h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />

@@ -38,16 +38,15 @@ export type IFormData = {
   rate: number;
 
   photos: File[];
-  // Add other fields as needed
   description: string;
   rentalPeriod: DateRange | undefined;
-  // availabilityDates: string;
   pickupLocation: {
     location: string;
     latitude: number;
     longitude: number;
   };
   specialInstructions: string;
+  initialDeposit: number;
   agreement: boolean;
   liabilityWaiver: boolean;
 };
@@ -57,8 +56,7 @@ export type ICategoryType = {
   name: string;
 };
 
-
-export type SearchResultItem= {
+export type SearchResultItem = {
   id: number;
   title: string;
   description: string;
@@ -68,8 +66,18 @@ export type SearchResultItem= {
   pricture_url: string;
   initial_deposit: number;
   added_by: string;
-
-}
+};
+export type IUserDetails = {
+  id: string;
+  name: string;
+  email: string;
+  created_at: Date;
+  rating: number;
+  role: "admin" | "user" | null;
+  profileUrl: string | null;
+  totalGivenRent: number | null;
+  totalTakenRent: number | null;
+};
 export type IUserDetailsResponse = {
   success: boolean;
   data: {
@@ -78,10 +86,63 @@ export type IUserDetailsResponse = {
     email: string;
     created_at: Date;
     rating: number;
-    role: "admin" | "user" | null;
+    role: "admin" | "user";
     profileUrl: string | null;
     totalGivenRent: number | null;
     totalTakenRent: number | null;
-    resetPasswordToken: string | null;
   };
+};
+
+export type IUserProfileDetails = {
+  name: string;
+  email: string;
+  created_at: Date;
+  role: "admin" | "user";
+};
+
+export type ILocationSearchResult = {
+  place_id: number;
+  licence: string;
+  osm_type: string;
+  osm_id: number;
+  lat: string;
+  lon: string;
+  category: string;
+  type: string;
+  place_rank: number;
+  importance: number;
+  addresstype: string;
+  name: string;
+  display_name: string;
+  boundingbox: string[];
+};
+
+export type IGeoLocationResponse = {
+  ip: string;
+  network: string;
+  version: string;
+  city: string;
+  region: string;
+  region_code: string;
+  country: string;
+  country_name: string;
+  country_code: string;
+  country_code_iso3: string;
+  country_capital: string;
+  country_tld: string;
+  continent_code: string;
+  in_eu: boolean;
+  postal: string | null;
+  latitude: number;
+  longitude: number;
+  timezone: string;
+  utc_offset: string;
+  country_calling_code: string;
+  currency: string;
+  currency_name: string;
+  languages: string;
+  country_area: number;
+  country_population: number;
+  asn: string;
+  org: string;
 };
