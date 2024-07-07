@@ -11,6 +11,11 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 export const userRole = pgEnum("userRole", ["admin", "user"]);
+export const itemStatus = pgEnum("itemStauts", [
+  "available",
+  "inrent",
+  "unavailable",
+]);
 
 export const users = pgTable(
   "users",
@@ -44,6 +49,7 @@ export const item = pgTable("item", {
   rate: real("rate").notNull(),
   pictureUrl: text("picture_url").array().notNull(),
   initialDeposit: real("initial_deposit"),
+  itemStatus: itemStatus("itemStatus").default("available").notNull(),
   addedBy: uuid("added_by")
     .notNull()
     .references(() => users.id),

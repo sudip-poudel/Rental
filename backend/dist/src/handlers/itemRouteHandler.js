@@ -5,11 +5,17 @@ const db_1 = require("../db");
 const drizzle_orm_1 = require("drizzle-orm");
 const schema_1 = require("../schema/schema");
 const handleCloudinaryUpload_1 = require("../helper/handleCloudinaryUpload");
-const handleGetItem = async (req, res) => {
-    const itemId = req.params.id;
-    const itemData = await db_1.db.query.item.findFirst({
-        where: (0, drizzle_orm_1.eq)(schema_1.item.id, itemId),
-    });
+//fetch items from database to show at the homepage
+const handleGetItem = async (_, res) => {
+    // const itemId = req.params.id;
+    try {
+        const items = await db_1.db.select().from(schema_1.item);
+        return res.json(items);
+    }
+    catch (error) {
+        res.send(error);
+        console.log(error);
+    }
 };
 exports.handleGetItem = handleGetItem;
 //TODO handle the route to post item data along with picture
@@ -69,6 +75,7 @@ const handlePostItem = async (req, res) => {
     }
 };
 exports.handlePostItem = handlePostItem;
+//to get the catagory list from database
 const handleGetCategory = async (_, res) => {
     try {
         const categories = await db_1.db.select().from(schema_1.category);

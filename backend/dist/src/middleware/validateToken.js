@@ -18,7 +18,6 @@ const validateToken = (req, res, next) => {
         return res.status(401).send({ success: false, messege: "Unauthorized" });
     }
     req.params.userId = decoded.id;
-    console.log(req.body.userId);
     console.log(decoded);
     next();
 };

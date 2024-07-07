@@ -14,4 +14,5 @@ router.post("/additem", validateToken_1.default, upload.array("photos", 5), item
 router.get("/getcategory", validateToken_1.default, itemRouteHandler_1.handleGetCategory);
 router.get("/id/:id", validateToken_1.default, itemRouteHandler_1.handleGetItem);
 router.get("/search/:search", validateToken_1.default, itemRouteHandler_1.handleSearch);
+router.get("/item", validateToken_1.default, itemRouteHandler_1.handleGetItem);
 module.exports = router;

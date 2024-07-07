@@ -1,9 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ItemCategoryRelation = exports.UserItemsRelation = exports.itemLocationRelation = exports.itemLocation = exports.itemCategoryTableRelations = exports.itemCategory = exports.category = exports.rentalsTableRelations = exports.rentals = exports.itemRelations = exports.item = exports.users = exports.userRole = void 0;
+exports.ItemCategoryRelation = exports.UserItemsRelation = exports.itemLocationRelation = exports.itemLocation = exports.itemCategoryTableRelations = exports.itemCategory = exports.category = exports.rentalsTableRelations = exports.rentals = exports.itemRelations = exports.item = exports.users = exports.itemStatus = exports.userRole = void 0;
 const drizzle_orm_1 = require("drizzle-orm");
 const pg_core_1 = require("drizzle-orm/pg-core");
 exports.userRole = (0, pg_core_1.pgEnum)("userRole", ["admin", "user"]);
+exports.itemStatus = (0, pg_core_1.pgEnum)("itemStauts", [
+    "available",
+    "inrent",
+    "unavailable",
+]);
 exports.users = (0, pg_core_1.pgTable)("users", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     name: (0, pg_core_1.varchar)("name", { length: 255 }).notNull(),
@@ -32,6 +37,7 @@ exports.item = (0, pg_core_1.pgTable)("item", {
     rate: (0, pg_core_1.real)("rate").notNull(),
     pictureUrl: (0, pg_core_1.text)("picture_url").array().notNull(),
     initialDeposit: (0, pg_core_1.real)("initial_deposit"),
+    itemStatus: (0, exports.itemStatus)("itemStatus").default("available").notNull(),
     addedBy: (0, pg_core_1.uuid)("added_by")
         .notNull()
         .references(() => exports.users.id),

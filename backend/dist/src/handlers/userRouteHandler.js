@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePasswordHandler = exports.verifyUpdatePassword = exports.handleForgetPassword = exports.handleLogout = exports.handleLogin = exports.handleSignup = exports.oAuth2Server = exports.oAuthHandler = void 0;
+exports.getUserById = exports.handleUpdateUserAvater = exports.updatePasswordHandler = exports.verifyUpdatePassword = exports.handleForgetPassword = exports.handleLogout = exports.handleLogin = exports.handleSignup = exports.oAuth2Server = exports.oAuthHandler = void 0;
 const db_1 = require("../db");
 const schema_1 = require("../schema/schema");
 const drizzle_orm_1 = require("drizzle-orm");
@@ -14,6 +14,8 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 // const jwt = require("jsonwebtoken");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const handleCloudinaryUpload_1 = require("../helper/handleCloudinaryUpload");
+//** Auth Routes */
 const handleSignup = async (req, res) => {
     const { email, password, name, } = req.body;
     console.log(email, password, name);
@@ -349,3 +351,61 @@ const updatePasswordHandler = async (req, res) => {
     }
 };
 exports.updatePasswordHandler = updatePasswordHandler;
+/**UPDATE USER DETAILS */
+const handleUpdateUserAvater = async (req, res) => {
+    const photo = req.file;
+    const userId = req.params.userId;
+    console.log(photo, "photos");
+    if (!photo) {
+        return res
+            .status(400)
+            .send({ success: false, message: "No image uploaded" });
+    }
+    try {
+        const b64 = Buffer.from(photo.buffer).toString("base64");
+        let dataURI = ("data:" + photo.mimetype) + ";base64," + b64;
+        const cldRes = await (0, handleCloudinaryUpload_1.handleAvatarImageUpload)(dataURI);
+        const avatarUrl = cldRes.secure_url;
+        const user = await db_1.db.query.users.findFirst({
+            where: (0, drizzle_orm_1.eq)(schema_1.users.id, userId),
+        });
+        if (!user) {
+            return res
+                .status(400)
+                .send({ success: false, message: "User not found" });
+        }
+        await db_1.db
+            .update(schema_1.users)
+            .set({ profileUrl: avatarUrl })
+            .where((0, drizzle_orm_1.eq)(schema_1.users.id, userId));
+        res.status(200).send({ success: true, message: "Profile picture updated" });
+    }
+    catch (error) {
+        res.status(400).send({ success: false, message: "Internal server error" });
+    }
+};
+exports.handleUpdateUserAvater = handleUpdateUserAvater;
+/** User Routes */
+const getUserById = async (req, res) => {
+    const id = req.params.userId;
+    console.log(id);
+    try {
+        const user = await db_1.db.query.users.findFirst({
+            where: (0, drizzle_orm_1.eq)(schema_1.users.id, id),
+            columns: {
+                password: false,
+                resetPasswordToken: false,
+            },
+        });
+        if (!user) {
+            return res
+                .status(400)
+                .send({ success: false, message: "User not found" });
+        }
+        res.status(200).send({ success: true, data: user });
+    }
+    catch (error) {
+        console.error(error);
+    }
+};
+exports.getUserById = getUserById;
