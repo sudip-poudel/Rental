@@ -1,12 +1,10 @@
 import { Request, Response } from "express";
 import { db } from "../db";
-import { eq } from "drizzle-orm";
-import { category, item, itemLocation } from "../schema/schema";
+import { InferSelectModel, eq } from "drizzle-orm";
+import { category, item, itemLocation, rentals } from "../schema/schema";
 import { handleItemImageUpload } from "../helper/handleCloudinaryUpload";
 import { UploadApiResponse } from "cloudinary";
-import { IItem } from "../types/types"
-
-
+import { IItem } from "../types/types";
 
 //fetch items from database to show at the homepage
 export const handleGetItem = async (_: Request, res: Response) => {
@@ -14,7 +12,6 @@ export const handleGetItem = async (_: Request, res: Response) => {
   try {
     const items = await db.select().from(item);
     return res.json(items);
-
   } catch (error) {
     res.send(error);
     console.log(error);
@@ -79,7 +76,6 @@ export const handlePostItem = async (req: Request, res: Response) => {
   }
 };
 
-
 //to get the catagory list from database
 export const handleGetCategory = async (_: Request, res: Response) => {
   try {
@@ -91,12 +87,8 @@ export const handleGetCategory = async (_: Request, res: Response) => {
   }
 };
 
-
-
-
 //to search the item from the item collection with similar keywords in title
 export const handleSearch = async (req: Request, res: Response) => {
-
   const search = req.params.search.toLowerCase();
   console.log(search);
 
@@ -112,4 +104,34 @@ export const handleSearch = async (req: Request, res: Response) => {
   }
 };
 
-
+export const handleRentItem = async (req: Request, res: Response) => {
+  const { rentDetails } = req.body;
+  const { userId } = req.params;
+  const { itemId, startDate, endDate } = rentDetails;
+  try {
+    const itemData = await db.select().from(item).where(eq(item.id, itemId));
+    const itemDetails = itemData[0];
+    const rentData = {
+      item: itemId,
+      rentedBy: userId,
+      rentStart: startDate,
+      rentEnd: endDate,
+      rate: itemDetails.rate,
+      initialDeposit: itemDetails.initialDeposit as number,
+    };
+    const rentItem = await db
+      .insert(rentals)
+      .values(rentData)
+      .returning({ id: item.id });
+    await db
+      .update(item)
+      .set({ itemStatus: "inrent" })
+      .where(eq(item.id, itemId));
+    return res.status(200).json({ success: true, data: rentItem[0] });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to rent item" });
+  }
+};

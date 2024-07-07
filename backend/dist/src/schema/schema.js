@@ -63,8 +63,10 @@ exports.rentals = (0, pg_core_1.pgTable)("rentals", {
     rentedBy: (0, pg_core_1.uuid)("rented_by")
         .notNull()
         .references(() => exports.users.id),
-    rentStart: (0, pg_core_1.timestamp)("rented_at").notNull().defaultNow(),
+    rentStart: (0, pg_core_1.timestamp)("rented_at").notNull(),
     rentEnd: (0, pg_core_1.timestamp)("returned_at"),
+    initialDeposit: (0, pg_core_1.real)("initial_deposit").notNull(),
+    rate: (0, pg_core_1.real)("rate").notNull(),
     isReturned: (0, pg_core_1.boolean)("is_returned").default(false),
 });
 exports.rentalsTableRelations = (0, drizzle_orm_1.relations)(exports.rentals, ({ one, many }) => {

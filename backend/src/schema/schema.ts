@@ -76,8 +76,10 @@ export const rentals = pgTable("rentals", {
   rentedBy: uuid("rented_by")
     .notNull()
     .references(() => users.id),
-  rentStart: timestamp("rented_at").notNull().defaultNow(),
+  rentStart: timestamp("rented_at").notNull(),
   rentEnd: timestamp("returned_at"),
+  initialDeposit: real("initial_deposit").notNull(),
+  rate: real("rate").notNull(),
   isReturned: boolean("is_returned").default(false),
 });
 

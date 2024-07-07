@@ -15,4 +15,5 @@ router.get("/getcategory", validateToken_1.default, itemRouteHandler_1.handleGet
 router.get("/id/:id", validateToken_1.default, itemRouteHandler_1.handleGetItem);
 router.get("/search/:search", validateToken_1.default, itemRouteHandler_1.handleSearch);
 router.get("/item", validateToken_1.default, itemRouteHandler_1.handleGetItem);
+router.post("/retnitem", validateToken_1.default, itemRouteHandler_1.handleRentItem);
 module.exports = router;

@@ -2,6 +2,7 @@ import {
   handleGetCategory,
   handleGetItem,
   handlePostItem,
+  handleRentItem,
   handleSearch,
 } from "../handlers/itemRouteHandler";
 import validateToken from "../middleware/validateToken";
@@ -24,6 +25,7 @@ router.get("/getcategory", validateToken, handleGetCategory);
 
 router.get("/id/:id", validateToken, handleGetItem);
 router.get("/search/:search", validateToken, handleSearch);
-router.get("/item",validateToken,handleGetItem);
+router.get("/item", validateToken, handleGetItem);
+router.post("/retnitem", validateToken, handleRentItem);
 
 module.exports = router;

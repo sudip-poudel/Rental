@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleSearch = exports.handleGetCategory = exports.handlePostItem = exports.handleGetItem = void 0;
+exports.handleRentItem = exports.handleSearch = exports.handleGetCategory = exports.handlePostItem = exports.handleGetItem = void 0;
 const db_1 = require("../db");
 const drizzle_orm_1 = require("drizzle-orm");
 const schema_1 = require("../schema/schema");
@@ -104,3 +104,36 @@ const handleSearch = async (req, res) => {
     }
 };
 exports.handleSearch = handleSearch;
+const handleRentItem = async (req, res) => {
+    const { rentDetails } = req.body;
+    const { userId } = req.params;
+    const { itemId, startDate, endDate } = rentDetails;
+    try {
+        const itemData = await db_1.db.select().from(schema_1.item).where((0, drizzle_orm_1.eq)(schema_1.item.id, itemId));
+        const itemDetails = itemData[0];
+        const rentData = {
+            item: itemId,
+            rentedBy: userId,
+            rentStart: startDate,
+            rentEnd: endDate,
+            rate: itemDetails.rate,
+            initialDeposit: itemDetails.initialDeposit,
+        };
+        const rentItem = await db_1.db
+            .insert(schema_1.rentals)
+            .values(rentData)
+            .returning({ id: schema_1.item.id });
+        await db_1.db
+            .update(schema_1.item)
+            .set({ itemStatus: "inrent" })
+            .where((0, drizzle_orm_1.eq)(schema_1.item.id, itemId));
+        return res.status(200).json({ success: true, data: rentItem[0] });
+    }
+    catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json({ success: false, message: "Failed to rent item" });
+    }
+};
+exports.handleRentItem = handleRentItem;
