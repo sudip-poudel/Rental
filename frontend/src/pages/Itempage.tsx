@@ -1,12 +1,11 @@
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+
 // import sampleItems from "@/sampleData/itemSamples";
 // import { useParams } from "react-router-dom";
 // import camera from "/images/camera.png";
 import for_rent from "/images/for_rent.png";
 // import Card from "@/components/ui/card";
 // import { MapPin } from "lucide-react";
-import { useNavigate ,useLocation} from "react-router-dom";
+import { useLocation} from "react-router-dom";
 // import { useEffect } from "react";
 // import Items from "@/components/Items";
 // import sampleUsers from "@/sampleUser/userSamples";
@@ -19,7 +18,7 @@ const Itempage = () => {
   console.log(item.title)
   // const { id,title,description } = useParams();
   // console.log(item.title);
-  console.log(item.pictureUrl)
+  // console.log(item.pic)
 
 
   // const result = sampleItems.find((item) => item.id === id);
@@ -39,7 +38,6 @@ const Itempage = () => {
   // };
   return (
     <>
-      <Navbar />
       <div>
         {item && (
           <div className=" flex items-center justify-center">
@@ -79,7 +77,6 @@ const Itempage = () => {
           />
         ))}
       </div> */}
-      <Footer />
     </>
   );
 };

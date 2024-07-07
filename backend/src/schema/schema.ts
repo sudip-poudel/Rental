@@ -10,7 +10,6 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-
 export const userRole = pgEnum("userRole", ["admin", "user"]);
 
 export const users = pgTable(

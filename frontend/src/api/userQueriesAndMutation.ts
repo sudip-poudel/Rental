@@ -1,10 +1,12 @@
-import { useMutation } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import {
+  fetchCurrentUserDetails,
   handleForgetPassword,
   handleUpdatePassword,
   loginUser,
   logoutUser,
   signupUser,
+  updateUserAvatar,
 } from "./userApi";
 import getUserCookies from "@/helpers/getUserCookie";
 import { logout, setUser } from "@/store/auth/authSlice";
@@ -13,7 +15,12 @@ import { useNavigate } from "react-router-dom";
 
 export enum QUERY_KYES {
   getCategory = "CATEGORY",
+  user = "USER",
+  getItems = "ITEMS",
+  userDetails = "USER_DETAILS",
 }
+
+const queryClient = new QueryClient();
 
 export const useLogin = () => {
   const dispatch = useDispatch();
@@ -93,5 +100,21 @@ export const useUpdatePassword = () => {
     onSuccess: () => {
       navigate("/signin");
     },
+  });
+};
+
+export const useUpdateUserAvatar = () => {
+  return useMutation({
+    mutationFn: updateUserAvatar,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KYES.userDetails] });
+    },
+  });
+};
+
+export const useGetCurrentUserDetails = () => {
+  return useQuery({
+    queryKey: [QUERY_KYES.userDetails, QUERY_KYES.user],
+    queryFn: fetchCurrentUserDetails,
   });
 };

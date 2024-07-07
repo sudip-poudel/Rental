@@ -3,6 +3,7 @@ import { logout } from "@/store/auth/authSlice";
 import { LogOut, Settings, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
 const ProfileDropDown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,7 +12,7 @@ const ProfileDropDown = () => {
 
   const handleClickOutside = (e) => {
     if (node.current?.contains(e.target)) {
-      // inside click
+      // inside clickp
       return;
     }
     // outside click
@@ -57,26 +58,24 @@ const ProfileDropDown = () => {
             aria-orientation="vertical"
             aria-labelledby="options-menu"
           >
-            <a
-              href="#"
+            <div
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               role="menuitem"
             >
-              <p className="flex items-center gap-2">
+              <Link to={"/profile"} className="flex items-center gap-2">
                 <User width={20} />
                 Profile
-              </p>
-            </a>
-            <a
-              href="#"
+              </Link>
+            </div>
+            <div
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               role="menuitem"
             >
-              <p className="flex items-center gap-2">
+              <Link to={"/usersetting"} className="flex items-center gap-2">
                 <Settings width={20} />
                 Settings
-              </p>
-            </a>
+              </Link>
+            </div>
             <button
               onClick={handleLogout}
               className="block px-4 py-2 w-full text-sm text-gray-700 hover:bg-gray-100"

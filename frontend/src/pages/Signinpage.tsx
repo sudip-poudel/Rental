@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { Eye, Loader2 } from "lucide-react";
 import { EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -411,8 +409,7 @@ const Signinpage = () => {
   return isLoggedIn ? (
     ""
   ) : (
-    <div className="">
-      <Navbar />
+    <>
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center justify-around w-96 h-16 rounded-sm mb-4">
           <div className="w-1/2 mx-1">
@@ -443,8 +440,7 @@ const Signinpage = () => {
           )}
         </div>
       </div>
-      <Footer />
-    </div>
+    </>
   );
 };
 
