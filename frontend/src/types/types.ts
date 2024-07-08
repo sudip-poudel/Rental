@@ -146,3 +146,25 @@ export type IGeoLocationResponse = {
   asn: string;
   org: string;
 };
+
+export type IItem = {
+  itemStatus: "available" | "inrent" | "unavailable";
+  id: string;
+  created_at: Date;
+  title: string;
+  description: string;
+  category: string;
+  rate: number;
+  pictureUrl: string[];
+  initialDeposit: number | null;
+  addedBy: string;
+};
+
+export type IItemResponse = {
+  success: boolean;
+  data: IItem[];
+};
+export type IItemDetailsResponse = {
+  success: boolean;
+  data: IItem;
+};

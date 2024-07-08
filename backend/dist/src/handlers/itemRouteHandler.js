@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleRentItem = exports.handleSearch = exports.handleGetCategory = exports.handlePostItem = exports.handleGetItem = void 0;
+exports.handleRentItem = exports.handleSearch = exports.handleGetCategory = exports.handlePostItem = exports.handleGetItemByCategory = exports.handleGetItemById = exports.handleGetItem = void 0;
 const db_1 = require("../db");
 const drizzle_orm_1 = require("drizzle-orm");
 const schema_1 = require("../schema/schema");
@@ -9,15 +9,45 @@ const handleCloudinaryUpload_1 = require("../helper/handleCloudinaryUpload");
 const handleGetItem = async (_, res) => {
     // const itemId = req.params.id;
     try {
-        const items = await db_1.db.select().from(schema_1.item);
-        return res.json(items);
+        const items = await db_1.db.select().from(schema_1.item).limit(10);
+        return res.status(200).json({ success: true, data: items });
     }
     catch (error) {
-        res.send(error);
         console.log(error);
+        // res.send({ succss: false, message: "Failed to fetch items" });
     }
 };
 exports.handleGetItem = handleGetItem;
+const handleGetItemById = async (req, res) => {
+    const itemId = req.params.id;
+    try {
+        const itemData = (await db_1.db.select().from(schema_1.item).where((0, drizzle_orm_1.eq)(schema_1.item.id, itemId)))[0];
+        return res.status(200).json({ success: true, data: itemData });
+    }
+    catch (error) {
+        console.log(error);
+    }
+};
+exports.handleGetItemById = handleGetItemById;
+const handleGetItemByCategory = async (req, res) => {
+    const category = req.params.categoryId;
+    console.log(category);
+    try {
+        const items = await db_1.db.query.item.findMany({
+            with: { itemLocation: true },
+            where: (0, drizzle_orm_1.eq)(schema_1.item.category, category),
+        });
+        const locationDetails = await db_1.db.query.itemLocation.findMany({
+            where: (0, drizzle_orm_1.eq)(schema_1.itemLocation.itemId, items[0].id),
+        });
+        console.log(items);
+        return res.status(200).json({ success: true, data: items });
+    }
+    catch (error) {
+        console.log(error);
+    }
+};
+exports.handleGetItemByCategory = handleGetItemByCategory;
 //TODO handle the route to post item data along with picture
 const handlePostItem = async (req, res) => {
     const itemData = req.body;
@@ -38,14 +68,13 @@ const handlePostItem = async (req, res) => {
                 urls.push(cldRes.secure_url);
                 console.log(cldRes.secure_url, "test");
             }
-            //TODO remove 90 and add initial deposit in the form
             const itemdetails = {
                 title: itemData.title,
                 description: itemData.description,
                 category: itemData.category,
                 rate: itemData.rate,
                 pictureUrl: urls,
-                initialDeposit: itemData.initialDeposit || 90,
+                initialDeposit: itemData.initialDeposit,
                 addedBy: req.params.userId,
             };
             //TODO handle category first then handle this

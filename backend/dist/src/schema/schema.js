@@ -53,6 +53,7 @@ exports.itemRelations = (0, drizzle_orm_1.relations)(exports.item, ({ one, many 
             references: [exports.category.id],
         }),
         rentals: one(exports.rentals),
+        location: one(exports.itemLocation),
     };
 });
 exports.rentals = (0, pg_core_1.pgTable)("rentals", {

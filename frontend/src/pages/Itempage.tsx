@@ -1,30 +1,38 @@
-import sampleItems from "@/sampleData/itemSamples";
 import { useParams } from "react-router-dom";
 import camera from "/images/camera.png";
 import for_rent from "/images/for_rent.png";
 import Card from "@/components/ui/card";
 import { MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useGetItemById, useGetItems } from "@/api/itemsQueriesAndMutation";
 // import Items from "@/components/Items";
 // import sampleUsers from "@/sampleUser/userSamples";
 const Itempage = () => {
   const { id } = useParams();
 
-  useEffect(() => {
-    
-  }, []);
+  const { data: itemDetails, isLoading: isItemDetailsLoading } = useGetItemById(
+    id as string
+  );
+  const { data: availableItems, isLoading: isAllItensLoading } = useGetItems();
 
-  const result = sampleItems.find((item) => item.id === id);
+  // const result = sampleItems.find((item) => item.id === id);
+  const result = itemDetails;
 
   // console.log(result);
-  const similarItems = sampleItems.filter(
+  const similarItems = availableItems?.filter(
     (item) => item.category === result?.category
   );
-  const relatedItems = similarItems.filter((item) => item.id !== result?.id);
+  const relatedItems = similarItems?.filter((item) => item.id !== result?.id);
   // console.log(similarItems);
 
   const navigate = useNavigate();
+  if (isItemDetailsLoading || isAllItensLoading) {
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        <img src="/images/loaderBlack.svg" alt="Loading..." />
+      </div>
+    );
+  }
   const handleCard = (id) => {
     // console.log("card clicked");
     // console.log(id);
@@ -51,7 +59,7 @@ const Itempage = () => {
                   <div className="text-lg mt-2">{result.description}</div>
                   {/* <div className="mt-2">{result.category}</div> */}
                   <div className="mt-2 flex">
-                    <MapPin size={18} /> {result.location}
+                    <MapPin size={18} /> {result.itemStatus}
                   </div>
                   {/* <div className="mt-2 cursor-pointer"> <PhoneCall size={18} /> {result?.contact}</div> */}
                 </div>
@@ -62,7 +70,7 @@ const Itempage = () => {
       </div>
       <div className="mt-12 ml-10 font-bold">Related Items:</div>
       <div className=" mt-12 grid place-content-center place-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-        {relatedItems.map((item, i) => (
+        {relatedItems?.map((item, i) => (
           <Card
             onClick={handleCard.bind(this, item.id)}
             className="rounded-lg shadow-md overflow-hidden "

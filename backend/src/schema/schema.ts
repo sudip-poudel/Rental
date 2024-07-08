@@ -65,6 +65,7 @@ export const itemRelations = relations(item, ({ one, many }) => {
       references: [category.id],
     }),
     rentals: one(rentals),
+    location: one(itemLocation),
   };
 });
 

@@ -10,10 +10,42 @@ import { IItem } from "../types/types";
 export const handleGetItem = async (_: Request, res: Response) => {
   // const itemId = req.params.id;
   try {
-    const items = await db.select().from(item);
-    return res.json(items);
+    const items = await db.select().from(item).limit(10);
+    return res.status(200).json({ success: true, data: items });
   } catch (error) {
-    res.send(error);
+    console.log(error);
+    // res.send({ succss: false, message: "Failed to fetch items" });
+  }
+};
+
+export const handleGetItemById = async (req: Request, res: Response) => {
+  const itemId = req.params.id;
+  try {
+    const itemData = (
+      await db.select().from(item).where(eq(item.id, itemId))
+    )[0];
+    return res.status(200).json({ success: true, data: itemData });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const handleGetItemByCategory = async (req: Request, res: Response) => {
+  const category = req.params.categoryId;
+  console.log(category);
+
+  try {
+    const items = await db.query.item.findMany({
+      with: { itemLocation: true },
+      where: eq(item.category, category),
+    });
+    const locationDetails = await db.query.itemLocation.findMany({
+      where: eq(itemLocation.itemId, items[0].id),
+    });
+    console.log(items);
+
+    return res.status(200).json({ success: true, data: items });
+  } catch (error) {
     console.log(error);
   }
 };
@@ -39,14 +71,13 @@ export const handlePostItem = async (req: Request, res: Response) => {
 
         console.log(cldRes.secure_url, "test");
       }
-      //TODO remove 90 and add initial deposit in the form
       const itemdetails: IItem = {
         title: itemData.title,
         description: itemData.description,
         category: itemData.category,
         rate: itemData.rate,
         pictureUrl: urls,
-        initialDeposit: itemData.initialDeposit || 90,
+        initialDeposit: itemData.initialDeposit as number,
         addedBy: req.params.userId,
       };
       //TODO handle category first then handle this

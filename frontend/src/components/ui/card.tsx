@@ -1,22 +1,20 @@
 import { MapPin } from "lucide-react";
 import { Button } from "./button";
+import { IItem } from "@/types/types";
 
-interface Item {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  created_at: string;
-  location: string;
-  rate: number;
-  pictureUrl: string;
-
-}
-
-const Card = ({ item, className, onClick }: { item: Item; className?: string; onClick: React.MouseEventHandler<HTMLElement> }) => {
+const Card = ({
+  item,
+  className,
+  onClick,
+}: {
+  item: IItem;
+  className?: string;
+  onClick: React.MouseEventHandler<HTMLElement>;
+}) => {
   console.log(item.pictureUrl);
   return (
-    <div onClick={onClick}
+    <div
+      onClick={onClick}
       className={`w-full sm:w-[95%] transform transition duration-500 ease-in-out hover:scale-105 ${className}`}
     >
       <img
@@ -28,7 +26,7 @@ const Card = ({ item, className, onClick }: { item: Item; className?: string; on
         <div className="font-bold text-lg mb-2">{item.title}</div>
         <p className="text-gray-700 text-sm">{item.description}</p>
         <p className="text-gray-700 text-sm flex gap-2 items-center">
-          <MapPin size={18} /> {item.location}
+          <MapPin size={18} /> {item.itemStatus}
         </p>
         <div className="flex items-center justify-around">
           <p className="text-gray-700 font-semibold">Rate: ${item.rate} /day</p>

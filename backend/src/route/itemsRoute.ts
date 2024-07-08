@@ -1,6 +1,8 @@
 import {
   handleGetCategory,
   handleGetItem,
+  handleGetItemByCategory,
+  handleGetItemById,
   handlePostItem,
   handleRentItem,
   handleSearch,
@@ -23,9 +25,10 @@ router.post(
 );
 router.get("/getcategory", validateToken, handleGetCategory);
 
-router.get("/id/:id", validateToken, handleGetItem);
-router.get("/search/:search", validateToken, handleSearch);
-router.get("/item", validateToken, handleGetItem);
+router.get("/item", handleGetItem);
 router.post("/rentitem", validateToken, handleRentItem);
+router.get("/search/:search", validateToken, handleSearch);
+router.get("/item/:categoryId", handleGetItemByCategory);
+router.get("/:id", validateToken, handleGetItemById);
 
 module.exports = router;
