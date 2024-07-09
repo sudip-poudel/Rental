@@ -7,11 +7,29 @@ import { UploadApiResponse } from "cloudinary";
 import { IItem } from "../types/types";
 
 //fetch items from database to show at the homepage
+type ItemDetails = InferSelectModel<typeof item> & {
+  locationDetails: InferSelectModel<typeof itemLocation>;
+};
+
 export const handleGetItem = async (_: Request, res: Response) => {
   // const itemId = req.params.id;
   try {
     const items = await db.select().from(item).limit(10);
-    return res.status(200).json({ success: true, data: items });
+    let itemDetailsWithLocation: ItemDetails[] = [];
+    for (const item of items) {
+      const locationDetails = (
+        await db.query.itemLocation.findMany({
+          where: eq(itemLocation.itemId, item.id),
+        })
+      )[0];
+      const details = { ...item, locationDetails: locationDetails };
+      itemDetailsWithLocation = [...itemDetailsWithLocation, details];
+    }
+    console.log(itemDetailsWithLocation);
+
+    return res
+      .status(200)
+      .json({ success: true, data: itemDetailsWithLocation });
   } catch (error) {
     console.log(error);
     // res.send({ succss: false, message: "Failed to fetch items" });

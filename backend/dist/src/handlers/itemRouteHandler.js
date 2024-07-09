@@ -5,12 +5,22 @@ const db_1 = require("../db");
 const drizzle_orm_1 = require("drizzle-orm");
 const schema_1 = require("../schema/schema");
 const handleCloudinaryUpload_1 = require("../helper/handleCloudinaryUpload");
-//fetch items from database to show at the homepage
 const handleGetItem = async (_, res) => {
     // const itemId = req.params.id;
     try {
         const items = await db_1.db.select().from(schema_1.item).limit(10);
-        return res.status(200).json({ success: true, data: items });
+        let itemDetailsWithLocation = [];
+        for (const item of items) {
+            const locationDetails = (await db_1.db.query.itemLocation.findMany({
+                where: (0, drizzle_orm_1.eq)(schema_1.itemLocation.itemId, item.id),
+            }))[0];
+            const details = { ...item, locationDetails: locationDetails };
+            itemDetailsWithLocation = [...itemDetailsWithLocation, details];
+        }
+        console.log(itemDetailsWithLocation);
+        return res
+            .status(200)
+            .json({ success: true, data: itemDetailsWithLocation });
     }
     catch (error) {
         console.log(error);
