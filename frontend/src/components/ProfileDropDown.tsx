@@ -1,13 +1,16 @@
 import { logoutUser } from "@/api/userApi";
 import { logout } from "@/store/auth/authSlice";
+import { RootState } from "@/types/types";
 import { LogOut, Settings, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 const ProfileDropDown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
+  const userId = useSelector((state: RootState) => state.auth.userInfo.id);
   const node = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = (e) => {
@@ -62,7 +65,10 @@ const ProfileDropDown = () => {
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               role="menuitem"
             >
-              <Link to={"/profile"} className="flex items-center gap-2">
+              <Link
+                to={`/profile/${userId}`}
+                className="flex items-center gap-2"
+              >
                 <User width={20} />
                 Profile
               </Link>

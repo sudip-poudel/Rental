@@ -9,7 +9,7 @@ const Items = () => {
   const { data: items, isLoading } = useGetItems();
 
   const handleCard = (id) => {
-    navigate(`/itempage/${id}`, { replace: true });
+    navigate(`/itempage/${id}`, { replace: true, preventScrollReset: true });
   };
 
   return (
@@ -26,7 +26,9 @@ const Items = () => {
           ))}
         </div>
       ) : (
-        <img src="images/loaderBlack.svg" alt="Loading..." />
+        <div className="flex items-center justify-center w-full h-[20vh]">
+          <img src="images/loaderBlack.svg" alt="Loading..." />
+        </div>
       )}
     </>
   );

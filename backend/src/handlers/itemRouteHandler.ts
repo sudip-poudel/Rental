@@ -42,7 +42,13 @@ export const handleGetItemById = async (req: Request, res: Response) => {
     const itemData = (
       await db.select().from(item).where(eq(item.id, itemId))
     )[0];
-    return res.status(200).json({ success: true, data: itemData });
+    const locationDetails = (
+      await db.query.itemLocation.findMany({
+        where: eq(itemLocation.itemId, item.id),
+      })
+    )[0] as InferSelectModel<typeof itemLocation>;
+    const itemDetails = { ...itemData, locationDetails: locationDetails };
+    return res.status(200).json({ success: true, data: itemDetails });
   } catch (error) {
     console.log(error);
   }

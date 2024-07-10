@@ -10,7 +10,7 @@ const validateToken = (req, res, next) => {
     console.log(token);
     if (!token) {
         console.log(token);
-        return res.status(401).send({ success: false, messege: "Please Login" });
+        res.redirect(`${config_1.FRONTEND_URL}/signin`);
     }
     const decoded = jsonwebtoken_1.default.verify(token, config_1.JWT_SECRET);
     console.log(decoded);

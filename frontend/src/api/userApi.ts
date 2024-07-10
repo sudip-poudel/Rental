@@ -23,6 +23,22 @@ const fetchCurrentUserDetails = async () => {
   }
 };
 
+const fetchUserDetailsById = async (id: string) => {
+  try {
+    const response: AxiosResponse<IUserDetailsResponse> = await axios.get(
+      `${import.meta.env.VITE_API_URL}/user/getUserDetails/${id}`
+    );
+    const data = response.data.data;
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An Unknown Error Occored");
+    }
+  }
+};
+
 const signupUser = async (data: ISignupData) => {
   try {
     const response: AxiosResponse<IUserLoginResponse> = await axios.post(
@@ -159,4 +175,5 @@ export {
   handleForgetPassword,
   handleUpdatePassword,
   updateUserAvatar,
+  fetchUserDetailsById,
 };

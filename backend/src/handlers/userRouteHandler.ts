@@ -438,7 +438,7 @@ const handleUpdateUserAvater = async (req: Request, res: Response) => {
 /** User Routes */
 
 const getUserById = async (req: Request, res: Response) => {
-  const id = req.params.userId;
+  const id = req.params.id;
   console.log(id);
   try {
     const user = await db.query.users.findFirst({

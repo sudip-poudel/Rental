@@ -20,7 +20,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 router.post("/signup", isLoggedOut, handleSignup);
-router.get("/getUserDetails", validateToken, getUserById);
+router.get("/getUserDetails/:id", validateToken, getUserById);
 router.post("/login", isLoggedOut, handleLogin);
 router.get("/logout", isLoggedIn, handleLogout);
 //TODO add a route to handle google auth

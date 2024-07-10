@@ -32,7 +32,11 @@ const handleGetItemById = async (req, res) => {
     const itemId = req.params.id;
     try {
         const itemData = (await db_1.db.select().from(schema_1.item).where((0, drizzle_orm_1.eq)(schema_1.item.id, itemId)))[0];
-        return res.status(200).json({ success: true, data: itemData });
+        const locationDetails = (await db_1.db.query.itemLocation.findMany({
+            where: (0, drizzle_orm_1.eq)(schema_1.itemLocation.itemId, schema_1.item.id),
+        }))[0];
+        const itemDetails = { ...itemData, locationDetails: locationDetails };
+        return res.status(200).json({ success: true, data: itemDetails });
     }
     catch (error) {
         console.log(error);

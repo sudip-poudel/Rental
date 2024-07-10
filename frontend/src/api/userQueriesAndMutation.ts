@@ -1,6 +1,7 @@
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import {
   fetchCurrentUserDetails,
+  fetchUserDetailsById,
   handleForgetPassword,
   handleUpdatePassword,
   loginUser,
@@ -117,5 +118,12 @@ export const useGetCurrentUserDetails = () => {
   return useQuery({
     queryKey: [QUERY_KYES.userDetails, QUERY_KYES.user],
     queryFn: fetchCurrentUserDetails,
+  });
+};
+
+export const useGetUserDetailsById = (userId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KYES.userDetails, userId],
+    queryFn: () => fetchUserDetailsById(userId),
   });
 };
