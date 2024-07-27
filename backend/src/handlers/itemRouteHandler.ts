@@ -25,7 +25,6 @@ export const handleGetItem = async (_: Request, res: Response) => {
       const details = { ...item, locationDetails: locationDetails };
       itemDetailsWithLocation = [...itemDetailsWithLocation, details];
     }
-    console.log(itemDetailsWithLocation);
 
     return res
       .status(200)
@@ -44,10 +43,14 @@ export const handleGetItemById = async (req: Request, res: Response) => {
     )[0];
     const locationDetails = (
       await db.query.itemLocation.findMany({
-        where: eq(itemLocation.itemId, item.id),
+        where: eq(itemLocation.itemId, itemData.id),
       })
     )[0] as InferSelectModel<typeof itemLocation>;
+    console.log(locationDetails, "locationDetails");
+
     const itemDetails = { ...itemData, locationDetails: locationDetails };
+    console.log(itemDetails, "itemDetails");
+
     return res.status(200).json({ success: true, data: itemDetails });
   } catch (error) {
     console.log(error);
@@ -73,9 +76,9 @@ export const handleGetItemByCategory = async (req: Request, res: Response) => {
     console.log(error);
   }
 };
-//TODO handle the route to post item data along with picture
 export const handlePostItem = async (req: Request, res: Response) => {
   const itemData = req.body;
+  console.log(itemData);
 
   try {
     if (req.files) {
@@ -100,11 +103,12 @@ export const handlePostItem = async (req: Request, res: Response) => {
         description: itemData.description,
         category: itemData.category,
         rate: itemData.rate,
+        rentStart: new Date(itemData.rentStart),
+        rentEnd: new Date(itemData.rentEnd),
         pictureUrl: urls,
         initialDeposit: itemData.initialDeposit as number,
         addedBy: req.params.userId,
       };
-      //TODO handle category first then handle this
       const newItem = await db
         .insert(item)
         .values(itemdetails)
@@ -160,17 +164,19 @@ export const handleSearch = async (req: Request, res: Response) => {
 };
 
 export const handleRentItem = async (req: Request, res: Response) => {
-  const { rentDetails } = req.body;
+  const rentDetails = req.body;
   const { userId } = req.params;
-  const { itemId, startDate, endDate } = rentDetails;
+  console.log(rentDetails);
+
+  const { item: itemId, rentStart, rentEnd } = rentDetails;
   try {
     const itemData = await db.select().from(item).where(eq(item.id, itemId));
     const itemDetails = itemData[0];
     const rentData = {
       item: itemId,
       rentedBy: userId,
-      rentStart: startDate,
-      rentEnd: endDate,
+      rentStart: new Date(rentStart),
+      rentEnd: new Date(rentEnd),
       rate: itemDetails.rate,
       initialDeposit: itemDetails.initialDeposit as number,
     };
@@ -182,11 +188,29 @@ export const handleRentItem = async (req: Request, res: Response) => {
       .update(item)
       .set({ itemStatus: "inrent" })
       .where(eq(item.id, itemId));
-    return res.status(200).json({ success: true, data: rentItem[0] });
+    return res.status(200).json({ success: true, data: "Rented successfully" });
   } catch (error) {
     console.log(error);
     return res
       .status(500)
-      .json({ success: false, message: "Failed to rent item" });
+      .json({ success: false, data: "Failed to rent item" });
+  }
+};
+export const handleGetRentedItems = async (req: Request, res: Response) => {
+  const { user } = req.params;
+
+  console.log(user, req.params);
+
+  try {
+    const rentedItems = await db
+      .select()
+      .from(rentals)
+      .where(eq(rentals.rentedBy, user));
+    return res.status(200).json({ success: true, data: rentedItems });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, data: "Failed to fetch rented items" });
   }
 };

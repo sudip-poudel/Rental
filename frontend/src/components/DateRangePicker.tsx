@@ -32,7 +32,7 @@ export default function DateRangePicker({
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-normal",
+              "w-full justify-start text-left font-normal",
               !date && "text-muted-foreground"
             )}
           >
@@ -56,6 +56,7 @@ export default function DateRangePicker({
             initialFocus
             mode="range"
             defaultMonth={date?.from}
+            disabled={{ before: new Date() }}
             selected={date}
             onSelect={handleDateChange}
             numberOfMonths={2}

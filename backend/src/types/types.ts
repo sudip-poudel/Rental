@@ -15,6 +15,8 @@ export type IItem = {
   description: string;
   category: string;
   created_at?: Date;
+  rentStart: Date;
+  rentEnd: Date;
   rate: number;
   pictureUrl: string[];
   initialDeposit: number;

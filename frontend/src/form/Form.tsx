@@ -7,7 +7,6 @@ import { ICategoryType, IFormData } from "@/types/types";
 import { MapPopup } from "@/components/Map";
 import { useAddItem, useGetCategories } from "@/api/itemsQueriesAndMutation";
 import DateRangePicker from "@/components/DateRangePicker";
-import { addDays } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
@@ -62,10 +61,7 @@ const RentProductForm = () => {
     });
   };
 
-  const [date, handleDateChange] = useState<DateRange | undefined>({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
-  });
+  const [date, handleDateChange] = useState<DateRange | undefined>();
 
   useEffect(() => {
     setFormData((prev) => ({ ...prev, rentalPeriod: date }));
@@ -82,6 +78,10 @@ const RentProductForm = () => {
 
     const fromPayload = new FormData(e.target);
     fromPayload.set("pickupLocation", JSON.stringify(formData.pickupLocation));
+    if (formData.rentalPeriod?.from && formData.rentalPeriod?.to) {
+      fromPayload.set("rentEnd", formData.rentalPeriod?.to.toISOString());
+      fromPayload.set("rentStart", formData.rentalPeriod?.from.toISOString());
+    }
     formData.photos.forEach((photo) => {
       fromPayload.append("photos", photo);
     });
@@ -198,6 +198,7 @@ const RentProductForm = () => {
                 id="photos"
                 type="file"
                 multiple
+                accept="image/*"
                 onChange={handleFileChange}
                 name="photos"
                 placeholder="Upload photo of item"

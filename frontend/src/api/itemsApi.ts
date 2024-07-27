@@ -2,6 +2,8 @@ import {
   ICategoryType,
   IItemDetailsResponse,
   IItemResponse,
+  IRentDetails,
+  IRentDetailsResponse,
 } from "@/types/types";
 import axios, { AxiosResponse } from "axios";
 
@@ -71,6 +73,7 @@ const fetchItemById = async (id: string) => {
       `${import.meta.env.VITE_API_URL}/item/${id}`
     );
     const result = response.data.data;
+
     return result;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -81,4 +84,36 @@ const fetchItemById = async (id: string) => {
   }
 };
 
-export { fetchCategoryDetails, submitItem, fetchItems, fetchItemById };
+//TODO add type def and fix this
+const addItemToRent = async (data: IRentDetails) => {
+  console.log(data, "fisdahkljf");
+  const response: AxiosResponse<IItemDetailsResponse> = await axios.post(
+    `${import.meta.env.VITE_API_URL}/item/rentitem`,
+    data
+  );
+  const result = response.data;
+  return result;
+};
+const fetchItemsRentedByUser = async (userId: string) => {
+  try {
+    const response: AxiosResponse<IRentDetailsResponse> = await axios.get(
+      `${import.meta.env.VITE_API_URL}/item/renteditems/${userId}`
+    );
+    const result = response.data.data;
+    return result;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An unknown error occurred");
+    }
+  }
+};
+export {
+  fetchCategoryDetails,
+  submitItem,
+  fetchItems,
+  fetchItemById,
+  addItemToRent,
+  fetchItemsRentedByUser,
+};

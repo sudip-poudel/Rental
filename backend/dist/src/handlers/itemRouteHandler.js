@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleRentItem = exports.handleSearch = exports.handleGetCategory = exports.handlePostItem = exports.handleGetItemByCategory = exports.handleGetItemById = exports.handleGetItem = void 0;
+exports.handleGetRentedItems = exports.handleRentItem = exports.handleSearch = exports.handleGetCategory = exports.handlePostItem = exports.handleGetItemByCategory = exports.handleGetItemById = exports.handleGetItem = void 0;
 const db_1 = require("../db");
 const drizzle_orm_1 = require("drizzle-orm");
 const schema_1 = require("../schema/schema");
@@ -17,7 +17,6 @@ const handleGetItem = async (_, res) => {
             const details = { ...item, locationDetails: locationDetails };
             itemDetailsWithLocation = [...itemDetailsWithLocation, details];
         }
-        console.log(itemDetailsWithLocation);
         return res
             .status(200)
             .json({ success: true, data: itemDetailsWithLocation });
@@ -33,9 +32,11 @@ const handleGetItemById = async (req, res) => {
     try {
         const itemData = (await db_1.db.select().from(schema_1.item).where((0, drizzle_orm_1.eq)(schema_1.item.id, itemId)))[0];
         const locationDetails = (await db_1.db.query.itemLocation.findMany({
-            where: (0, drizzle_orm_1.eq)(schema_1.itemLocation.itemId, schema_1.item.id),
+            where: (0, drizzle_orm_1.eq)(schema_1.itemLocation.itemId, itemData.id),
         }))[0];
+        console.log(locationDetails, "locationDetails");
         const itemDetails = { ...itemData, locationDetails: locationDetails };
+        console.log(itemDetails, "itemDetails");
         return res.status(200).json({ success: true, data: itemDetails });
     }
     catch (error) {
@@ -62,9 +63,9 @@ const handleGetItemByCategory = async (req, res) => {
     }
 };
 exports.handleGetItemByCategory = handleGetItemByCategory;
-//TODO handle the route to post item data along with picture
 const handlePostItem = async (req, res) => {
     const itemData = req.body;
+    console.log(itemData);
     try {
         if (req.files) {
             const uploadedPhotos = req.files;
@@ -87,11 +88,12 @@ const handlePostItem = async (req, res) => {
                 description: itemData.description,
                 category: itemData.category,
                 rate: itemData.rate,
+                rentStart: new Date(itemData.rentStart),
+                rentEnd: new Date(itemData.rentEnd),
                 pictureUrl: urls,
                 initialDeposit: itemData.initialDeposit,
                 addedBy: req.params.userId,
             };
-            //TODO handle category first then handle this
             const newItem = await db_1.db
                 .insert(schema_1.item)
                 .values(itemdetails)
@@ -148,17 +150,18 @@ const handleSearch = async (req, res) => {
 };
 exports.handleSearch = handleSearch;
 const handleRentItem = async (req, res) => {
-    const { rentDetails } = req.body;
+    const rentDetails = req.body;
     const { userId } = req.params;
-    const { itemId, startDate, endDate } = rentDetails;
+    console.log(rentDetails);
+    const { item: itemId, rentStart, rentEnd } = rentDetails;
     try {
         const itemData = await db_1.db.select().from(schema_1.item).where((0, drizzle_orm_1.eq)(schema_1.item.id, itemId));
         const itemDetails = itemData[0];
         const rentData = {
             item: itemId,
             rentedBy: userId,
-            rentStart: startDate,
-            rentEnd: endDate,
+            rentStart: new Date(rentStart),
+            rentEnd: new Date(rentEnd),
             rate: itemDetails.rate,
             initialDeposit: itemDetails.initialDeposit,
         };
@@ -170,13 +173,31 @@ const handleRentItem = async (req, res) => {
             .update(schema_1.item)
             .set({ itemStatus: "inrent" })
             .where((0, drizzle_orm_1.eq)(schema_1.item.id, itemId));
-        return res.status(200).json({ success: true, data: rentItem[0] });
+        return res.status(200).json({ success: true, data: "Rented successfully" });
     }
     catch (error) {
         console.log(error);
         return res
             .status(500)
-            .json({ success: false, message: "Failed to rent item" });
+            .json({ success: false, data: "Failed to rent item" });
     }
 };
 exports.handleRentItem = handleRentItem;
+const handleGetRentedItems = async (req, res) => {
+    const { user } = req.params;
+    console.log(user, req.params);
+    try {
+        const rentedItems = await db_1.db
+            .select()
+            .from(schema_1.rentals)
+            .where((0, drizzle_orm_1.eq)(schema_1.rentals.rentedBy, user));
+        return res.status(200).json({ success: true, data: rentedItems });
+    }
+    catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json({ success: false, data: "Failed to fetch rented items" });
+    }
+};
+exports.handleGetRentedItems = handleGetRentedItems;

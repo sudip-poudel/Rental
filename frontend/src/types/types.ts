@@ -158,6 +158,13 @@ export type IItem = {
   pictureUrl: string[];
   initialDeposit: number | null;
   addedBy: string;
+  locationDetails: {
+    id: string;
+    location: string;
+    itemId: string;
+    latitude: number;
+    longitude: number;
+  };
 };
 
 export type IItemResponse = {
@@ -167,4 +174,17 @@ export type IItemResponse = {
 export type IItemDetailsResponse = {
   success: boolean;
   data: IItem;
+};
+
+export type IRentDetails = {
+  item: string;
+  rate: number;
+  rentStart: Date | undefined;
+  rentEnd: Date | undefined;
+  rentedBy: string;
+  initialDeposit: number;
+};
+export type IRentDetailsResponse = {
+  success: boolean;
+  data: IRentDetails[];
 };

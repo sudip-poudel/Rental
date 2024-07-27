@@ -1,6 +1,7 @@
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,
+  date,
   index,
   pgEnum,
   pgTable,
@@ -38,6 +39,7 @@ export const users = pgTable(
     };
   }
 );
+//TODO item rent period is not handled
 export const item = pgTable("item", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }).notNull(),
@@ -48,6 +50,8 @@ export const item = pgTable("item", {
   created_at: timestamp("created_at").notNull().defaultNow(),
   rate: real("rate").notNull(),
   pictureUrl: text("picture_url").array().notNull(),
+  rentStart: date("rent_start", { mode: "date" }).notNull(),
+  rentEnd: date("rent_end", { mode: "date" }).notNull(),
   initialDeposit: real("initial_deposit"),
   itemStatus: itemStatus("itemStatus").default("available").notNull(),
   addedBy: uuid("added_by")
@@ -77,8 +81,8 @@ export const rentals = pgTable("rentals", {
   rentedBy: uuid("rented_by")
     .notNull()
     .references(() => users.id),
-  rentStart: timestamp("rented_at").notNull(),
-  rentEnd: timestamp("returned_at"),
+  rentStart: date("rented_at", { mode: "date" }).notNull(),
+  rentEnd: date("returned_at", { mode: "date" }).notNull(),
   initialDeposit: real("initial_deposit").notNull(),
   rate: real("rate").notNull(),
   isReturned: boolean("is_returned").default(false),

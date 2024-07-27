@@ -3,6 +3,7 @@ import {
   handleGetItem,
   handleGetItemByCategory,
   handleGetItemById,
+  handleGetRentedItems,
   handlePostItem,
   handleRentItem,
   handleSearch,
@@ -27,8 +28,10 @@ router.get("/getcategory", validateToken, handleGetCategory);
 
 router.get("/item", handleGetItem);
 router.post("/rentitem", validateToken, handleRentItem);
+router.get("/renteditems/:user", validateToken, handleGetRentedItems);
 router.get("/search/:search", validateToken, handleSearch);
 router.get("/item/:categoryId", handleGetItemByCategory);
+
 router.get("/:id", validateToken, handleGetItemById);
 
 module.exports = router;

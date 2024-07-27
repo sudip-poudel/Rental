@@ -30,7 +30,7 @@ const Map = ({
   isPreview: boolean;
   classname?: string;
   handleChange?: (e) => void;
-  setSelectedLocation: (e) => void;
+  setSelectedLocation?: (e) => void;
 }) => {
   const [position, setPosition] = useState<LatLngTuple>(marker);
   const [center, setCenter] = useState<LatLngTuple>(marker);
@@ -57,7 +57,7 @@ const Map = ({
           },
         }));
       }
-      setSelectedLocation(data.display_name);
+      if (setSelectedLocation) setSelectedLocation(data.display_name);
     };
     fetchLocation();
   }, [position]);
@@ -83,7 +83,7 @@ const Map = ({
         zoom={13}
         scrollWheelZoom={true}
         dragging={true}
-        className="w-full h-96"
+        className={`w-full ${isPreview ? "h-52" : "h-96"}`}
         maxBoundsViscosity={0.5}
         maxBounds={[
           [90, -180],

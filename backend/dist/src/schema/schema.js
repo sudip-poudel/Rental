@@ -26,6 +26,7 @@ exports.users = (0, pg_core_1.pgTable)("users", {
         emailIndex: (0, pg_core_1.index)("emailIndex").on(table.email),
     };
 });
+//TODO item rent period is not handled
 exports.item = (0, pg_core_1.pgTable)("item", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     title: (0, pg_core_1.varchar)("title", { length: 255 }).notNull(),
@@ -36,6 +37,8 @@ exports.item = (0, pg_core_1.pgTable)("item", {
     created_at: (0, pg_core_1.timestamp)("created_at").notNull().defaultNow(),
     rate: (0, pg_core_1.real)("rate").notNull(),
     pictureUrl: (0, pg_core_1.text)("picture_url").array().notNull(),
+    rentStart: (0, pg_core_1.date)("rent_start", { mode: "date" }).notNull(),
+    rentEnd: (0, pg_core_1.date)("rent_end", { mode: "date" }).notNull(),
     initialDeposit: (0, pg_core_1.real)("initial_deposit"),
     itemStatus: (0, exports.itemStatus)("itemStatus").default("available").notNull(),
     addedBy: (0, pg_core_1.uuid)("added_by")
@@ -64,8 +67,8 @@ exports.rentals = (0, pg_core_1.pgTable)("rentals", {
     rentedBy: (0, pg_core_1.uuid)("rented_by")
         .notNull()
         .references(() => exports.users.id),
-    rentStart: (0, pg_core_1.timestamp)("rented_at").notNull(),
-    rentEnd: (0, pg_core_1.timestamp)("returned_at"),
+    rentStart: (0, pg_core_1.date)("rented_at", { mode: "date" }).notNull(),
+    rentEnd: (0, pg_core_1.date)("returned_at", { mode: "date" }).notNull(),
     initialDeposit: (0, pg_core_1.real)("initial_deposit").notNull(),
     rate: (0, pg_core_1.real)("rate").notNull(),
     isReturned: (0, pg_core_1.boolean)("is_returned").default(false),

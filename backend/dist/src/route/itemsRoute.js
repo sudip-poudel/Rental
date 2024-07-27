@@ -14,6 +14,7 @@ router.post("/additem", validateToken_1.default, upload.array("photos", 5), item
 router.get("/getcategory", validateToken_1.default, itemRouteHandler_1.handleGetCategory);
 router.get("/item", itemRouteHandler_1.handleGetItem);
 router.post("/rentitem", validateToken_1.default, itemRouteHandler_1.handleRentItem);
+router.get("/renteditems/:user", validateToken_1.default, itemRouteHandler_1.handleGetRentedItems);
 router.get("/search/:search", validateToken_1.default, itemRouteHandler_1.handleSearch);
 router.get("/item/:categoryId", itemRouteHandler_1.handleGetItemByCategory);
 router.get("/:id", validateToken_1.default, itemRouteHandler_1.handleGetItemById);

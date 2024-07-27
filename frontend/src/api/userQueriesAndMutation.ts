@@ -20,6 +20,7 @@ export enum QUERY_KYES {
   getItems = "ITEMS",
   userDetails = "USER_DETAILS",
   getItemById = "ITEM_BY_ID",
+  getItemsRentedByUser = "ITEMS_RENTED_BY_USER",
 }
 
 const queryClient = new QueryClient();
