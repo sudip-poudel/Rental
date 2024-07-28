@@ -6,6 +6,7 @@ import {
   handleGetRentedItems,
   handlePostItem,
   handleRentItem,
+  handleRentStatusChange,
   handleSearch,
 } from "../handlers/itemRouteHandler";
 import validateToken from "../middleware/validateToken";
@@ -28,6 +29,7 @@ router.get("/getcategory", validateToken, handleGetCategory);
 
 router.get("/item", handleGetItem);
 router.post("/rentitem", validateToken, handleRentItem);
+router.post("/rentitem/changestatus", validateToken, handleRentStatusChange);
 router.get("/renteditems/:user", validateToken, handleGetRentedItems);
 router.get("/search/:search", validateToken, handleSearch);
 router.get("/item/:categoryId", handleGetItemByCategory);

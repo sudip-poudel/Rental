@@ -177,14 +177,20 @@ export type IItemDetailsResponse = {
 };
 
 export type IRentDetails = {
+  id: string;
   item: string;
   rate: number;
-  rentStart: Date | undefined;
-  rentEnd: Date | undefined;
+  rentStart: Date;
+  rentEnd: Date;
   rentedBy: string;
+  status: "requested" | "rented" | "returned";
   initialDeposit: number;
 };
 export type IRentDetailsResponse = {
   success: boolean;
   data: IRentDetails[];
+};
+export type INormalResponse = {
+  success: boolean;
+  message: string;
 };

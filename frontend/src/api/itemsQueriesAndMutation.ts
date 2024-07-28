@@ -6,6 +6,7 @@ import {
   fetchItemById,
   fetchItems,
   fetchItemsRentedByUser,
+  markItemAsReceived,
   submitItem,
 } from "./itemsApi";
 
@@ -59,5 +60,15 @@ export const useGetItemsRentedByUser = (userId: string) => {
     queryKey: [QUERY_KYES.getItemsRentedByUser, userId, QUERY_KYES.getItems],
     staleTime: 1000 * 60 * 60 * 24 * 7,
     queryFn: () => fetchItemsRentedByUser(userId),
+  });
+};
+export const useMarkItemAsReceived = () => {
+  return useMutation({
+    mutationFn: markItemAsReceived,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KYES.getItemsRentedByUser, QUERY_KYES.getItems],
+      });
+    },
   });
 };

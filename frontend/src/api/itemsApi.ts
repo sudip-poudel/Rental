@@ -2,6 +2,7 @@ import {
   ICategoryType,
   IItemDetailsResponse,
   IItemResponse,
+  INormalResponse,
   IRentDetails,
   IRentDetailsResponse,
 } from "@/types/types";
@@ -109,6 +110,22 @@ const fetchItemsRentedByUser = async (userId: string) => {
     }
   }
 };
+const markItemAsReceived = async (rentId: string) => {
+  try {
+    const response: AxiosResponse<INormalResponse> = await axios.post(
+      `${import.meta.env.VITE_API_URL}/item/rentitem/changestatus`,
+      { rentId, rentStatus: "rented" }
+    );
+    const result = response.data;
+    return result;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An unknown error occurred");
+    }
+  }
+};
 export {
   fetchCategoryDetails,
   submitItem,
@@ -116,4 +133,5 @@ export {
   fetchItemById,
   addItemToRent,
   fetchItemsRentedByUser,
+  markItemAsReceived,
 };

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ItemCategoryRelation = exports.UserItemsRelation = exports.itemLocationRelation = exports.itemLocation = exports.itemCategoryTableRelations = exports.itemCategory = exports.category = exports.rentalsTableRelations = exports.rentals = exports.itemRelations = exports.item = exports.users = exports.itemStatus = exports.userRole = void 0;
+exports.ItemCategoryRelation = exports.UserItemsRelation = exports.itemLocationRelation = exports.itemLocation = exports.itemCategoryTableRelations = exports.itemCategory = exports.category = exports.rentalsTableRelations = exports.rentals = exports.itemRelations = exports.item = exports.users = exports.rentalStatus = exports.itemStatus = exports.userRole = void 0;
 const drizzle_orm_1 = require("drizzle-orm");
 const pg_core_1 = require("drizzle-orm/pg-core");
 exports.userRole = (0, pg_core_1.pgEnum)("userRole", ["admin", "user"]);
@@ -8,6 +8,11 @@ exports.itemStatus = (0, pg_core_1.pgEnum)("itemStauts", [
     "available",
     "inrent",
     "unavailable",
+]);
+exports.rentalStatus = (0, pg_core_1.pgEnum)("rentalStatus", [
+    "requested",
+    "rented",
+    "returned",
 ]);
 exports.users = (0, pg_core_1.pgTable)("users", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
@@ -71,6 +76,7 @@ exports.rentals = (0, pg_core_1.pgTable)("rentals", {
     rentEnd: (0, pg_core_1.date)("returned_at", { mode: "date" }).notNull(),
     initialDeposit: (0, pg_core_1.real)("initial_deposit").notNull(),
     rate: (0, pg_core_1.real)("rate").notNull(),
+    status: (0, exports.rentalStatus)("status").default("requested").notNull(),
     isReturned: (0, pg_core_1.boolean)("is_returned").default(false),
 });
 exports.rentalsTableRelations = (0, drizzle_orm_1.relations)(exports.rentals, ({ one, many }) => {

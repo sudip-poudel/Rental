@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleGetRentedItems = exports.handleRentItem = exports.handleSearch = exports.handleGetCategory = exports.handlePostItem = exports.handleGetItemByCategory = exports.handleGetItemById = exports.handleGetItem = void 0;
+exports.handleRentStatusChange = exports.handleGetRentedItems = exports.handleRentItem = exports.handleSearch = exports.handleGetCategory = exports.handlePostItem = exports.handleGetItemByCategory = exports.handleGetItemById = exports.handleGetItem = void 0;
 const db_1 = require("../db");
 const drizzle_orm_1 = require("drizzle-orm");
 const schema_1 = require("../schema/schema");
@@ -201,3 +201,22 @@ const handleGetRentedItems = async (req, res) => {
     }
 };
 exports.handleGetRentedItems = handleGetRentedItems;
+const handleRentStatusChange = async (req, res) => {
+    const { rentId, rentStatus } = req.body;
+    try {
+        await db_1.db
+            .update(schema_1.rentals)
+            .set({ status: rentStatus })
+            .where((0, drizzle_orm_1.eq)(schema_1.rentals.id, rentId));
+        return res
+            .status(200)
+            .json({ success: true, data: `Status changed to ${rentStatus}` });
+    }
+    catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json({ success: false, data: "Failed to change status" });
+    }
+};
+exports.handleRentStatusChange = handleRentStatusChange;

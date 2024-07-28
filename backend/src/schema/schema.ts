@@ -17,7 +17,11 @@ export const itemStatus = pgEnum("itemStauts", [
   "inrent",
   "unavailable",
 ]);
-
+export const rentalStatus = pgEnum("rentalStatus", [
+  "requested",
+  "rented",
+  "returned",
+]);
 export const users = pgTable(
   "users",
   {
@@ -85,6 +89,7 @@ export const rentals = pgTable("rentals", {
   rentEnd: date("returned_at", { mode: "date" }).notNull(),
   initialDeposit: real("initial_deposit").notNull(),
   rate: real("rate").notNull(),
+  status: rentalStatus("status").default("requested").notNull(),
   isReturned: boolean("is_returned").default(false),
 });
 

@@ -12,7 +12,6 @@ const config_1 = require("../config");
 const loginHelper_1 = require("../helper/loginHelper");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
-// const jwt = require("jsonwebtoken");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const handleCloudinaryUpload_1 = require("../helper/handleCloudinaryUpload");
 //** Auth Routes */

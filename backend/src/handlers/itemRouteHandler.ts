@@ -214,3 +214,20 @@ export const handleGetRentedItems = async (req: Request, res: Response) => {
       .json({ success: false, data: "Failed to fetch rented items" });
   }
 };
+export const handleRentStatusChange = async (req: Request, res: Response) => {
+  const { rentId, rentStatus } = req.body;
+  try {
+    await db
+      .update(rentals)
+      .set({ status: rentStatus })
+      .where(eq(rentals.id, rentId));
+    return res
+      .status(200)
+      .json({ success: true, data: `Status changed to ${rentStatus}` });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, data: "Failed to change status" });
+  }
+};

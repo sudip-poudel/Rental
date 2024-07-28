@@ -17,7 +17,6 @@ import {
 import { loginHelper } from "../helper/loginHelper";
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
-// const jwt = require("jsonwebtoken");
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { UploadApiResponse } from "cloudinary";
 import { handleAvatarImageUpload } from "../helper/handleCloudinaryUpload";
