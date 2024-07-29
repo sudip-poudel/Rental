@@ -4,6 +4,7 @@ import {
   useGetItemById,
   useGetItemsRentedByUser,
   useMarkItemAsReceived,
+  useMarkItemAsReturnRequested,
 } from "@/api/itemsQueriesAndMutation";
 import { useSelector } from "react-redux";
 import { IRentDetails, RootState } from "@/types/types";
@@ -22,14 +23,14 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 
-const DashboardCard = ({ item }: { item: IRentDetails }) => {
+const DashboardRentedCard = ({ item }: { item: IRentDetails }) => {
   const { toast } = useToast();
   const { data: itemData, isLoading: idItemLoading } = useGetItemById(
     item.item
   );
   const { mutate: markItemAsReceived } = useMarkItemAsReceived();
+  const { mutate: markItemAsReturnRequested } = useMarkItemAsReturnRequested();
   const [ratingValue, setRatingValue] = useState(0);
-  console.log(item);
 
   if (idItemLoading) {
     return (
@@ -65,31 +66,72 @@ const DashboardCard = ({ item }: { item: IRentDetails }) => {
               {item.status === "requested" && <Button> Mark Received</Button>}
 
               {item.status === "rented" && <Button>Request Return</Button>}
+              {item.status === "returnrequested" && (
+                <Button>Return Requested</Button>
+              )}
             </div>
           </AlertDialogTrigger>
           <AlertDialogContent className="max-w-[500px]">
             <AlertDialogHeader>
               <AlertDialogTitle>
-                {item.status === "requested" && "Mark Item As Received"}
-                {item.status === "rented" &&
-                  !(new Date(item.rentEnd) < new Date()) &&
-                  "Cannot return item before due date"}
+                <div>
+                  {item.status === "requested" && "Mark Item As Received"}
+                  {item.status === "rented" &&
+                    !(new Date(item.rentEnd) < new Date()) &&
+                    "Cannot return item before due date"}
+                  {item.status === "rented" &&
+                    new Date(item.rentEnd) <= new Date() &&
+                    "Request Return"}
+                  {item.status === "returnrequested" &&
+                    "Waiting for owner to accept return request"}
+                </div>
               </AlertDialogTitle>
             </AlertDialogHeader>
             <AlertDialogFooter className="">
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction asChild>
-                <Button
-                  type="button"
-                  onClick={() =>
-                    markItemAsReceived(item.id, {
-                      onSuccess: () =>
-                        toast({ title: "Item marked as received" }),
-                    })
-                  }
-                >
-                  Continue
-                </Button>
+                <div>
+                  {item.status === "requested" && (
+                    <Button
+                      type="button"
+                      onClick={() =>
+                        markItemAsReceived(item.id, {
+                          onSuccess: () =>
+                            toast({ title: "Item marked as received" }),
+                        })
+                      }
+                    >
+                      Continue
+                    </Button>
+                  )}
+                  {item.status === "rented" &&
+                    new Date(item.rentEnd) < new Date() && (
+                      <Button
+                        onClick={() => {
+                          console.log("not able to return");
+                        }}
+                      >
+                        Continue
+                      </Button>
+                    )}
+                  {item.status === "rented" &&
+                    new Date(item.rentEnd) >= new Date() && (
+                      <Button
+                        onClick={() => {
+                          markItemAsReturnRequested(item.id, {
+                            onSuccess: () =>
+                              toast({ title: "Return requested Success" }),
+                          });
+                          console.log("marked as returnrequested");
+                        }}
+                      >
+                        Continue
+                      </Button>
+                    )}
+                  {item.status === "returnrequested" && (
+                    <Button>Continue</Button>
+                  )}
+                </div>
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -109,6 +151,8 @@ const DashboardCard = ({ item }: { item: IRentDetails }) => {
     </div>
   );
 };
+
+const DashboardListings = () => {};
 
 const Dashboard = () => {
   const userId = useSelector((state: RootState) => state.auth.userInfo.id);
@@ -140,20 +184,13 @@ const Dashboard = () => {
           <h2 className="text-xl font-semibold">Items You Have Rented:</h2>
           <div className="grid grid-cols-3 gap-4 mt-2">
             {rentedItems?.map((item, i) => (
-              <DashboardCard key={i} item={item} />
+              <DashboardRentedCard key={i} item={item} />
             ))}
           </div>
         </section>
         <section className="mb-4">
           <h2 className="text-xl font-semibold">Current Rentals</h2>
-          <ul className="mt-2">
-            {/* Map through current rentals */}
-            <li className="bg-white p-4 rounded shadow mb-2">
-              <p>Renter: John Doe</p>
-              <p>Item: Camera</p>
-              <p>Rental Period: 01/01/2023 - 01/07/2023</p>
-            </li>
-          </ul>
+          <DasboardListings />
         </section>
         <section className="mb-4">
           <h2 className="text-xl font-semibold">Earnings</h2>

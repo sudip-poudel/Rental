@@ -183,7 +183,7 @@ export type IRentDetails = {
   rentStart: Date;
   rentEnd: Date;
   rentedBy: string;
-  status: "requested" | "rented" | "returned";
+  status: "requested" | "rented" | "returned" | "returnrequested";
   initialDeposit: number;
 };
 export type IRentDetailsResponse = {

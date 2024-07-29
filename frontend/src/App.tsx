@@ -20,6 +20,7 @@ import UserProfile from "./pages/UserProfile";
 import AppLayout from "./components/AppLayout";
 import UserSetting from "./pages/UserSetting";
 import "@smastrom/react-rating/style.css";
+
 function App() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);

@@ -20,6 +20,7 @@ export const itemStatus = pgEnum("itemStauts", [
 export const rentalStatus = pgEnum("rentalStatus", [
   "requested",
   "rented",
+  "returnrequested",
   "returned",
 ]);
 export const users = pgTable(
@@ -43,7 +44,6 @@ export const users = pgTable(
     };
   }
 );
-//TODO item rent period is not handled
 export const item = pgTable("item", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }).notNull(),

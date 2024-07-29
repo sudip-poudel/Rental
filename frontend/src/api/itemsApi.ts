@@ -126,6 +126,23 @@ const markItemAsReceived = async (rentId: string) => {
     }
   }
 };
+const markItemAsReturnRequested = async (rentId: string) => {
+  try {
+    const response: AxiosResponse<INormalResponse> = await axios.post(
+      `${import.meta.env.VITE_API_URL}/item/rentitem/changestatus`,
+      { rentId, rentStatus: "returnrequested" }
+    );
+    const result = response.data;
+    return result;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An unknown error occurred");
+    }
+  }
+};
+
 export {
   fetchCategoryDetails,
   submitItem,
@@ -134,4 +151,5 @@ export {
   addItemToRent,
   fetchItemsRentedByUser,
   markItemAsReceived,
+  markItemAsReturnRequested,
 };

@@ -1,4 +1,4 @@
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KYES } from "./userQueriesAndMutation";
 import {
   addItemToRent,
@@ -7,10 +7,9 @@ import {
   fetchItems,
   fetchItemsRentedByUser,
   markItemAsReceived,
+  markItemAsReturnRequested,
   submitItem,
 } from "./itemsApi";
-
-const queryClient = new QueryClient();
 
 export const useGetCategories = () => {
   return useQuery({
@@ -22,8 +21,14 @@ export const useGetCategories = () => {
 };
 
 export const useAddItem = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: submitItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KYES.getItems],
+      });
+    },
   });
 };
 
@@ -38,18 +43,19 @@ export const useGetItems = () => {
 
 export const useGetItemById = (id: string) => {
   return useQuery({
-    queryKey: [QUERY_KYES.getItemById, id],
+    queryKey: [QUERY_KYES.getItems, id],
     staleTime: 1000 * 60 * 60 * 24 * 7,
     queryFn: () => fetchItemById(id),
   });
 };
 
 export const useRentItem = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: addItemToRent,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KYES.getItems, QUERY_KYES.getItemById],
+        queryKey: [QUERY_KYES.getItems, QUERY_KYES.getItemsRentedByUser],
       });
     },
   });
@@ -57,17 +63,30 @@ export const useRentItem = () => {
 
 export const useGetItemsRentedByUser = (userId: string) => {
   return useQuery({
-    queryKey: [QUERY_KYES.getItemsRentedByUser, userId, QUERY_KYES.getItems],
+    queryKey: [QUERY_KYES.getItems, QUERY_KYES.getItemsRentedByUser, userId],
     staleTime: 1000 * 60 * 60 * 24 * 7,
     queryFn: () => fetchItemsRentedByUser(userId),
   });
 };
 export const useMarkItemAsReceived = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: markItemAsReceived,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KYES.getItemsRentedByUser, QUERY_KYES.getItems],
+        queryKey: [QUERY_KYES.getItems],
+      });
+    },
+  });
+};
+
+export const useMarkItemAsReturnRequested = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: markItemAsReturnRequested,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KYES.getItems, QUERY_KYES.getItemsRentedByUser],
       });
     },
   });
