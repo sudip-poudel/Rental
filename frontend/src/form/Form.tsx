@@ -56,7 +56,7 @@ const RentProductForm = () => {
     const { name, value, type, checked } = e.target;
     // console.log(value);
     setFormData({
-      ...formData,
+      ...formData,  
       [name]: type === "checkbox" ? checked : value,
     });
   };
@@ -175,6 +175,7 @@ const RentProductForm = () => {
               placeholder="Rental Rate (Rs./day)"
               value={formData.rate}
               onChange={handleChange}
+              
               required
               className="w-full h-16 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />

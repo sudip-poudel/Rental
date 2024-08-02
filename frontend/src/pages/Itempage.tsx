@@ -28,6 +28,7 @@ const Itempage = () => {
   const { data: availableItems, isLoading: isAllItensLoading } = useGetItems();
   const { mutate: addToRent, isPending: isaddToRentLoading } = useRentItem();
 
+
   const [rentData, setRentData] = useState<IRentDetails>({
     item: id as string,
     rentStart: undefined,
@@ -59,7 +60,7 @@ const Itempage = () => {
   // const result = sampleItems.find((item) => item.id === id);
   const result = itemDetails;
 
-  // console.log(result);
+  console.log(result);
   const similarItems = availableItems?.filter(
     (item) => item.category === result?.category
   );
@@ -108,7 +109,7 @@ const Itempage = () => {
           <div className=" flex items-center justify-center">
             <div className="  h-46 w-4/5 flex flex-row">
               <div className="w-2/6 m-10  shadow-md bg-white border rounded-lg flex items-center justify-center transform transition duration-500 ease-in-out hover:scale-105">
-                <img className="w-full  " src={camera} alt="Camera" />
+                <img className="w-full  " src={result.pictureUrl[0]} alt="Camera" />
               </div>
               <div className=" w-1/2 m-10 flex flex-col p-5">
                 <div className="mt-2 flex flex-col border rounded-md shadow-md bg-white p-5">
