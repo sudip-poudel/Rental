@@ -152,7 +152,9 @@ const DashboardRentedCard = ({ item }: { item: IRentDetails }) => {
   );
 };
 
-const DashboardListings = () => {};
+const DashboardListings = () => {
+  return <div>listings</div>;
+};
 
 const Dashboard = () => {
   const userId = useSelector((state: RootState) => state.auth.userInfo.id);
@@ -190,7 +192,7 @@ const Dashboard = () => {
         </section>
         <section className="mb-4">
           <h2 className="text-xl font-semibold">Current Rentals</h2>
-          <DasboardListings />
+          <DashboardListings />
         </section>
         <section className="mb-4">
           <h2 className="text-xl font-semibold">Earnings</h2>

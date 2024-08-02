@@ -167,7 +167,7 @@ export const handleRentItem = async (req: Request, res: Response) => {
   const rentDetails = req.body;
   const { userId } = req.params;
   console.log(rentDetails);
-
+  //TODO check if the item is already rented
   const { item: itemId, rentStart, rentEnd } = rentDetails;
   try {
     const itemData = await db.select().from(item).where(eq(item.id, itemId));
@@ -229,5 +229,23 @@ export const handleRentStatusChange = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ success: false, data: "Failed to change status" });
+  }
+};
+export const handleGetListedItemsByUser = async (
+  req: Request,
+  res: Response
+) => {
+  const { user } = req.params;
+  try {
+    const listedItems = await db
+      .select()
+      .from(item)
+      .where(eq(item.addedBy, user));
+    return res.status(200).json({ success: true, data: listedItems });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, data: "Failed to fetch listed items" });
   }
 };

@@ -3,6 +3,7 @@ import {
   handleGetItem,
   handleGetItemByCategory,
   handleGetItemById,
+  handleGetListedItemsByUser,
   handleGetRentedItems,
   handlePostItem,
   handleRentItem,
@@ -31,6 +32,7 @@ router.get("/item", handleGetItem);
 router.post("/rentitem", validateToken, handleRentItem);
 router.post("/rentitem/changestatus", validateToken, handleRentStatusChange);
 router.get("/renteditems/:user", validateToken, handleGetRentedItems);
+router.get("/itemlisted/:user", validateToken, handleGetListedItemsByUser);
 router.get("/search/:search", validateToken, handleSearch);
 router.get("/item/:categoryId", handleGetItemByCategory);
 

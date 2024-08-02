@@ -5,6 +5,7 @@ import {
   fetchCategoryDetails,
   fetchItemById,
   fetchItems,
+  fetchItemsListedByUser,
   fetchItemsRentedByUser,
   markItemAsReceived,
   markItemAsReturnRequested,
@@ -89,5 +90,13 @@ export const useMarkItemAsReturnRequested = () => {
         queryKey: [QUERY_KYES.getItems, QUERY_KYES.getItemsRentedByUser],
       });
     },
+  });
+};
+
+export const useGetItemsListedByUser = (userId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KYES.getItems, QUERY_KYES.getItemsListedByUser, userId],
+    staleTime: 1000 * 60 * 60 * 24 * 7,
+    queryFn: () => fetchItemsListedByUser(userId),
   });
 };
