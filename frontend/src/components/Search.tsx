@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 
 const Search = () => {
   const [searchItem, setSearchItem] = useState("");
-
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
@@ -16,10 +15,9 @@ const Search = () => {
   console.log("search item; ", searchItem);
   const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    navigate(`/searchresults/${searchItem}`, { replace: true });
-
-    console.log("Search submitted:", searchItem);
+    navigate(`/searchresults/${searchItem}`, {
+      replace: true,
+    });
   };
 
   return (

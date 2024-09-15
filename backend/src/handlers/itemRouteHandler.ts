@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { db } from "../db";
-import { InferSelectModel, eq } from "drizzle-orm";
+import { InferSelectModel, eq, sql } from "drizzle-orm";
 import { category, item, itemLocation, rentals } from "../schema/schema";
 import { handleItemImageUpload } from "../helper/handleCloudinaryUpload";
 import { UploadApiResponse } from "cloudinary";
-import { IItem } from "../types/types";
+import { IItem, IItemRes } from "../types/types";
 
 //fetch items from database to show at the homepage
 type ItemDetails = InferSelectModel<typeof item> & {
@@ -148,15 +148,18 @@ export const handleGetCategory = async (_: Request, res: Response) => {
 
 //to search the item from the item collection with similar keywords in title
 export const handleSearch = async (req: Request, res: Response) => {
-  const search = req.params.search.toLowerCase();
+  const search: string = req.params.search as string;
   console.log(search);
 
   try {
-    const searchedItem = await db
-      .select()
-      .from(item)
-      .where(eq(item.title, search));
-    return res.json(searchedItem);
+    const searchedItem = (
+      await db.execute(
+        sql`select * from item where to_tsvector(description) @@ to_tsquery(${search})`
+      )
+    ).rows as IItemRes[];
+    console.log(searchedItem);
+
+    return res.json({ success: true, data: searchedItem });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Failed to search items" });

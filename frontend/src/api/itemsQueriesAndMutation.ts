@@ -7,6 +7,7 @@ import {
   fetchItems,
   fetchItemsRentedByUser,
   markItemAsReceived,
+  searchItems,
   submitItem,
 } from "./itemsApi";
 
@@ -70,5 +71,13 @@ export const useMarkItemAsReceived = () => {
         queryKey: [QUERY_KYES.getItemsRentedByUser, QUERY_KYES.getItems],
       });
     },
+  });
+};
+
+export const useSearchItems = (search: string) => {
+  return useQuery({
+    queryKey: [QUERY_KYES.searchItems],
+    staleTime: 1000 * 60 * 60 * 24 * 7,
+    queryFn: () => searchItems(search),
   });
 };

@@ -33,6 +33,8 @@ router.post("/updatepassword", updatePasswordHandler);
 router.get("/updatepassword/:token", verifyUpdatePassword);
 
 /** UPDATE USER DETAILS */
+console.log("test");
+
 router.post(
   "/updateavatar",
   validateToken,

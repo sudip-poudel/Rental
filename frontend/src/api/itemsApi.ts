@@ -126,6 +126,23 @@ const markItemAsReceived = async (rentId: string) => {
     }
   }
 };
+
+const searchItems = async (search: string) => {
+  try {
+    const response: AxiosResponse<IItemResponse> = await axios.get(
+      `${import.meta.env.VITE_API_URL}/item/search/${search}`
+    );
+    const result = response.data.data;
+    return result;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An unknown error occurred");
+    }
+  }
+};
+
 export {
   fetchCategoryDetails,
   submitItem,
@@ -134,4 +151,5 @@ export {
   addItemToRent,
   fetchItemsRentedByUser,
   markItemAsReceived,
+  searchItems,
 };

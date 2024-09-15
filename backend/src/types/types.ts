@@ -22,3 +22,4 @@ export type IItem = {
   initialDeposit: number;
   addedBy: string;
 };
+export type IItemRes = IItem & { id: string };

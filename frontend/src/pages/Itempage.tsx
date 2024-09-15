@@ -106,37 +106,39 @@ const Itempage = () => {
       <div>
         {result && (
           <div className=" flex items-center justify-center">
-            <div className="  h-46 w-4/5 flex flex-row">
-              <div className="w-2/6 m-10  shadow-md bg-white border rounded-lg flex items-center justify-center transform transition duration-500 ease-in-out hover:scale-105">
+            <div className="  h-46 w-4/5 flex flex-col md:flex-row">
+              <div className="w-5/6 md:w-2/6 m-10  shadow-md bg-white border rounded-lg flex items-center justify-center transform transition duration-500 ease-in-out hover:scale-105">
                 <img className="w-full  " src={camera} alt="Camera" />
               </div>
-              <div className=" w-1/2 m-10 flex flex-col p-5">
-                <div className="mt-2 flex flex-col border rounded-md shadow-md bg-white p-5">
-                  <div className="flex gap-2">
+              <div className="w-full md:w-1/2 md:m-10 flex flex-col md:p-5">
+                <div className="my-4 flex flex-col border rounded-lg shadow-lg bg-white p-6">
+                  <div className="flex items-center gap-4">
                     <img
                       src={for_rent}
                       alt="for_rent image"
-                      className="h-10 w-10"
+                      className="h-12 w-12 rounded-full"
                     />
-                    <div className=" text-2xl  font-bold mt-2">
-                      {result.title}
-                    </div>{" "}
+                    <div className="text-2xl font-bold">{result.title}</div>
                   </div>
-                  <div className="text-lg mt-2">{result.description}</div>
-                  <div className="mt-2 flex gap-5">
-                    <h1>Rate:</h1>Rs.{result.rate} per/day
+
+                  <div className="text-lg mt-4">{result.description}</div>
+
+                  <div className="mt-4 flex items-center gap-2">
+                    <span className="font-semibold w-32">Rate:</span>
+                    <span>Rs.{result.rate} per/day</span>
                   </div>
-                  <div className="mt-2">
-                    Initial Deposit: Rs.{result.initialDeposit}
+
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="font-semibold w-32">Initial Deposit:</span>
+                    <span>Rs.{result.initialDeposit}</span>
                   </div>
-                  <div className="mt-2 flex flex-col ">
-                    <p className="flex items-center gap-2">
-                      Location
-                      <MapPin size={22} />:
-                    </p>
-                    <p>{result.locationDetails.location}</p>
+
+                  <div className="flex items-start gap-2 mt-4">
+                    <span className="font-semibold w-32">Location:</span>
+                    <p className="">{result.locationDetails.location}</p>
                   </div>
-                  <div className="mt-4">
+
+                  <div className="mt-6">
                     <p className="font-semibold mb-2">Select rental period:</p>
                     <DateRangePicker
                       className={`${
@@ -146,7 +148,10 @@ const Itempage = () => {
                       date={selectDate}
                     />
                   </div>
-                  {/* <div className="mt-2 cursor-pointer"> <PhoneCall size={18} /> {result?.contact}</div> */}
+
+                  {/* <div className="mt-4 cursor-pointer"> 
+      <PhoneCall size={18} /> {result?.contact}
+    </div> */}
                 </div>
                 <Button type="button" onClick={handleRentItem}>
                   {isaddToRentLoading && (
