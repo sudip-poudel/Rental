@@ -4,8 +4,8 @@ import { Button } from "./ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Search = () => {
-  const [searchItem, setSearchItem] = useState("");
+const Search = ({ searchTerm }: { searchTerm?: string }) => {
+  const [searchItem, setSearchItem] = useState(searchTerm || "");
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
@@ -41,6 +41,7 @@ const Search = () => {
               type="text"
               className="w-3/4 h-12 border-gray-400 border-[0.1px]  rounded-2xl pl-2"
               placeholder="Search for items..."
+              value={searchItem}
               onChange={handleSearch}
               required
             />

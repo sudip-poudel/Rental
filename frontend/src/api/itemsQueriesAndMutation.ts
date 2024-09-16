@@ -76,7 +76,7 @@ export const useMarkItemAsReceived = () => {
 
 export const useSearchItems = (search: string) => {
   return useQuery({
-    queryKey: [QUERY_KYES.searchItems],
+    queryKey: [QUERY_KYES.searchItems, search],
     staleTime: 1000 * 60 * 60 * 24 * 7,
     queryFn: () => searchItems(search),
   });

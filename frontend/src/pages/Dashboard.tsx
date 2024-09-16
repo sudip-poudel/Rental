@@ -31,6 +31,7 @@ const DashboardCard = ({ item }: { item: IRentDetails }) => {
   const [ratingValue, setRatingValue] = useState(0);
   console.log(item);
 
+  console.log(itemData);
   if (idItemLoading) {
     return (
       <div className="flex items-center justify-center w-full ">
@@ -43,11 +44,11 @@ const DashboardCard = ({ item }: { item: IRentDetails }) => {
     <div className="bg-white p-4 rounded shadow">
       <Toaster />
       <img
-        src={itemData?.pictureUrl[0]}
+        src={itemData?.item.pictureUrl[0]}
         alt="Item"
         className="w-full h-52 object-cover rounded transform transition duration-1000 ease-in-out hover:scale-105 hover:object-contain"
       />
-      <h3 className="mt-2 font-bold">{itemData?.title}</h3>
+      <h3 className="mt-2 font-bold">{itemData?.item.title}</h3>
       <p className="mt-1 text-gray-600">
         Rented from: {new Date(item?.rentStart).toDateString()}
       </p>
@@ -64,7 +65,7 @@ const DashboardCard = ({ item }: { item: IRentDetails }) => {
             <div className="text-center flex items-center justify-center">
               {item.status === "requested" && <Button> Mark Received</Button>}
 
-              {item.status === "rented" && <Button>Request Return</Button>}
+              {item.status === "rented" && <Button>Request for Return</Button>}
             </div>
           </AlertDialogTrigger>
           <AlertDialogContent className="max-w-[500px]">
@@ -138,7 +139,7 @@ const Dashboard = () => {
 
         <section className="mb-4">
           <h2 className="text-xl font-semibold">Items You Have Rented:</h2>
-          <div className="grid grid-cols-3 gap-4 mt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 gap-4 mt-2">
             {rentedItems?.map((item, i) => (
               <DashboardCard key={i} item={item} />
             ))}

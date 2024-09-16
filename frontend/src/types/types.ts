@@ -148,17 +148,19 @@ export type IGeoLocationResponse = {
 };
 
 export type IItem = {
-  itemStatus: "available" | "inrent" | "unavailable";
-  id: string;
-  created_at: Date;
-  title: string;
-  description: string;
-  category: string;
-  rate: number;
-  pictureUrl: string[];
-  initialDeposit: number | null;
-  addedBy: string;
-  locationDetails: {
+  item: {
+    itemStatus: "available" | "inrent" | "unavailable";
+    id: string;
+    created_at: Date;
+    title: string;
+    description: string;
+    category: string;
+    rate: number;
+    pictureUrl: string[];
+    initialDeposit: number | null;
+    addedBy: string;
+  };
+  item_location: {
     id: string;
     location: string;
     itemId: string;

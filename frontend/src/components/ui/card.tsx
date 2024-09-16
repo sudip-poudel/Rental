@@ -11,7 +11,9 @@ const Card = ({
   className?: string;
   onClick: React.MouseEventHandler<HTMLElement>;
 }) => {
-  console.log(item.pictureUrl);
+  console.log(item);
+
+  console.log(item.item.id);
   return (
     <div
       onClick={onClick}
@@ -19,17 +21,19 @@ const Card = ({
     >
       <img
         className="w-full h-40 object-cover"
-        src={item.pictureUrl[0]}
-        alt={item.title}
+        src={item.item.pictureUrl[0]}
+        alt={item.item.title}
       />
       <div className="px-4 py-2">
-        <div className="font-bold text-lg mb-2">{item.title}</div>
-        <p className="text-gray-700 text-sm">{item.description}</p>
+        <div className="font-bold text-lg mb-2">{item.item.title}</div>
+        <p className="text-gray-700 text-sm">{item.item.description}</p>
         <p className="text-gray-700 text-sm flex gap-2 items-center">
-          <MapPin size={18} /> {item.itemStatus}
+          <MapPin size={18} /> {item.item.itemStatus}
         </p>
         <div className="flex items-center justify-around">
-          <p className="text-gray-700 font-semibold">Rate: ${item.rate} /day</p>
+          <p className="text-gray-700 font-semibold">
+            Rate: ${item.item.rate} /day
+          </p>
           <Button className="font-bold py-1 px-2 rounded ">Rent Now</Button>
         </div>
       </div>

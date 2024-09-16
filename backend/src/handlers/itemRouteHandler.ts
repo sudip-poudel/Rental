@@ -1,7 +1,13 @@
 import { Request, Response } from "express";
 import { db } from "../db";
 import { InferSelectModel, eq, sql } from "drizzle-orm";
-import { category, item, itemLocation, rentals } from "../schema/schema";
+import {
+  category,
+  item,
+  itemLocation,
+  itemStatus,
+  rentals,
+} from "../schema/schema";
 import { handleItemImageUpload } from "../helper/handleCloudinaryUpload";
 import { UploadApiResponse } from "cloudinary";
 import { IItem, IItemRes } from "../types/types";
@@ -14,21 +20,24 @@ type ItemDetails = InferSelectModel<typeof item> & {
 export const handleGetItem = async (_: Request, res: Response) => {
   // const itemId = req.params.id;
   try {
-    const items = await db.select().from(item).limit(10);
+    const items = await db
+      .select()
+      .from(item)
+      .innerJoin(itemLocation, eq(item.id, itemLocation.itemId))
+      .limit(10);
     let itemDetailsWithLocation: ItemDetails[] = [];
-    for (const item of items) {
-      const locationDetails = (
-        await db.query.itemLocation.findMany({
-          where: eq(itemLocation.itemId, item.id),
-        })
-      )[0];
-      const details = { ...item, locationDetails: locationDetails };
-      itemDetailsWithLocation = [...itemDetailsWithLocation, details];
-    }
 
-    return res
-      .status(200)
-      .json({ success: true, data: itemDetailsWithLocation });
+    // for (const item of items) {
+    //   const locationDetails = (
+    //     await db.query.itemLocation.findMany({
+    //       where: eq(itemLocation.itemId, item.id),
+    //     })
+    //   )[0];
+    //   const details = { ...item, locationDetails: locationDetails };
+    //   itemDetailsWithLocation = [...itemDetailsWithLocation, details];
+    // }
+
+    return res.status(200).json({ success: true, data: items });
   } catch (error) {
     console.log(error);
     // res.send({ succss: false, message: "Failed to fetch items" });
@@ -38,17 +47,23 @@ export const handleGetItem = async (_: Request, res: Response) => {
 export const handleGetItemById = async (req: Request, res: Response) => {
   const itemId = req.params.id;
   try {
-    const itemData = (
-      await db.select().from(item).where(eq(item.id, itemId))
+    // const itemData = (
+    //   await db.select().from(item).where(eq(item.id, itemId))
+    // )[0];
+    // const locationDetails = (
+    //   await db.query.itemLocation.findMany({
+    //     where: eq(itemLocation.itemId, itemData.id),
+    //   })
+    // )[0] as InferSelectModel<typeof itemLocation>;
+    // console.log(locationDetails, "locationDetails");
+    const itemDetails = (
+      await db
+        .select()
+        .from(item)
+        .innerJoin(itemLocation, eq(item.id, itemLocation.itemId))
+        .where(eq(item.id, itemId))
     )[0];
-    const locationDetails = (
-      await db.query.itemLocation.findMany({
-        where: eq(itemLocation.itemId, itemData.id),
-      })
-    )[0] as InferSelectModel<typeof itemLocation>;
-    console.log(locationDetails, "locationDetails");
-
-    const itemDetails = { ...itemData, locationDetails: locationDetails };
+    // const itemDetails = { ...itemData, locationDetails: locationDetails };
     console.log(itemDetails, "itemDetails");
 
     return res.status(200).json({ success: true, data: itemDetails });
@@ -152,11 +167,38 @@ export const handleSearch = async (req: Request, res: Response) => {
   console.log(search);
 
   try {
+    //TODO check the item.id and row.id are incorrect
     const searchedItem = (
       await db.execute(
-        sql`select * from item where to_tsvector(description) @@ to_tsquery(${search})`
+        sql`select * from item 
+        inner join item_location on item.id = item_location.item_id
+        where to_tsvector(description || ' ' || title) @@ to_tsquery(${search})`
       )
-    ).rows as IItemRes[];
+    ).rows.map((row) => {
+      console.log(row);
+
+      const itemRes = {
+        item: {
+          id: row.item_id as string,
+          title: row.title as string,
+          description: row.description as string,
+          category: row.category as string,
+          itemStatus: row.itemStatus as "available" | "inrent" | "unavailable",
+          rate: row.rate as number,
+          rentStart: row.rent_start as Date,
+          rentEnd: row.rent_end as Date,
+          pictureUrl: row.picture_url as string[],
+          initialDeposit: row.initial_deposit as number,
+          addedBy: row.added_by as string,
+        },
+        item_location: {
+          location: row.location as string,
+          latitude: row.latitude as number,
+          longitude: row.longitude as number,
+        },
+      };
+      return itemRes;
+    });
     console.log(searchedItem);
 
     return res.json({ success: true, data: searchedItem });
