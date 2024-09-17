@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { db } from "../db";
-import { InferSelectModel, eq, sql } from "drizzle-orm";
+import { InferSelectModel, and, eq, sql } from "drizzle-orm";
 import {
   category,
   item,
@@ -274,5 +274,43 @@ export const handleRentStatusChange = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ success: false, data: "Failed to change status" });
+  }
+};
+
+export const handleGetListedItemsByUser = async (
+  req: Request,
+  res: Response
+) => {
+  const { user } = req.params;
+  try {
+    const listedItems = await db
+      .select()
+      .from(item)
+      .innerJoin(itemLocation, eq(item.id, itemLocation.itemId))
+      .where(eq(item.addedBy, user));
+    return res.status(200).json({ success: true, data: listedItems });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, data: "Failed to fetch listed items" });
+  }
+};
+
+export const handleGetRentalDetialsByItemId = async (
+  req: Request,
+  res: Response
+) => {
+  //TODO make this route and use in dashboard listing\
+  const { itemid } = req.params;
+
+  try {
+    const rentaldetails = (
+      await db.select().from(rentals).where(eq(rentals.item, itemid))
+    )[0];
+    return res.status(200).json({ success: true, data: rentaldetails });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, data: "Failed to execute " });
   }
 };

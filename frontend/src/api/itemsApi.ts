@@ -4,6 +4,7 @@ import {
   IItemResponse,
   INormalResponse,
   IRentDetails,
+  IRentDetailsByIdResponse,
   IRentDetailsResponse,
 } from "@/types/types";
 import axios, { AxiosResponse } from "axios";
@@ -74,6 +75,7 @@ const fetchItemById = async (id: string) => {
       `${import.meta.env.VITE_API_URL}/item/${id}`
     );
     const result = response.data.data;
+    console.log(result);
 
     return result;
   } catch (error) {
@@ -127,10 +129,65 @@ const markItemAsReceived = async (rentId: string) => {
   }
 };
 
+const changeRentalStatus = async ({
+  rentId,
+  rentStatus,
+}: {
+  rentId: string;
+  rentStatus: string;
+}) => {
+  try {
+    const response: AxiosResponse<INormalResponse> = await axios.post(
+      `${import.meta.env.VITE_API_URL}/item/rentitem/changestatus`,
+      { rentId, rentStatus }
+    );
+    const result = response.data;
+    return result;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An unknown error occurred");
+    }
+  }
+};
+
 const searchItems = async (search: string) => {
   try {
     const response: AxiosResponse<IItemResponse> = await axios.get(
       `${import.meta.env.VITE_API_URL}/item/search/${search}`
+    );
+    const result = response.data.data;
+    return result;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An unknown error occurred");
+    }
+  }
+};
+
+const fetchItemsListedByUser = async (userId: string) => {
+  try {
+    const response: AxiosResponse<IItemResponse> = await axios.get(
+      `${import.meta.env.VITE_API_URL}/item/itemlisted/${userId}`
+    );
+    const result = response.data.data;
+    return result;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An unknown error occurred");
+    }
+  }
+};
+
+const fetchRentalDetailsOfItemById = async (itemId: string) => {
+  try {
+    const response: AxiosResponse<IRentDetailsByIdResponse> = await axios.get(
+      `${import.meta.env.VITE_API_URL}/item/rentaldetail/${itemId}`
     );
     const result = response.data.data;
     return result;
@@ -152,4 +209,7 @@ export {
   fetchItemsRentedByUser,
   markItemAsReceived,
   searchItems,
+  changeRentalStatus,
+  fetchItemsListedByUser,
+  fetchRentalDetailsOfItemById,
 };

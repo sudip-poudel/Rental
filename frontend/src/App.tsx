@@ -20,6 +20,9 @@ import UserProfile from "./pages/UserProfile";
 import AppLayout from "./components/AppLayout";
 import UserSetting from "./pages/UserSetting";
 import "@smastrom/react-rating/style.css";
+import DashboardLayout from "./pages/Dashboard/DashboardLayout";
+import DashboardListed from "./pages/Dashboard/DashboardListed";
+import DashboardRented from "./pages/Dashboard/DashboardRented";
 function App() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
@@ -55,16 +58,39 @@ function App() {
           <Route path="/signin" Component={Signinpage} />
           <Route path="/about" Component={About} />
           <Route path="/contact" Component={Contact} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute
-                authenticationPath="/signin"
-                isAuthenticated={isLoggedin}
-                Component={Dashboard}
-              />
-            }
-          />
+          <Route element={<DashboardLayout />} path="/dashboard">
+            <Route
+              index
+              element={
+                <ProtectedRoute
+                  authenticationPath="/signin"
+                  isAuthenticated={isLoggedin}
+                  Component={Dashboard}
+                />
+              }
+            />
+
+            <Route
+              path="rented"
+              element={
+                <ProtectedRoute
+                  authenticationPath="/signin"
+                  isAuthenticated={isLoggedin}
+                  Component={DashboardRented}
+                />
+              }
+            />
+            <Route
+              path="listed"
+              element={
+                <ProtectedRoute
+                  authenticationPath="/signin"
+                  isAuthenticated={isLoggedin}
+                  Component={DashboardListed}
+                />
+              }
+            />
+          </Route>
           <Route
             path="/addproduct"
             element={

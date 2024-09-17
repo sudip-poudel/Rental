@@ -185,12 +185,24 @@ export type IRentDetails = {
   rentStart: Date;
   rentEnd: Date;
   rentedBy: string;
-  status: "requested" | "rented" | "returned";
+  status:
+    | "requested"
+    | "requestAccepted"
+    | "requestRejected"
+    | "rented"
+    | "returnRequested"
+    | "returnAccepted"
+    | "returnRejected"
+    | "returned";
   initialDeposit: number;
 };
 export type IRentDetailsResponse = {
   success: boolean;
   data: IRentDetails[];
+};
+export type IRentDetailsByIdResponse = {
+  success: boolean;
+  data: IRentDetails;
 };
 export type INormalResponse = {
   success: boolean;

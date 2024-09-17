@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <div className="ml-3 mt-5 flex flex-col md:flex-row justify-around gap-4 md:gap-0 border-t-2 pt-2">
+    <div className="ml-3 mt-5 flex pb-3 flex-col md:flex-row justify-around gap-4 md:gap-0 border-t-2 pt-2">
       <div className="flex flex-col  items-center  ">
         <section className="flex items-end gap-3">
           <img src="/images/rent.png" alt="blob" className="h-10 w-10" />
@@ -24,7 +24,7 @@ const Footer = () => {
       </div>
       <div>
         <h1 className="font-bold text-center">Quick Links</h1>
-        <section className="text-sm flex flex-col items-center gap-2 ">
+        <section className="text-sm flex flex-col items-start  ">
           <Link className="hover:underline" to="/">
             Home
           </Link>

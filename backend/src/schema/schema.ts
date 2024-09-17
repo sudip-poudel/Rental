@@ -19,7 +19,12 @@ export const itemStatus = pgEnum("itemStauts", [
 ]);
 export const rentalStatus = pgEnum("rentalStatus", [
   "requested",
+  "requestAccepted",
+  "requestRejected",
   "rented",
+  "returnRequested",
+  "returnAccepted",
+  "returnRejected",
   "returned",
 ]);
 export const users = pgTable(

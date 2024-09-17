@@ -2,7 +2,6 @@ import { useParams } from "react-router-dom";
 import camera from "/images/camera.png";
 import for_rent from "/images/for_rent.png";
 import Card from "@/components/ui/card";
-import { MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   useGetItemById,
@@ -16,8 +15,11 @@ import { DateRange } from "react-day-picker";
 import { IRentDetails, RootState } from "@/types/types";
 import { useSelector } from "react-redux";
 import Map from "@/components/Map";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 const Itempage = () => {
+  const { toast } = useToast();
   const { id } = useParams();
   const userId = useSelector((state: RootState) => state.auth.userToken);
   //TODO only show items with status available
@@ -33,8 +35,8 @@ const Itempage = () => {
     rentStart: undefined,
     rentEnd: undefined,
     rentedBy: userId as string,
-    rate: itemDetails?.rate as number,
-    initialDeposit: itemDetails?.initialDeposit as number,
+    rate: itemDetails?.item.rate as number,
+    initialDeposit: itemDetails?.item.initialDeposit as number,
   });
 
   const [selectDate, setselectDate] = useState<DateRange | undefined>();
@@ -50,8 +52,8 @@ const Itempage = () => {
       setDateError(false);
       setRentData({
         ...rentData,
-        rentStart: date.from,
-        rentEnd: date.to,
+        rentStart: date.from as Date,
+        rentEnd: date.to as Date,
       });
     }
   }, [date]);
@@ -61,11 +63,12 @@ const Itempage = () => {
 
   // console.log(result);
   const similarItems = availableItems?.filter(
-    (item) => item.category === result?.category
+    (item) => item.item.category === result?.item.category
   );
-  const relatedItems = similarItems?.filter((item) => item.id !== result?.id);
+  const relatedItems = similarItems?.filter(
+    (item) => item.item.id !== result?.item.id
+  );
   // console.log(similarItems);
-
   const navigate = useNavigate();
   if (isItemDetailsLoading || isAllItensLoading) {
     return (
@@ -85,14 +88,19 @@ const Itempage = () => {
     const data: IRentDetails = {
       item: id as string,
       rentedBy: userId as string,
-      rate: itemDetails?.rate as number,
-      initialDeposit: itemDetails?.initialDeposit as number,
-      rentStart: date?.from,
-      rentEnd: date?.to,
+      rate: itemDetails?.item.rate as number,
+      initialDeposit: itemDetails?.item.initialDeposit as number,
+      rentStart: date?.from as Date,
+      rentEnd: date?.to as Date,
     };
     console.log(data);
 
-    addToRent(data, { onSuccess: () => console.log("success") });
+    addToRent(data, {
+      onSuccess: () =>
+        toast({
+          title: "Successfully Requested for rent.(Goto Dashboard for more)",
+        }),
+    });
 
     console.log(data);
   };
@@ -104,6 +112,7 @@ const Itempage = () => {
   return (
     <>
       <div>
+        <Toaster />
         {result && (
           <div className=" flex items-center justify-center">
             <div className="  h-46 w-4/5 flex flex-col md:flex-row">
@@ -118,24 +127,26 @@ const Itempage = () => {
                       alt="for_rent image"
                       className="h-12 w-12 rounded-full"
                     />
-                    <div className="text-2xl font-bold">{result.title}</div>
+                    <div className="text-2xl font-bold">
+                      {result.item.title}
+                    </div>
                   </div>
 
-                  <div className="text-lg mt-4">{result.description}</div>
+                  <div className="text-lg mt-4">{result.item.description}</div>
 
                   <div className="mt-4 flex items-center gap-2">
                     <span className="font-semibold w-32">Rate:</span>
-                    <span>Rs.{result.rate} per/day</span>
+                    <span>Rs.{result.item.rate} per/day</span>
                   </div>
 
                   <div className="mt-2 flex items-center gap-2">
                     <span className="font-semibold w-32">Initial Deposit:</span>
-                    <span>Rs.{result.initialDeposit}</span>
+                    <span>Rs.{result.item.initialDeposit}</span>
                   </div>
 
                   <div className="flex items-start gap-2 mt-4">
                     <span className="font-semibold w-32">Location:</span>
-                    <p className="">{result.locationDetails.location}</p>
+                    <p className="">{result.item_location.location}</p>
                   </div>
 
                   <div className="mt-6">
@@ -153,7 +164,14 @@ const Itempage = () => {
       <PhoneCall size={18} /> {result?.contact}
     </div> */}
                 </div>
-                <Button type="button" onClick={handleRentItem}>
+                <Button
+                  type="button"
+                  onClick={handleRentItem}
+                  disabled={
+                    itemDetails.item.itemStatus === "inrent" ||
+                    itemDetails.item.itemStatus === "unavailable"
+                  }
+                >
                   {isaddToRentLoading && (
                     <img
                       width={18}
@@ -171,8 +189,8 @@ const Itempage = () => {
                     classname="z-0"
                     isPreview={true}
                     marker={[
-                      itemDetails.locationDetails.latitude,
-                      itemDetails.locationDetails.longitude,
+                      itemDetails.item_location.latitude,
+                      itemDetails.item_location.longitude,
                     ]}
                   />
                 </div>
@@ -185,8 +203,8 @@ const Itempage = () => {
       <div className=" mt-12 grid place-content-center place-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
         {relatedItems?.map((item, i) => (
           <Card
-            onClick={handleCard.bind(this, item.id)}
-            className="rounded-lg shadow-md overflow-hidden "
+            onClick={handleCard.bind(this, item.item.id)}
+            className="rounded-lg shadow-md overflow-hidden"
             item={item}
             key={i}
           />

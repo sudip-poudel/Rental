@@ -34,7 +34,15 @@ const Card = ({
           <p className="text-gray-700 font-semibold">
             Rate: ${item.item.rate} /day
           </p>
-          <Button className="font-bold py-1 px-2 rounded ">Rent Now</Button>
+          <Button
+            className="font-bold py-1 px-2 rounded "
+            disabled={
+              item.item.itemStatus === "inrent" ||
+              item.item.itemStatus === "unavailable"
+            }
+          >
+            Rent Now
+          </Button>
         </div>
       </div>
     </div>
