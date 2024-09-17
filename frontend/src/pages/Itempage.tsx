@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import camera from "/images/camera.png";
+import Slider from "react-slick";
 import for_rent from "/images/for_rent.png";
 import Card from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -43,6 +43,22 @@ const Itempage = () => {
   const [dateError, setDateError] = useState(false);
 
   const [date, handleDateChange] = useState<DateRange | undefined>();
+
+  const settings = {
+    customPaging: function (i) {
+      return (
+        <a>
+          <img src={itemDetails?.item.pictureUrl[i]} />
+        </a>
+      );
+    },
+    dots: true,
+    infinite: true,
+    dotsClass: "slick-dots slick-thumb",
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
 
   useEffect(() => {
     console.log(itemDetails);
@@ -115,9 +131,24 @@ const Itempage = () => {
         <Toaster />
         {result && (
           <div className=" flex items-center justify-center">
-            <div className="  h-46 w-4/5 flex flex-col md:flex-row">
-              <div className="w-5/6 md:w-2/6 m-10  shadow-md bg-white border rounded-lg flex items-center justify-center transform transition duration-500 ease-in-out hover:scale-105">
+            <div className=" h-46 w-4/5 flex flex-col md:flex-row overflow-hidden">
+              {/* <div className="w-5/6 md:w-2/6 m-10  shadow-md bg-white border rounded-lg flex items-center justify-center transform transition duration-500 ease-in-out hover:scale-105">
                 <img className="w-full  " src={camera} alt="Camera" />
+              </div> */}
+              <div className=" w-5/6 md:w-2/6 m-10 shadow-md bg-white border rounded-lg flex items-center justify-center">
+                <Slider {...settings} className="w-full">
+                  {itemDetails.item.pictureUrl.map(
+                    (url: string, index: number) => (
+                      <div key={index} className="w-full">
+                        <img
+                          src={url}
+                          alt={`Item image ${index + 1}`}
+                          className="h-64 w-full object-contain rounded-lg"
+                        />
+                      </div>
+                    )
+                  )}
+                </Slider>
               </div>
               <div className="w-full md:w-1/2 md:m-10 flex flex-col md:p-5">
                 <div className="my-4 flex flex-col border rounded-lg shadow-lg bg-white p-6">

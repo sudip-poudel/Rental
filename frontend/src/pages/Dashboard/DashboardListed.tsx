@@ -132,23 +132,17 @@ const ListedItemsHelper = ({ itemDetails }: { itemDetails: IItem }) => {
                 {item.status === "returnRequested" && (
                   <Button>Return Received?</Button>
                 )}
-                {item.status === "rented" && (
+                {/* {item.status === "rented" && (
                   <Button disabled> Item in rent</Button>
-                )}
+                )} */}
               </div>
             </AlertDialogTrigger>
             <AlertDialogContent className="max-w-[500px]">
               <AlertDialogHeader>
                 <AlertDialogTitle>
-                  {item.status === "requested" && "Mark Item As Received"}
-                  {item.status === "rented" &&
-                    !(new Date(item.rentEnd) < new Date()) &&
-                    "Cannot return item before due date"}
-                  {item.status === "rented" &&
-                    new Date(item.rentEnd) <= new Date() &&
-                    "Request for Return ?"}
+                  {item.status === "requested" && "Accept Rent Request?"}
                   {item.status === "returnRequested" &&
-                    "Return in process wait for confirmation"}
+                    " Return Item Received?"}
                 </AlertDialogTitle>
               </AlertDialogHeader>
               <AlertDialogFooter className="">
@@ -157,43 +151,30 @@ const ListedItemsHelper = ({ itemDetails }: { itemDetails: IItem }) => {
                   <Button
                     type="button"
                     onClick={() => {
-                      if (
-                        item.status === "rented" &&
-                        new Date(item.rentEnd) < new Date()
-                      ) {
-                        console.log("Cannot return before due date");
-                        return;
-                      }
-
                       if (item.status === "requested") {
                         console.log(item.status);
 
                         return changeRentStatus(
-                          { rentId: item.id, rentStatus: "rented" },
+                          { rentId: item.id, rentStatus: "requestAccepted" },
                           {
                             onSuccess: () =>
-                              toast({ title: "Item marked as received" }),
+                              toast({ title: "Rent Request Accepted" }),
                           }
                         );
                       }
                       if (
-                        item.status === "rented" &&
+                        item.status === "returnRequested" &&
                         new Date(item.rentEnd) >= new Date()
                       ) {
-                        console.log("Requesting for return");
+                        console.log("accept return");
                         console.log(item.status);
                         return changeRentStatus(
-                          { rentId: item.id, rentStatus: "returnRequested" },
+                          { rentId: item.id, rentStatus: "returnAccepted" },
                           {
                             onSuccess: () =>
-                              toast({ title: "Request for return sent" }),
+                              toast({ title: "Rental Successful" }),
                           }
                         );
-                      }
-                      if (item.status === "returnRequested") {
-                        console.log("Returning item");
-                        console.log(item.status);
-                        return;
                       }
                     }}
                   >

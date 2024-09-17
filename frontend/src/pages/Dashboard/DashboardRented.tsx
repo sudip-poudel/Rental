@@ -63,7 +63,7 @@ const DashboardRentedCard = ({ item }: { item: IRentDetails }) => {
           <AlertDialogTrigger className="">
             <div className="text-center flex items-center justify-center">
               {item.status === "requested" && (
-                <Button> Waiting Owner Acceptance..</Button>
+                <Button disabled> Waiting Owner Acceptance..</Button>
               )}
               {item.status === "requestAccepted" && (
                 <Button>Mark As Received</Button>
@@ -78,15 +78,15 @@ const DashboardRentedCard = ({ item }: { item: IRentDetails }) => {
           <AlertDialogContent className="max-w-[500px]">
             <AlertDialogHeader>
               <AlertDialogTitle>
-                {item.status === "requested" && "Mark Item As Received"}
+                {item.status === "requestAccepted" && "Mark Item As Received?"}
                 {item.status === "rented" &&
                   !(new Date(item.rentEnd) < new Date()) &&
                   "Cannot return item before due date"}
                 {item.status === "rented" &&
                   new Date(item.rentEnd) <= new Date() &&
                   "Request for Return ?"}
-                {item.status === "returnRequested" &&
-                  "Return in process wait for confirmation"}
+                {item.status === "returnRequested" ||
+                  (item.status === "requested" && "Please Wait..")}
               </AlertDialogTitle>
             </AlertDialogHeader>
             <AlertDialogFooter className="">
@@ -95,15 +95,7 @@ const DashboardRentedCard = ({ item }: { item: IRentDetails }) => {
                 <Button
                   type="button"
                   onClick={() => {
-                    if (
-                      item.status === "rented" &&
-                      new Date(item.rentEnd) <= new Date()
-                    ) {
-                      console.log("Cannot return before due date");
-                      return;
-                    }
-
-                    if (item.status === "requested") {
+                    if (item.status === "requestAccepted") {
                       console.log(item.status);
 
                       return changeRentStatus(
@@ -116,7 +108,15 @@ const DashboardRentedCard = ({ item }: { item: IRentDetails }) => {
                     }
                     if (
                       item.status === "rented" &&
-                      new Date(item.rentEnd) >= new Date()
+                      new Date(item.rentEnd) > new Date()
+                    ) {
+                      console.log("Cannot return before due date");
+                      return;
+                    }
+
+                    if (
+                      item.status === "rented" &&
+                      new Date(item.rentEnd) <= new Date()
                     ) {
                       console.log("Requesting for return");
                       console.log(item.status);
@@ -128,7 +128,10 @@ const DashboardRentedCard = ({ item }: { item: IRentDetails }) => {
                         }
                       );
                     }
-                    if (item.status === "returnRequested") {
+                    if (
+                      item.status === "returnRequested" ||
+                      item.status === "requested"
+                    ) {
                       console.log("Returning item");
                       console.log(item.status);
                       return;
