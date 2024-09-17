@@ -92,6 +92,7 @@ const Itempage = () => {
       initialDeposit: itemDetails?.item.initialDeposit as number,
       rentStart: date?.from as Date,
       rentEnd: date?.to as Date,
+      
     };
     console.log(data);
 
