@@ -8,6 +8,13 @@
       "when": 1719662337195,
       "tag": "0000_rich_vin_gonzales",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1726603994742,
+      "tag": "0001_complete_valeria_richards",
+      "breakpoints": true
     }
   ]
 }

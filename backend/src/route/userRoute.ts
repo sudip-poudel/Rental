@@ -9,6 +9,7 @@ import {
   updatePasswordHandler,
   getUserById,
   handleUpdateUserAvater,
+  getCurrentUser,
 } from "../handlers/userRouteHandler";
 import { isLoggedIn, isLoggedOut } from "../middleware/userVerify";
 import validateToken from "../middleware/validateToken";
@@ -20,6 +21,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 router.post("/signup", isLoggedOut, handleSignup);
+router.get("/getUserDetails", validateToken, getCurrentUser);
 router.get("/getUserDetails/:id", validateToken, getUserById);
 router.post("/login", isLoggedOut, handleLogin);
 router.get("/logout", isLoggedIn, handleLogout);

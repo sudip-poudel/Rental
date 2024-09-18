@@ -52,6 +52,13 @@ const RentProductForm = () => {
       uploadRef.current.click();
     }
   };
+  const handleRemoveImage = (indexToRemove: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      photos: prev.photos.filter((_, index) => index !== indexToRemove),
+    }));
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     // console.log(value);
@@ -189,8 +196,12 @@ const RentProductForm = () => {
               Photos:
             </label>
             <div
-              onClick={handleImageUpload}
-              className="w-full h-40 flex flex-col cursor-pointer px-4 py-2 border items-center justify-center rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              onClick={(e) => {
+                if ((e.target as HTMLElement).nodeName !== "BUTTON") {
+                  handleImageUpload();
+                }
+              }}
+              className="w-full h-40 flex overflow-y-auto flex-col cursor-pointer px-4 py-2 border items-center justify-center rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             >
               <img src={upload} alt="upload" className="h-20 w-20 " />
               <p className="">choose a photo</p>
@@ -211,13 +222,23 @@ const RentProductForm = () => {
                 {formData.photos.map((photo, index) => {
                   const photoURL = URL.createObjectURL(photo);
                   return (
-                    <img
-                      key={index}
-                      src={photoURL}
-                      alt={`Upload ${index}`}
-                      className="h-20 w-20 object-cover rounded-lg"
-                      onLoad={() => URL.revokeObjectURL(photoURL)}
-                    />
+                    <div key={index} className="relative group">
+                      <img
+                        // key={index}
+                        src={photoURL}
+                        alt={`Upload ${index}`}
+                        className="h-20 w-20 object-cover rounded-lg"
+                        onLoad={() => URL.revokeObjectURL(photoURL)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 text-xs opacity-100"
+                        style={{ zIndex: 10 }}
+                      >
+                        ✕
+                      </button>
+                    </div>
                   );
                 })}
               </div>

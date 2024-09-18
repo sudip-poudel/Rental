@@ -1,5 +1,6 @@
 import {
   useChangeRentStatus,
+  useDeleteItem,
   useGetItemsListedByUser,
   useGetRentalDetailsByItemId,
 } from "@/api/itemsQueriesAndMutation";
@@ -20,11 +21,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 
-import { useToast } from "@/components/ui/use-toast";
+import { toast, useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 
 const DashboardListings = ({ userId }) => {
   const { data: itemsListed, isPending } = useGetItemsListedByUser(userId);
+  const { mutate: deleteItem, isPending: isDeleting } = useDeleteItem();
 
   if (isPending || !itemsListed) {
     return <p>Loading...</p>;
@@ -67,7 +69,16 @@ const DashboardListings = ({ userId }) => {
                       <button className="text-green-500 hover:text-green-700 mx-1">
                         <TooltipDemo Trigger={<Pencil />} content="Edit Item" />
                       </button>
-                      <button className="text-red-500 hover:text-red-700 mx-1">
+                      <button
+                        className="text-red-500 hover:text-red-700 mx-1"
+                        onClick={() => {
+                          deleteItem(item.item.id, {
+                            onSuccess: (data) => {
+                              toast({ title: data.message });
+                            },
+                          });
+                        }}
+                      >
                         <TooltipDemo
                           Trigger={<Trash2 />}
                           content="Delete Item"
