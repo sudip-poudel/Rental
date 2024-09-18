@@ -77,29 +77,44 @@ const UserSetting = () => {
             <div className="space-y-3 mt-4">
               {Object.entries(user).map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between">
-                  {editMode[key] ? (
-                    <input
-                      ref={inputRefs[key]}
-                      type={key === "age" ? "number" : "text"}
-                      name={key}
-                      value={value?.toString()}
-                      onChange={(e) =>
-                        handleUpdate(e, key as keyof IUserDetails)
-                      }
-                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                      onBlur={() => toggleEdit(key as keyof IUserDetails)}
-                    />
+                  {key === "name" ? (
+                    editMode[key] ? (
+                      <input
+                        ref={inputRefs[key]}
+                        type={"text"}
+                        name={key}
+                        value={value.toString()}
+                        onChange={(e) =>
+                          handleUpdate(e, key as keyof IUserDetails)
+                        }
+                        className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        onBlur={() => toggleEdit(key as keyof IUserDetails)}
+                      />
+                    ) : (
+                      <>
+                        <span
+                          className="cursor-pointer text-sm text-gray-600"
+                          onClick={() => toggleEdit(key)}
+                        >
+                          Name: {value.toString()}
+                        </span>
+                        <PenIcon
+                          className="h-5 w-5 text-gray-500 cursor-pointer"
+                          onClick={() => toggleEdit(key)}
+                        />
+                      </>
+                    )
                   ) : (
                     <>
                       <span className="text-sm text-gray-600">{`${
                         key === "created_at"
                           ? "Member Since"
                           : key.charAt(0).toUpperCase() + key.slice(1)
-                      }: ${value}`}</span>
-                      <PenIcon
-                        className="h-5 w-5 text-gray-500 cursor-pointer"
-                        onClick={() => toggleEdit(key as keyof IUserDetails)}
-                      />
+                      }: ${
+                        key === "created_at"
+                          ? new Date(value).toLocaleDateString("en-Us")
+                          : value
+                      }`}</span>
                     </>
                   )}
                 </div>

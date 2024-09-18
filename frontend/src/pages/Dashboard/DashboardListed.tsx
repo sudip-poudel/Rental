@@ -126,7 +126,7 @@ const ListedItemsHelper = ({ itemDetails }: { itemDetails: IItem }) => {
         </div>
       </td>
       <td className="border p-2">
-        <div>
+        <div className="flex flex-row">
           <AlertDialog>
             <AlertDialogTrigger className="">
               <div className="text-center flex items-center justify-center">
@@ -195,16 +195,17 @@ const ListedItemsHelper = ({ itemDetails }: { itemDetails: IItem }) => {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+
+          <button className="text-blue-500 hover:text-blue-700 mx-1">
+            <TooltipDemo Trigger={<Eye />} content="View Details" />
+          </button>
+          <button className="text-green-500 hover:text-green-700 mx-1">
+            <TooltipDemo Trigger={<Pencil />} content="Edit Item" />
+          </button>
+          <button className="text-red-500 hover:text-red-700 mx-1">
+            <TooltipDemo Trigger={<Trash2 />} content="Delete Item" />
+          </button>
         </div>
-        <button className="text-blue-500 hover:text-blue-700 mx-1">
-          <TooltipDemo Trigger={<Eye />} content="View Details" />
-        </button>
-        <button className="text-green-500 hover:text-green-700 mx-1">
-          <TooltipDemo Trigger={<Pencil />} content="Edit Item" />
-        </button>
-        <button className="text-red-500 hover:text-red-700 mx-1">
-          <TooltipDemo Trigger={<Trash2 />} content="Delete Item" />
-        </button>
       </td>
     </tr>
   );
