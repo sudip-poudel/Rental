@@ -8,8 +8,8 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold">Welcome to Your Dashboard</h1>
           <div className="mt-2 flex justify-between">
             <div>
-              <p>Total Items: 10</p>
-              <p>Total Earnings: $500</p>
+              <p>Here you can:</p>
+              <p>Add new Items, view your rentals and Listings</p>
             </div>
             <Link to="/addproduct">
               <Button className=" text-white px-4 py-2 rounded">

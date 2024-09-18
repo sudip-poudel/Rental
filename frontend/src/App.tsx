@@ -23,6 +23,7 @@ import "@smastrom/react-rating/style.css";
 import DashboardLayout from "./pages/Dashboard/DashboardLayout";
 import DashboardListed from "./pages/Dashboard/DashboardListed";
 import DashboardRented from "./pages/Dashboard/DashboardRented";
+import DashboardEarnings from "./pages/Dashboard/DashboardEarnings";
 function App() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
@@ -87,6 +88,16 @@ function App() {
                   authenticationPath="/signin"
                   isAuthenticated={isLoggedin}
                   Component={DashboardListed}
+                />
+              }
+            />
+            <Route
+              path="earnings"
+              element={
+                <ProtectedRoute
+                  authenticationPath="/signin"
+                  isAuthenticated={isLoggedin}
+                  Component={DashboardEarnings}
                 />
               }
             />

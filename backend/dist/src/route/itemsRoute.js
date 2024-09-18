@@ -17,6 +17,10 @@ router.post("/rentitem", validateToken_1.default, itemRouteHandler_1.handleRentI
 router.post("/rentitem/changestatus", validateToken_1.default, itemRouteHandler_1.handleRentStatusChange);
 router.get("/renteditems/:user", validateToken_1.default, itemRouteHandler_1.handleGetRentedItems);
 router.get("/search/:search", validateToken_1.default, itemRouteHandler_1.handleSearch);
+router.get("/itemlisted/:user", validateToken_1.default, itemRouteHandler_1.handleGetListedItemsByUser);
+router.get("/deleteitem/:itemId", validateToken_1.default, itemRouteHandler_1.handleDeleteItem);
+router.get("/rentaldetail/:itemid", validateToken_1.default, itemRouteHandler_1.handleGetRentalDetialsByItemId);
 router.get("/item/:categoryId", itemRouteHandler_1.handleGetItemByCategory);
 router.get("/:id", validateToken_1.default, itemRouteHandler_1.handleGetItemById);
+// router.post()
 module.exports = router;

@@ -206,6 +206,8 @@ const deleteItem = async (id: string) => {
       `${import.meta.env.VITE_API_URL}/item/deleteitem/${id}`
     );
     const result = response.data;
+    console.log(result);
+
     return result;
   } catch (error) {
     if (axios.isAxiosError(error)) {

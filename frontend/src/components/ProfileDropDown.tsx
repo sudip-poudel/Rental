@@ -1,4 +1,5 @@
 import { logoutUser } from "@/api/userApi";
+import { useGetUserDetailsById } from "@/api/userQueriesAndMutation";
 import { logout } from "@/store/auth/authSlice";
 import { RootState } from "@/types/types";
 import { LogOut, Settings, User } from "lucide-react";
@@ -11,6 +12,8 @@ const ProfileDropDown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const userId = useSelector((state: RootState) => state.auth.userInfo.id);
+  const userInfo = useSelector((state: RootState) => state.auth.userInfo);
+  const { data: userData } = useGetUserDetailsById(userId);
   const node = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = (e) => {
@@ -51,7 +54,12 @@ const ProfileDropDown = () => {
         onClick={toggleOpen}
         className="rounded-full w-10 h-10 bg-gray-300 mr-8"
       >
-        {/* Replace this with your profile icon */}P
+        {/* Replace this with your profile icon */}
+        {userData?.profileUrl ? (
+          <img className="rounded-full" src={userData?.profileUrl} />
+        ) : (
+          userInfo.name.split("")[0].toUpperCase()
+        )}
       </button>
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">

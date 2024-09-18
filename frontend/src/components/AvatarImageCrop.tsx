@@ -159,7 +159,6 @@ export default function AvatarImageCrop({
               onLoad={onImageLoad}
             />
           </ReactCrop>
-          //TODO handle submit the avatar
           <Button
             type="button"
             disabled={isPending}

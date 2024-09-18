@@ -10,9 +10,14 @@ exports.itemStatus = (0, pg_core_1.pgEnum)("itemStauts", [
     "unavailable",
 ]);
 exports.rentalStatus = (0, pg_core_1.pgEnum)("rentalStatus", [
-    "requested",
-    "rented",
+    "returnRejected",
+    "returnAccepted",
+    "returnRequested",
+    "requestRejected",
+    "requestAccepted",
     "returned",
+    "rented",
+    "requested",
 ]);
 exports.users = (0, pg_core_1.pgTable)("users", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
@@ -37,7 +42,7 @@ exports.item = (0, pg_core_1.pgTable)("item", {
     title: (0, pg_core_1.varchar)("title", { length: 255 }).notNull(),
     description: (0, pg_core_1.text)("description").notNull(),
     category: (0, pg_core_1.uuid)("category")
-        .references(() => exports.category.id)
+        .references(() => exports.category.id, { onDelete: "cascade", onUpdate: "cascade" })
         .notNull(),
     created_at: (0, pg_core_1.timestamp)("created_at").notNull().defaultNow(),
     rate: (0, pg_core_1.real)("rate").notNull(),
@@ -102,7 +107,10 @@ exports.itemCategory = (0, pg_core_1.pgTable)("item_category", {
         .references(() => exports.item.id),
     categoryId: (0, pg_core_1.uuid)("category_id")
         .notNull()
-        .references(() => exports.category.id),
+        .references(() => exports.category.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+    }),
 });
 exports.itemCategoryTableRelations = (0, drizzle_orm_1.relations)(exports.itemCategory, ({ one, many }) => {
     return {
@@ -117,7 +125,7 @@ exports.itemLocation = (0, pg_core_1.pgTable)("item_location", {
     id: (0, pg_core_1.uuid)("id").primaryKey().defaultRandom(),
     itemId: (0, pg_core_1.uuid)("item_id")
         .notNull()
-        .references(() => exports.item.id),
+        .references(() => exports.item.id, { onDelete: "cascade", onUpdate: "cascade" }),
     latitude: (0, pg_core_1.real)("latitude").notNull(),
     longitude: (0, pg_core_1.real)("longitude").notNull(),
     location: (0, pg_core_1.text)("location").notNull(),

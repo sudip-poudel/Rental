@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import Slider from "react-slick";
 import for_rent from "/images/for_rent.png";
+import available from "/images/available.png";
 import Card from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import {
@@ -154,7 +155,11 @@ const Itempage = () => {
                 <div className="my-4 flex flex-col border rounded-lg shadow-lg bg-white p-6">
                   <div className="flex items-center gap-4">
                     <img
-                      src={for_rent}
+                      src={
+                        itemDetails.item.itemStatus === "inrent"
+                          ? for_rent
+                          : available
+                      }
                       alt="for_rent image"
                       className="h-12 w-12 rounded-full"
                     />

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.handleUpdateUserAvater = exports.updatePasswordHandler = exports.verifyUpdatePassword = exports.handleForgetPassword = exports.handleLogout = exports.handleLogin = exports.handleSignup = exports.oAuth2Server = exports.oAuthHandler = void 0;
+exports.getCurrentUser = exports.getUserById = exports.handleUpdateUserAvater = exports.updatePasswordHandler = exports.verifyUpdatePassword = exports.handleForgetPassword = exports.handleLogout = exports.handleLogin = exports.handleSignup = exports.oAuth2Server = exports.oAuthHandler = void 0;
 const db_1 = require("../db");
 const schema_1 = require("../schema/schema");
 const drizzle_orm_1 = require("drizzle-orm");
@@ -385,6 +385,29 @@ const handleUpdateUserAvater = async (req, res) => {
 };
 exports.handleUpdateUserAvater = handleUpdateUserAvater;
 /** User Routes */
+const getCurrentUser = async (req, res) => {
+    const id = req.params.userId;
+    console.log(id);
+    try {
+        const user = await db_1.db.query.users.findFirst({
+            where: (0, drizzle_orm_1.eq)(schema_1.users.id, id),
+            columns: {
+                password: false,
+                resetPasswordToken: false,
+            },
+        });
+        if (!user) {
+            return res
+                .status(400)
+                .send({ success: false, message: "User not found" });
+        }
+        res.status(200).send({ success: true, data: user });
+    }
+    catch (error) {
+        console.error(error);
+    }
+};
+exports.getCurrentUser = getCurrentUser;
 const getUserById = async (req, res) => {
     const id = req.params.id;
     console.log(id);

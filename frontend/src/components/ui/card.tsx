@@ -32,7 +32,7 @@ const Card = ({
         </p>
         <div className="flex items-center justify-around">
           <p className="text-gray-700 font-semibold">
-            Rate: ${item.item.rate} /day
+            Rate: Rs. {item.item.rate} /day
           </p>
           <Button
             className="font-bold py-1 px-2 rounded "

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleRentStatusChange = exports.handleGetRentedItems = exports.handleRentItem = exports.handleSearch = exports.handleGetCategory = exports.handlePostItem = exports.handleGetItemByCategory = exports.handleGetItemById = exports.handleGetItem = void 0;
+exports.handleDeleteItem = exports.handleGetRentalDetialsByItemId = exports.handleGetListedItemsByUser = exports.handleRentStatusChange = exports.handleGetRentedItems = exports.handleRentItem = exports.handleSearch = exports.handleGetCategory = exports.handlePostItem = exports.handleGetItemByCategory = exports.handleGetItemById = exports.handleGetItem = void 0;
 const db_1 = require("../db");
 const drizzle_orm_1 = require("drizzle-orm");
 const schema_1 = require("../schema/schema");
@@ -8,18 +8,22 @@ const handleCloudinaryUpload_1 = require("../helper/handleCloudinaryUpload");
 const handleGetItem = async (_, res) => {
     // const itemId = req.params.id;
     try {
-        const items = await db_1.db.select().from(schema_1.item).limit(10);
+        const items = await db_1.db
+            .select()
+            .from(schema_1.item)
+            .innerJoin(schema_1.itemLocation, (0, drizzle_orm_1.eq)(schema_1.item.id, schema_1.itemLocation.itemId))
+            .limit(10);
         let itemDetailsWithLocation = [];
-        for (const item of items) {
-            const locationDetails = (await db_1.db.query.itemLocation.findMany({
-                where: (0, drizzle_orm_1.eq)(schema_1.itemLocation.itemId, item.id),
-            }))[0];
-            const details = { ...item, locationDetails: locationDetails };
-            itemDetailsWithLocation = [...itemDetailsWithLocation, details];
-        }
-        return res
-            .status(200)
-            .json({ success: true, data: itemDetailsWithLocation });
+        // for (const item of items) {
+        //   const locationDetails = (
+        //     await db.query.itemLocation.findMany({
+        //       where: eq(itemLocation.itemId, item.id),
+        //     })
+        //   )[0];
+        //   const details = { ...item, locationDetails: locationDetails };
+        //   itemDetailsWithLocation = [...itemDetailsWithLocation, details];
+        // }
+        return res.status(200).json({ success: true, data: items });
     }
     catch (error) {
         console.log(error);
@@ -30,12 +34,21 @@ exports.handleGetItem = handleGetItem;
 const handleGetItemById = async (req, res) => {
     const itemId = req.params.id;
     try {
-        const itemData = (await db_1.db.select().from(schema_1.item).where((0, drizzle_orm_1.eq)(schema_1.item.id, itemId)))[0];
-        const locationDetails = (await db_1.db.query.itemLocation.findMany({
-            where: (0, drizzle_orm_1.eq)(schema_1.itemLocation.itemId, itemData.id),
-        }))[0];
-        console.log(locationDetails, "locationDetails");
-        const itemDetails = { ...itemData, locationDetails: locationDetails };
+        // const itemData = (
+        //   await db.select().from(item).where(eq(item.id, itemId))
+        // )[0];
+        // const locationDetails = (
+        //   await db.query.itemLocation.findMany({
+        //     where: eq(itemLocation.itemId, itemData.id),
+        //   })
+        // )[0] as InferSelectModel<typeof itemLocation>;
+        // console.log(locationDetails, "locationDetails");
+        const itemDetails = (await db_1.db
+            .select()
+            .from(schema_1.item)
+            .innerJoin(schema_1.itemLocation, (0, drizzle_orm_1.eq)(schema_1.item.id, schema_1.itemLocation.itemId))
+            .where((0, drizzle_orm_1.eq)(schema_1.item.id, itemId)))[0];
+        // const itemDetails = { ...itemData, locationDetails: locationDetails };
         console.log(itemDetails, "itemDetails");
         return res.status(200).json({ success: true, data: itemDetails });
     }
@@ -134,14 +147,38 @@ const handleGetCategory = async (_, res) => {
 exports.handleGetCategory = handleGetCategory;
 //to search the item from the item collection with similar keywords in title
 const handleSearch = async (req, res) => {
-    const search = req.params.search.toLowerCase();
+    const search = req.params.search;
     console.log(search);
     try {
-        const searchedItem = await db_1.db
-            .select()
-            .from(schema_1.item)
-            .where((0, drizzle_orm_1.eq)(schema_1.item.title, search));
-        return res.json(searchedItem);
+        //TODO check the item.id and row.id are incorrect
+        const searchedItem = (await db_1.db.execute((0, drizzle_orm_1.sql) `select * from item 
+        inner join item_location on item.id = item_location.item_id
+        where to_tsvector(description || ' ' || title) @@ to_tsquery(${search})`)).rows.map((row) => {
+            console.log(row);
+            const itemRes = {
+                item: {
+                    id: row.item_id,
+                    title: row.title,
+                    description: row.description,
+                    category: row.category,
+                    itemStatus: row.itemStatus,
+                    rate: row.rate,
+                    rentStart: row.rent_start,
+                    rentEnd: row.rent_end,
+                    pictureUrl: row.picture_url,
+                    initialDeposit: row.initial_deposit,
+                    addedBy: row.added_by,
+                },
+                item_location: {
+                    location: row.location,
+                    latitude: row.latitude,
+                    longitude: row.longitude,
+                },
+            };
+            return itemRes;
+        });
+        console.log(searchedItem);
+        return res.json({ success: true, data: searchedItem });
     }
     catch (error) {
         console.log(error);
@@ -204,6 +241,20 @@ exports.handleGetRentedItems = handleGetRentedItems;
 const handleRentStatusChange = async (req, res) => {
     const { rentId, rentStatus } = req.body;
     try {
+        if (rentStatus === "returnAccepted") {
+            const rentData = await db_1.db
+                .select()
+                .from(schema_1.rentals)
+                .where((0, drizzle_orm_1.eq)(schema_1.rentals.id, rentId));
+            const rentDetails = rentData[0];
+            const itemId = rentDetails.item;
+            await db_1.db.delete(schema_1.rentals).where((0, drizzle_orm_1.eq)(schema_1.rentals.id, rentId));
+            await db_1.db
+                .update(schema_1.item)
+                .set({ itemStatus: "available" })
+                .where((0, drizzle_orm_1.eq)(schema_1.item.id, itemId));
+            return;
+        }
         await db_1.db
             .update(schema_1.rentals)
             .set({ status: rentStatus })
@@ -220,3 +271,56 @@ const handleRentStatusChange = async (req, res) => {
     }
 };
 exports.handleRentStatusChange = handleRentStatusChange;
+const handleGetListedItemsByUser = async (req, res) => {
+    const { user } = req.params;
+    try {
+        const listedItems = await db_1.db
+            .select()
+            .from(schema_1.item)
+            .innerJoin(schema_1.itemLocation, (0, drizzle_orm_1.eq)(schema_1.item.id, schema_1.itemLocation.itemId))
+            .where((0, drizzle_orm_1.eq)(schema_1.item.addedBy, user));
+        return res.status(200).json({ success: true, data: listedItems });
+    }
+    catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json({ success: false, data: "Failed to fetch listed items" });
+    }
+};
+exports.handleGetListedItemsByUser = handleGetListedItemsByUser;
+const handleGetRentalDetialsByItemId = async (req, res) => {
+    //TODO make this route and use in dashboard listing\
+    const { itemid } = req.params;
+    try {
+        const rentaldetails = (await db_1.db.select().from(schema_1.rentals).where((0, drizzle_orm_1.eq)(schema_1.rentals.item, itemid)))[0];
+        return res.status(200).json({ success: true, data: rentaldetails });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, data: "Failed to execute " });
+    }
+};
+exports.handleGetRentalDetialsByItemId = handleGetRentalDetialsByItemId;
+const handleDeleteItem = async (req, res) => {
+    const { itemId } = req.params;
+    try {
+        const itemData = await db_1.db.select().from(schema_1.item).where((0, drizzle_orm_1.eq)(schema_1.item.id, itemId));
+        const itemDetails = itemData[0];
+        console.log(itemId, itemDetails);
+        if (itemDetails.itemStatus === "inrent") {
+            return res
+                .status(400)
+                .json({ success: false, data: "Cannot delete rented item" });
+        }
+        await db_1.db.delete(schema_1.item).where((0, drizzle_orm_1.eq)(schema_1.item.id, itemId));
+        return res.status(200).json({ success: true, data: "Item deleted" });
+    }
+    catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json({ success: false, data: "Failed to delete item" });
+    }
+};
+exports.handleDeleteItem = handleDeleteItem;

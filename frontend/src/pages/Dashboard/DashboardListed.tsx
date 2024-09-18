@@ -23,10 +23,12 @@ import { Button } from "@/components/ui/button";
 
 import { toast, useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import { useNavigate } from "react-router-dom";
 
 const DashboardListings = ({ userId }) => {
   const { data: itemsListed, isPending } = useGetItemsListedByUser(userId);
   const { mutate: deleteItem, isPending: isDeleting } = useDeleteItem();
+  const navigate = useNavigate();
 
   if (isPending || !itemsListed) {
     return <p>Loading...</p>;
@@ -63,7 +65,12 @@ const DashboardListings = ({ userId }) => {
                     </td>
                     <td className="border p-2">{item.item.itemStatus}</td>
                     <td className="border p-2">
-                      <button className="text-blue-500 hover:text-blue-700 mx-1">
+                      <button
+                        className="text-blue-500 hover:text-blue-700 mx-1"
+                        onClick={() => {
+                          navigate(`/itempage/${item.item.id}`);
+                        }}
+                      >
                         <TooltipDemo Trigger={<Eye />} content="View Details" />
                       </button>
                       <button className="text-green-500 hover:text-green-700 mx-1">
@@ -106,7 +113,7 @@ const ListedItemsHelper = ({ itemDetails }: { itemDetails: IItem }) => {
   );
   const { mutate: changeRentStatus } = useChangeRentStatus();
   const { toast } = useToast();
-
+  const navigate = useNavigate();
   if (!item || idItemLoading) {
     return <div>loading</div>;
   }
@@ -196,13 +203,23 @@ const ListedItemsHelper = ({ itemDetails }: { itemDetails: IItem }) => {
             </AlertDialogContent>
           </AlertDialog>
 
-          <button className="text-blue-500 hover:text-blue-700 mx-1">
+          <button
+            className="text-blue-500 hover:text-blue-700 mx-1"
+            onClick={() => {
+              navigate(`/itempage/${itemDetails.item.id}`);
+            }}
+          >
             <TooltipDemo Trigger={<Eye />} content="View Details" />
           </button>
           <button className="text-green-500 hover:text-green-700 mx-1">
             <TooltipDemo Trigger={<Pencil />} content="Edit Item" />
           </button>
-          <button className="text-red-500 hover:text-red-700 mx-1">
+          <button
+            className="text-red-500 hover:text-red-700 mx-1"
+            onClick={() => {
+              toast({ title: "Cannot Delete Item On Rent" });
+            }}
+          >
             <TooltipDemo Trigger={<Trash2 />} content="Delete Item" />
           </button>
         </div>
