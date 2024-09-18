@@ -262,6 +262,20 @@ export const handleGetRentedItems = async (req: Request, res: Response) => {
 export const handleRentStatusChange = async (req: Request, res: Response) => {
   const { rentId, rentStatus } = req.body;
   try {
+    if (rentStatus === "returnAccepted") {
+      const rentData = await db
+        .select()
+        .from(rentals)
+        .where(eq(rentals.id, rentId));
+      const rentDetails = rentData[0];
+      const itemId = rentDetails.item;
+      await db.delete(rentals).where(eq(rentals.id, rentId));
+      await db
+        .update(item)
+        .set({ itemStatus: "available" })
+        .where(eq(item.id, itemId));
+      return;
+    }
     await db
       .update(rentals)
       .set({ status: rentStatus })
@@ -312,5 +326,27 @@ export const handleGetRentalDetialsByItemId = async (
   } catch (error) {
     console.log(error);
     return res.status(500).json({ success: false, data: "Failed to execute " });
+  }
+};
+
+export const handleDeleteItem = async (req: Request, res: Response) => {
+  const { itemId } = req.params;
+  try {
+    const itemData = await db.select().from(item).where(eq(item.id, itemId));
+    const itemDetails = itemData[0];
+    console.log(itemId, itemDetails);
+
+    if (itemDetails.itemStatus === "inrent") {
+      return res
+        .status(400)
+        .json({ success: false, data: "Cannot delete rented item" });
+    }
+    await db.delete(item).where(eq(item.id, itemId));
+    return res.status(200).json({ success: true, data: "Item deleted" });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, data: "Failed to delete item" });
   }
 };

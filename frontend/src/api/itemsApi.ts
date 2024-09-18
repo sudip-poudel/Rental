@@ -200,6 +200,22 @@ const fetchRentalDetailsOfItemById = async (itemId: string) => {
   }
 };
 
+const deleteItem = async (id: string) => {
+  try {
+    const response: AxiosResponse<INormalResponse> = await axios.get(
+      `${import.meta.env.VITE_API_URL}/item/deleteitem/${id}`
+    );
+    const result = response.data;
+    return result;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    } else {
+      throw new Error("An unknown error occurred");
+    }
+  }
+};
+
 export {
   fetchCategoryDetails,
   submitItem,
@@ -212,4 +228,5 @@ export {
   changeRentalStatus,
   fetchItemsListedByUser,
   fetchRentalDetailsOfItemById,
+  deleteItem,
 };

@@ -3,6 +3,7 @@ import { QUERY_KYES } from "./userQueriesAndMutation";
 import {
   addItemToRent,
   changeRentalStatus,
+  deleteItem,
   fetchCategoryDetails,
   fetchItemById,
   fetchItems,
@@ -114,5 +115,17 @@ export const useGetRentalDetailsByItemId = (id: string) => {
   return useQuery({
     queryKey: [QUERY_KYES.getItems, QUERY_KYES.rentDetailsById, id],
     queryFn: () => fetchRentalDetailsOfItemById(id),
+  });
+};
+
+export const useDeleteItem = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KYES.getItems],
+      });
+    },
   });
 };

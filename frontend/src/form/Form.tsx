@@ -52,14 +52,13 @@ const RentProductForm = () => {
       uploadRef.current.click();
     }
   };
-
   const handleRemoveImage = (indexToRemove: number) => {
     setFormData((prev) => ({
       ...prev,
       photos: prev.photos.filter((_, index) => index !== indexToRemove),
     }));
   };
-  
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     // console.log(value);

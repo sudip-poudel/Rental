@@ -75,10 +75,27 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col">
-      <div className="flex-grow flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-          <h1 className="text-2xl font-bold mb-6 text-center">Contact Us</h1>
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6 text-center">Contact Us</h1>
+      <div className="flex flex-col md:flex-row gap-6">
+        <div className="md:w-1/2">
+          <p className="mb-4 text-gray-700">
+            We would love to hear from you! Whether you have a question about
+            features, pricing, need a demo, or anything else, our team is ready
+            to answer all your questions.
+          </p>
+          <p className="mb-4 text-gray-700">You can also reach us at:</p>
+          <ul className="list-disc list-inside text-gray-700 mb-4">
+            <li>Email: support@example.com</li>
+            <li>Phone: +123 456 7890</li>
+            <li>Address: 123 Main Street, Anytown, USA</li>
+          </ul>
+          <p className="text-gray-700">
+            Our office hours are Monday to Friday, 9 AM to 5 PM. We look forward
+            to hearing from you!
+          </p>
+        </div>
+        <div className="md:w-1/2 bg-white p-8 rounded-lg shadow-lg">
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <input
@@ -127,9 +144,14 @@ const ContactUs = () => {
                 <p className="text-red-600">{errors.message}</p>
               )}
             </div>
-            <Button type="submit" className="w-full text-lg">
-              Send Message
-            </Button>
+            <div className="flex items-center justify-between">
+              <Button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                Send Message
+              </Button>
+            </div>
           </form>
         </div>
       </div>

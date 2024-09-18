@@ -18,14 +18,14 @@ export const itemStatus = pgEnum("itemStauts", [
   "unavailable",
 ]);
 export const rentalStatus = pgEnum("rentalStatus", [
-  "requested",
-  "requestAccepted",
-  "requestRejected",
-  "rented",
-  "returnRequested",
-  "returnAccepted",
   "returnRejected",
+  "returnAccepted",
+  "returnRequested",
+  "requestRejected",
+  "requestAccepted",
   "returned",
+  "rented",
+  "requested",
 ]);
 export const users = pgTable(
   "users",
@@ -54,7 +54,7 @@ export const item = pgTable("item", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
   category: uuid("category")
-    .references(() => category.id)
+    .references(() => category.id, { onDelete: "cascade", onUpdate: "cascade" })
     .notNull(),
   created_at: timestamp("created_at").notNull().defaultNow(),
   rate: real("rate").notNull(),
@@ -123,7 +123,10 @@ export const itemCategory = pgTable("item_category", {
     .references(() => item.id),
   categoryId: uuid("category_id")
     .notNull()
-    .references(() => category.id),
+    .references(() => category.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
 });
 
 export const itemCategoryTableRelations = relations(
@@ -143,7 +146,7 @@ export const itemLocation = pgTable("item_location", {
   id: uuid("id").primaryKey().defaultRandom(),
   itemId: uuid("item_id")
     .notNull()
-    .references(() => item.id),
+    .references(() => item.id, { onDelete: "cascade", onUpdate: "cascade" }),
   latitude: real("latitude").notNull(),
   longitude: real("longitude").notNull(),
   location: text("location").notNull(),

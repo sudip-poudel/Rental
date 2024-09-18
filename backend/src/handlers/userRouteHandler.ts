@@ -435,6 +435,27 @@ const handleUpdateUserAvater = async (req: Request, res: Response) => {
 };
 
 /** User Routes */
+const getCurrentUser = async (req: Request, res: Response) => {
+  const id = req.params.userId;
+  console.log(id);
+  try {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, id),
+      columns: {
+        password: false,
+        resetPasswordToken: false,
+      },
+    });
+    if (!user) {
+      return res
+        .status(400)
+        .send({ success: false, message: "User not found" });
+    }
+    res.status(200).send({ success: true, data: user });
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const getUserById = async (req: Request, res: Response) => {
   const id = req.params.id;
@@ -467,4 +488,5 @@ export {
   updatePasswordHandler,
   handleUpdateUserAvater,
   getUserById,
+  getCurrentUser,
 };
