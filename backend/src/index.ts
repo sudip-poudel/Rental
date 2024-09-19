@@ -12,7 +12,7 @@ app.use(
   cors({
     origin: ["http://localhost:5173", "https://rental-ruby.vercel.app"],
     credentials: true,
-    METHODS: "GET, POST, PUT, DELETE",
+    methods: "GET, POST, PUT, DELETE",
   })
 );
 app.use(cookieParser());
