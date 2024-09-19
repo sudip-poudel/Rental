@@ -99,7 +99,7 @@ const DashboardRentedCard = ({ item }: { item: IRentDetails }) => {
                       console.log(item.status);
 
                       return changeRentStatus(
-                        { rentId: item.id, rentStatus: "rented" },
+                        { rentId: item.id as string, rentStatus: "rented" },
                         {
                           onSuccess: () =>
                             toast({ title: "Item marked as received" }),
@@ -121,7 +121,10 @@ const DashboardRentedCard = ({ item }: { item: IRentDetails }) => {
                       console.log("Requesting for return");
                       console.log(item.status);
                       return changeRentStatus(
-                        { rentId: item.id, rentStatus: "returnRequested" },
+                        {
+                          rentId: item.id as string,
+                          rentStatus: "returnRequested",
+                        },
                         {
                           onSuccess: () =>
                             toast({ title: "Request for return sent" }),
