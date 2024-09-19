@@ -44,7 +44,7 @@ router.get(
 );
 router.get("/item/:categoryId", handleGetItemByCategory);
 
-router.get("/:id", validateToken, handleGetItemById);
+router.get("/:id", handleGetItemById);
 // router.post()
 
 module.exports = router;
