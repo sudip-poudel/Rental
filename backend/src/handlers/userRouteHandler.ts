@@ -61,13 +61,13 @@ const handleSignup = async (req: Request, res: Response) => {
     res.cookie("token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: "none",
-      httpOnly: true,
+      // httpOnly: true,
       secure: true,
     });
     res.cookie("userdata", stringifiedData, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: "none",
-      httpOnly: true,
+      // httpOnly: true,
       secure: true,
     });
 
