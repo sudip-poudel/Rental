@@ -21,6 +21,6 @@ router.get("/itemlisted/:user", validateToken_1.default, itemRouteHandler_1.hand
 router.get("/deleteitem/:itemId", validateToken_1.default, itemRouteHandler_1.handleDeleteItem);
 router.get("/rentaldetail/:itemid", validateToken_1.default, itemRouteHandler_1.handleGetRentalDetialsByItemId);
 router.get("/item/:categoryId", itemRouteHandler_1.handleGetItemByCategory);
-router.get("/:id", validateToken_1.default, itemRouteHandler_1.handleGetItemById);
+router.get("/:id", itemRouteHandler_1.handleGetItemById);
 // router.post()
 module.exports = router;
