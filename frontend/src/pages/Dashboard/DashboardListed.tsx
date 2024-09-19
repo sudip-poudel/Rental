@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 
 const DashboardListings = ({ userId }) => {
   const { data: itemsListed, isPending } = useGetItemsListedByUser(userId);
-  const { mutate: deleteItem, isPending: isDeleting } = useDeleteItem();
+  const { mutate: deleteItem } = useDeleteItem();
   const navigate = useNavigate();
 
   if (isPending || !itemsListed) {
@@ -173,7 +173,10 @@ const ListedItemsHelper = ({ itemDetails }: { itemDetails: IItem }) => {
                         console.log(item.status);
 
                         return changeRentStatus(
-                          { rentId: item.id, rentStatus: "requestAccepted" },
+                          {
+                            rentId: item.id as string,
+                            rentStatus: "requestAccepted",
+                          },
                           {
                             onSuccess: () =>
                               toast({ title: "Rent Request Accepted" }),
@@ -187,7 +190,10 @@ const ListedItemsHelper = ({ itemDetails }: { itemDetails: IItem }) => {
                         console.log("accept return");
                         console.log(item.status);
                         return changeRentStatus(
-                          { rentId: item.id, rentStatus: "returnAccepted" },
+                          {
+                            rentId: item.id as string,
+                            rentStatus: "returnAccepted",
+                          },
                           {
                             onSuccess: () =>
                               toast({ title: "Rental Successful" }),

@@ -179,7 +179,7 @@ export type IItemDetailsResponse = {
 };
 
 export type IRentDetails = {
-  id: string;
+  id?: string;
   item: string;
   rate: number;
   rentStart: Date;

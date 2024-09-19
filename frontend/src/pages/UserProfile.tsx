@@ -36,16 +36,12 @@ const UserProfile = () => {
       </div>
       <div className="mb-6">
         <h3 className="text-lg font-semibold">About Me</h3>
-        <p className="text-gray-700">
-          {userDetails?.about || "No information available."}
-        </p>
+        <p className="text-gray-700">{"No information available."}</p>
       </div>
       <div className="mb-6">
         <h3 className="text-lg font-semibold">Contact Information</h3>
         <ul className="list-disc list-inside text-gray-700">
           <li>Email: {userDetails?.email}</li>
-          <li>Phone: {userDetails?.phone}</li>
-          <li>Address: {userDetails?.address}</li>
         </ul>
       </div>
       <div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Card from "./ui/card";
 import { useNavigate } from "react-router-dom";
 import { useGetCategories, useGetItems } from "@/api/itemsQueriesAndMutation";
@@ -6,7 +6,7 @@ import { useGetCategories, useGetItems } from "@/api/itemsQueriesAndMutation";
 const Items = () => {
   const navigate = useNavigate();
   const { data: items, isLoading } = useGetItems();
-  const { data: categories, isLoading: categoryLoading } = useGetCategories();
+  const { data: categories } = useGetCategories();
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const handleCard = (id) => {

@@ -31,13 +31,16 @@ const Itempage = () => {
   const { data: availableItems, isLoading: isAllItensLoading } = useGetItems();
   const { mutate: addToRent, isPending: isaddToRentLoading } = useRentItem();
 
+  //TODO: this may be wrong because i entered status to correct the type error
   const [rentData, setRentData] = useState<IRentDetails>({
     item: id as string,
-    rentStart: undefined,
-    rentEnd: undefined,
+    rentStart: new Date() as Date,
+    rentEnd: new Date() as Date,
     rentedBy: userId as string,
     rate: itemDetails?.item.rate as number,
     initialDeposit: itemDetails?.item.initialDeposit as number,
+    id: "",
+    status: "requested",
   });
 
   const [selectDate, setselectDate] = useState<DateRange | undefined>();
@@ -101,7 +104,7 @@ const Itempage = () => {
       setDateError(true);
       return;
     }
-
+    //TODO: this may be wrong because i entered status to correct the type error
     const data: IRentDetails = {
       item: id as string,
       rentedBy: userId as string,
@@ -109,6 +112,7 @@ const Itempage = () => {
       initialDeposit: itemDetails?.item.initialDeposit as number,
       rentStart: date?.from as Date,
       rentEnd: date?.to as Date,
+      status: `requested`,
     };
     console.log(data);
 
