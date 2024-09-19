@@ -48,9 +48,15 @@ const handleSignup = async (req, res) => {
         console.log(stringifiedData);
         res.cookie("token", token, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
+            sameSite: "none",
+            httpOnly: true,
+            secure: true,
         });
         res.cookie("userdata", stringifiedData, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
+            sameSite: "none",
+            httpOnly: true,
+            secure: true,
         });
         res.status(200).send({ success: true, message: "Signup successful" });
         return;
@@ -99,9 +105,15 @@ const handleLogin = async (req, res) => {
         console.log(stringifiedUserData);
         res.cookie("token", token, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
+            sameSite: "none",
+            httpOnly: true,
+            secure: true,
         });
         res.cookie("userdata", stringifiedUserData, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
+            sameSite: "none",
+            httpOnly: true,
+            secure: true,
         });
         return res.status(200).send({ success: true, message: "Login successful" });
     }
