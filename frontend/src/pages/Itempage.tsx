@@ -22,7 +22,7 @@ import { Toaster } from "@/components/ui/toaster";
 const Itempage = () => {
   const { toast } = useToast();
   const { id } = useParams();
-  const userId = useSelector((state: RootState) => state.auth.userToken);
+  const userId = useSelector((state: RootState) => state.auth.userInfo.id);
   //TODO only show items with status available
 
   const { data: itemDetails, isLoading: isItemDetailsLoading } = useGetItemById(
