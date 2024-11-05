@@ -8,7 +8,7 @@ import { RootState } from "@/types/types";
 import ProfileDropDown from "./ProfileDropDown";
 const Navbar = () => {
   const isLoggedin = useSelector(
-    (state: RootState) => state.auth.userToken
+    (state: RootState) => state.auth.userInfo.id
   )?.trim()
     ? true
     : false;

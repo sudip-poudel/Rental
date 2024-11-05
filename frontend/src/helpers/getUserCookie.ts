@@ -1,15 +1,8 @@
-const getUserCookies = () => {
-  const cookie: {
-    token: string;
-    userdata: string;
-  } = document.cookie.split(";").reduce(
-    (ac, str) =>
-      Object.assign(ac, {
-        [str.split("=")[0].trim()]: str.split("=")[1],
-      }),
-    { token: "", userdata: "" }
-  );
-  return cookie;
+import { fetchCurrentUserDetails } from "@/api/userApi";
+
+const getUserCookies = async () => {
+  const data = await fetchCurrentUserDetails();
+  return { id: data.id, name: data.name, email: data.email };
 };
 
 export default getUserCookies;

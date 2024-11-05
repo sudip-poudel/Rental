@@ -8,7 +8,6 @@ const initialState: IAuthState = {
     profilePic: "",
     id: "",
   }, // for user object
-  userToken: null, // for storing the JWT
   success: false, // for monitoring the registration process.
 };
 
@@ -18,12 +17,9 @@ const authSlice = createSlice({
   reducers: {
     setUser: (
       state: IAuthState,
-      {
-        payload: { userdata, token },
-      }: { payload: { userdata: IUserInfo; token: string | null } }
+      { payload: { userdata } }: { payload: { userdata: IUserInfo } }
     ) => {
       state.userInfo = userdata;
-      state.userToken = token;
     },
     logout: (state: IAuthState) => {
       state.userInfo = {
@@ -32,7 +28,6 @@ const authSlice = createSlice({
         profilePic: "",
         id: "",
       };
-      state.userToken = null;
       state.success = false;
     },
   },

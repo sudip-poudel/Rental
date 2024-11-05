@@ -1,3 +1,4 @@
+import getUserCookies from "@/helpers/getUserCookie";
 import {
   ILoginData,
   ISignupData,
@@ -72,6 +73,10 @@ const loginUser = async (data: ILoginData) => {
     );
 
     const userData = response.data;
+    console.log(userData);
+    console.log(getUserCookies());
+
+    // console.log(JSON.parse(decodeURIComponent(getUserCookies().userdata)));
 
     return userData;
   } catch (error) {

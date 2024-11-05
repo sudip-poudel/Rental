@@ -9,7 +9,6 @@ export type IUserInfo = {
 
 export type IAuthState = {
   userInfo: IUserInfo;
-  userToken: string | null;
   success: boolean;
 };
 

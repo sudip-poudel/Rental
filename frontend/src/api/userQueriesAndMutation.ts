@@ -9,7 +9,6 @@ import {
   signupUser,
   updateUserAvatar,
 } from "./userApi";
-import getUserCookies from "@/helpers/getUserCookie";
 import { logout, setUser } from "@/store/auth/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -27,19 +26,18 @@ export enum QUERY_KYES {
 }
 
 const queryClient = new QueryClient();
-
+//TODO handle the auth state
 export const useLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   return useMutation({
     mutationFn: loginUser,
-    onSuccess: () => {
+    onSuccess: async () => {
+      const data = await fetchCurrentUserDetails();
       const authState: {
-        token: string;
         userdata: { id: string; name: string; email: string };
       } = {
-        token: getUserCookies().token,
-        userdata: JSON.parse(decodeURIComponent(getUserCookies().userdata)),
+        userdata: { id: data.id, name: data.name, email: data.email },
       };
       console.log(authState, "fasdfasd");
       dispatch(setUser(authState));
@@ -53,15 +51,12 @@ export const useSignup = () => {
   const navigate = useNavigate();
   return useMutation({
     mutationFn: signupUser,
-    onSuccess: () => {
-      console.log("signup success");
-
+    onSuccess: async () => {
+      const data = await fetchCurrentUserDetails();
       const authState: {
-        token: string;
         userdata: { id: string; name: string; email: string };
       } = {
-        token: getUserCookies().token,
-        userdata: JSON.parse(decodeURIComponent(getUserCookies().userdata)),
+        userdata: { id: data.id, name: data.name, email: data.email },
       };
       console.log(authState, "fasdfasd");
 

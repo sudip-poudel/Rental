@@ -29,16 +29,22 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const isLoggedin = getUserCookies().token ? true : false;
+    async function getUser() {
+      const isLoggedin = await getUserCookies();
 
-    if (isLoggedin) {
-      const authstate = {
-        token: getUserCookies().token,
-        userdata: JSON.parse(decodeURIComponent(getUserCookies().userdata)),
-      };
+      if (isLoggedin.id) {
+        const authstate = {
+          userdata: {
+            id: isLoggedin.id,
+            name: isLoggedin.name,
+            email: isLoggedin.email,
+          },
+        };
 
-      dispatch(setUser(authstate));
+        dispatch(setUser(authstate));
+      }
     }
+    getUser();
     setIsLoading(false);
   }, []);
   const isLoggedin = useIsLoggedin();
