@@ -177,7 +177,8 @@ export const oAuthHandler = (_: Request, res: Response) => {
   // Prevent CSRF and more
   const state = "some_state";
 
-  const scopes = GOOGLE_OAUTH_SCOPES.join("+");
+  // const scopes = GOOGLE_OAUTH_SCOPES.join("+");
+  const scopes = "https://www.googleapis.com/auth/userinfo.profile";
   console.log(scopes);
 
   // Generate url from auth request
