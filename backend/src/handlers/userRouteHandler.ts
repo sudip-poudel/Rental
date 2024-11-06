@@ -177,7 +177,7 @@ export const oAuthHandler = (_: Request, res: Response) => {
   // Prevent CSRF and more
   const state = "some_state";
 
-  const scopes = GOOGLE_OAUTH_SCOPES.join(" ");
+  const scopes = GOOGLE_OAUTH_SCOPES.join("+");
   console.log(scopes);
 
   // Generate url from auth request
@@ -220,6 +220,7 @@ export const oAuth2Server = async (
   });
 
   const access_token_data = await response.json();
+  console.log(access_token_data);
 
   const { id_token } = access_token_data;
 

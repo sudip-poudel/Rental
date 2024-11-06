@@ -157,7 +157,7 @@ const oAuthHandler = (_, res) => {
     ];
     // Prevent CSRF and more
     const state = "some_state";
-    const scopes = GOOGLE_OAUTH_SCOPES.join(" ");
+    const scopes = GOOGLE_OAUTH_SCOPES.join("+");
     console.log(scopes);
     // Generate url from auth request
     // (A pattern, check docs)
@@ -190,6 +190,7 @@ const oAuth2Server = async (req, res, next) => {
         body: JSON.stringify(data),
     });
     const access_token_data = await response.json();
+    console.log(access_token_data);
     const { id_token } = access_token_data;
     // verify and extract the information in the id token
     const token_info_response = await fetch(`${process.env.GOOGLE_TOKEN_INFO_URL}?id_token=${id_token}`);
