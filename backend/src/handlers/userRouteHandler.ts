@@ -183,7 +183,7 @@ export const oAuthHandler = (_: Request, res: Response) => {
 
   // Generate url from auth request
   // (A pattern, check docs)
-  const GOOGLE_OAUTH_CONSENT_SCREEN_URL = `${GOOGLE_OAUTH_URL}?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&access_type=offline&response_type=code&state=${state}&scope=${scopes}`;
+  const GOOGLE_OAUTH_CONSENT_SCREEN_URL = `${GOOGLE_OAUTH_URL}?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&access_type=offline&response_type=code&scope=${scopes}`;
   console.log(GOOGLE_OAUTH_CONSENT_SCREEN_URL);
 
   // Redirect to concent page
