@@ -144,14 +144,14 @@ const handleLogin = async (req: Request, res: Response) => {
 
 const handleLogout = async (req: Request, res: Response) => {
   res.clearCookie("token", {
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 0,
     domain: ".rental-backend-five.vercel.app",
     secure: true,
     sameSite: "none",
     path: "/",
   });
   res.clearCookie("userdata", {
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 0,
     domain: ".rental-backend-five.vercel.app",
     secure: true,
     sameSite: "none",
