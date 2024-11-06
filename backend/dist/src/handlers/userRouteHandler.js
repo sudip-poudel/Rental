@@ -49,13 +49,15 @@ const handleSignup = async (req, res) => {
         res.cookie("token", token, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
             sameSite: "none",
-            // httpOnly: true,
+            httpOnly: true,
+            domain: ".rental-backend-five.vercel.app",
             secure: true,
         });
         res.cookie("userdata", stringifiedData, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
             sameSite: "none",
-            // httpOnly: true,
+            httpOnly: true,
+            domain: ".rental-backend-five.vercel.app",
             secure: true,
         });
         res.status(200).send({ success: true, message: "Signup successful" });
@@ -106,12 +108,14 @@ const handleLogin = async (req, res) => {
         res.cookie("token", token, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
             sameSite: "none",
+            domain: ".rental-backend-five.vercel.app",
             httpOnly: true,
             secure: true,
         });
         res.cookie("userdata", stringifiedUserData, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
             sameSite: "none",
+            domain: ".rental-backend-five.vercel.app",
             httpOnly: true,
             secure: true,
         });
@@ -123,8 +127,20 @@ const handleLogin = async (req, res) => {
 };
 exports.handleLogin = handleLogin;
 const handleLogout = async (req, res) => {
-    res.clearCookie("token");
-    res.clearCookie("userdata");
+    res.clearCookie("token", {
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        domain: ".rental-backend-five.vercel.app",
+        secure: true,
+        sameSite: "none",
+        path: "/",
+    });
+    res.clearCookie("userdata", {
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        domain: ".rental-backend-five.vercel.app",
+        secure: true,
+        sameSite: "none",
+        path: "/",
+    });
     res.status(200).send({ success: true, message: "Logged out successfully" });
 };
 exports.handleLogout = handleLogout;
