@@ -143,20 +143,23 @@ const handleLogin = async (req: Request, res: Response) => {
 };
 
 const handleLogout = async (req: Request, res: Response) => {
-  res.clearCookie("token", {
-    maxAge: 0,
-    domain: ".rental-backend-five.vercel.app",
-    secure: true,
-    sameSite: "none",
-    path: "/",
-  });
-  res.clearCookie("userdata", {
-    maxAge: 0,
-    domain: ".rental-backend-five.vercel.app",
-    secure: true,
-    sameSite: "none",
-    path: "/",
-  });
+  let cookieRes = "token=; Path=/; Secure; Expires=Thu, 27 Jun 1970 13:52:54 GMT; SameSite=None;";
+
+  res.set("Set-Cookie", cookieRes)
+  //  res.clearCookie("token", {
+  //    maxAge: 0,
+  //    domain: ".rental-backend-five.vercel.app",
+  //    secure: true,
+  //    sameSite: "none",
+  //    path: "/",
+  //  });
+  //  res.clearCookie("userdata", {
+  //    maxAge: 0,
+  //    domain: ".rental-backend-five.vercel.app",
+  //    secure: true,
+  //    sameSite: "none",
+  //    path: "/",
+  //  });
   res.status(200).send({ success: true, message: "Logged out successfully" });
 };
 
@@ -177,13 +180,12 @@ export const oAuthHandler = (_: Request, res: Response) => {
   // Prevent CSRF and more
   const state = "some_state";
 
-  // const scopes = GOOGLE_OAUTH_SCOPES.join("+");
-  const scopes = "https://www.googleapis.com/auth/userinfo.profile";
+  const scopes = GOOGLE_OAUTH_SCOPES.join("+");
   console.log(scopes);
 
   // Generate url from auth request
   // (A pattern, check docs)
-  const GOOGLE_OAUTH_CONSENT_SCREEN_URL = `${GOOGLE_OAUTH_URL}?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&access_type=offline&response_type=code&scope=${scopes}`;
+  const GOOGLE_OAUTH_CONSENT_SCREEN_URL = `${GOOGLE_OAUTH_URL}?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&access_type=offline&response_type=code&state=${state}&scope=${scopes}`;
   console.log(GOOGLE_OAUTH_CONSENT_SCREEN_URL);
 
   // Redirect to concent page
@@ -197,7 +199,14 @@ export const oAuth2Server = async (
 ) => {
   // Get code out of query (Authorization Code)
   // TODO: Maybe, validate state
-  const { code } = req.query;
+  const { code, state } = req.query;
+  const storedState = req.cookies.oauth_state;
+
+  if (state != storedState) {
+    return res.status(403).json({ error: "Invalid state parameter" });
+  }
+
+  res.clearCookie("oauth_state"); // Remove state cookie
 
   // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
   const REDIRECT_URI = `${BACKEND_URL}/user/oauthsuccess`;
