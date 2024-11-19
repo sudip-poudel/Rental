@@ -245,12 +245,12 @@ export const oAuth2Server = async (
   const access_token_data = await response.json();
   console.log(access_token_data);
 
-  const { id_token } = access_token_data;
+  //  const { id_token } = access_token_data;
 
   // verify and extract the information in the id token
-  const token_info_response = await fetch(
-    `${process.env.GOOGLE_TOKEN_INFO_URL}?id_token=${id_token}`
-  );
+  //  const token_info_response = await fetch(
+  //    `${process.env.GOOGLE_TOKEN_INFO_URL}?id_token=${id_token}`
+  //  );
   const userinfoResponse = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
     headers: {
       Authorization: `Bearer ${access_token_data.access_token}`,
@@ -259,10 +259,12 @@ export const oAuth2Server = async (
 
   const userInfo = await userinfoResponse.json();
   console.log(userInfo, "testisdfjhklsdjflksda")
+  console.log(userInfo.name, "yyyydfiyuasuidytestisdfjhklsdfsdffsdahkflksda")
   // TODO: TYPE
-  const token_info_response_json = await token_info_response.json();
-  console.log(token_info_response_json);
 
+  //  const token_info_response_son = await token_info_response.json();
+  //  console.log(token_info_response_json);
+  //
   const { name, email } = userInfo;
   console.log(name, email);
   try {
