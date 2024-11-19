@@ -5,10 +5,6 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const app = express();
-const allowedOrigins = [
-    "http://localhost:5173",
-    "https://rental-ruby.vercel.app",
-];
 app.use(cors({
     origin: ["http://localhost:5173", "https://rental-ruby.vercel.app"],
     credentials: true,
@@ -20,7 +16,7 @@ app.use(express.json());
 app.use("/user", require("./route/userRoute"));
 app.use("/item", require("./route/itemsRoute"));
 // app.use(errorHandler);
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
     res.send("Hello World home!");
 });
 app.listen(3000, () => {

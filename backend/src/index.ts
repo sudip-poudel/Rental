@@ -1,17 +1,10 @@
-import { NextFunction, Request, Response } from "express";
-import { errorHandler } from "./middleware/errorHandler";
-import { getcat, insertCategory } from "./seed";
+import { Request, Response } from "express";
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const app = express();
-
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://rental-ruby.vercel.app",
-];
 
 app.use(
   cors({
@@ -29,7 +22,7 @@ app.use("/item", require("./route/itemsRoute"));
 
 // app.use(errorHandler);
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (_: Request, res: Response) => {
   res.send("Hello World home!");
 });
 

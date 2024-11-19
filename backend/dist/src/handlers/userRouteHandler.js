@@ -176,7 +176,7 @@ const oAuthHandler = (req, res) => {
     res.redirect(GOOGLE_OAUTH_CONSENT_SCREEN_URL);
 };
 exports.oAuthHandler = oAuthHandler;
-const oAuth2Server = async (req, res, next) => {
+const oAuth2Server = async (req, res, _) => {
     // Get code out of query (Authorization Code)
     // TODO: Maybe, validate state
     const { code, state } = req.query;
@@ -210,6 +210,13 @@ const oAuth2Server = async (req, res, next) => {
     const { id_token } = access_token_data;
     // verify and extract the information in the id token
     const token_info_response = await fetch(`${process.env.GOOGLE_TOKEN_INFO_URL}?id_token=${id_token}`);
+    const userinfoResponse = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+        headers: {
+            Authorization: `Bearer ${access_token_data.access_token}`,
+        },
+    });
+    const userInfo = await userinfoResponse.json();
+    console.log(userInfo, "testisdfjhklsdjflksda");
     // TODO: TYPE
     const token_info_response_json = await token_info_response.json();
     console.log(token_info_response_json);
