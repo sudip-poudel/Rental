@@ -166,7 +166,7 @@ const handleLogout = async (req: Request, res: Response) => {
 
 //* Google Auth*//
 
-export const oAuthHandler = (req: Request, res: Response) => {
+export const oAuthHandler = (_: Request, res: Response) => {
   const REDIRECT_URI = `${BACKEND_URL}/user/oauthsuccess`;
   // ENV === "PROD"
   //   ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
@@ -184,13 +184,6 @@ export const oAuthHandler = (req: Request, res: Response) => {
     const randomString = crypto.randomBytes(8).toString("hex");
     return `${referer}:${randomString}`
   }
-
-  const referer = req.get('Referer') || "https://rental-ruby.vercel.app"
-
-  const state = generateState(referer);
-
-  res.cookie("oauth_state", state, { httpOnly: true });
-
   const scopes = GOOGLE_OAUTH_SCOPES.join("+");
   console.log(scopes);
 
@@ -212,14 +205,12 @@ export const oAuth2Server = async (
   // TODO: Maybe, validate state
   const { code, state } = req.query;
   const storedState = req.cookies.oauth_state;
-  console.log(state)
 
   if (state != storedState) {
     return res.status(403).json({ error: "Invalid state parameter" });
   }
 
   res.clearCookie("oauth_state"); // Remove state cookie
-  const referer = decodeURIComponent(state as string).split('::')[0] || "https://www.ciy.sangat.tech";
 
   // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
   const REDIRECT_URI = `${BACKEND_URL}/user/oauthsuccess`;
@@ -282,7 +273,7 @@ export const oAuth2Server = async (
     const resp = loginHelper(data[0], res);
     if (resp.success) {
       // res.redirect("http://localhost:5173")
-      res.redirect(302, referer as string);
+      res.redirect(`${FRONTEND_URL}`);
     }
   } catch (error) {
     console.log(error);

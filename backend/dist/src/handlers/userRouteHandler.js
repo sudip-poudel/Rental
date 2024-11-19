@@ -14,6 +14,7 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const handleCloudinaryUpload_1 = require("../helper/handleCloudinaryUpload");
+const crypto_1 = __importDefault(require("crypto"));
 //** Auth Routes */
 const handleSignup = async (req, res) => {
     const { email, password, name, } = req.body;
@@ -147,7 +148,7 @@ const handleLogout = async (req, res) => {
 };
 exports.handleLogout = handleLogout;
 //* Google Auth*//
-const oAuthHandler = (_, res) => {
+const oAuthHandler = (req, res) => {
     const REDIRECT_URI = `${config_1.BACKEND_URL}/user/oauthsuccess`;
     // ENV === "PROD"
     //   ? "https://rental-backend-five.vercel.app/user/oauthsuccess"
@@ -158,7 +159,13 @@ const oAuthHandler = (_, res) => {
         "https://www.googleapis.com/auth/userinfo.email",
     ];
     // Prevent CSRF and more
-    const state = "some_state";
+    const generateState = (referer) => {
+        const randomString = crypto_1.default.randomBytes(8).toString("hex");
+        return `${referer}:${randomString}`;
+    };
+    const referer = req.get('Referer') || "https://rental-ruby.vercel.app";
+    const state = generateState(referer);
+    res.cookie("oauth_state", state, { httpOnly: true });
     const scopes = GOOGLE_OAUTH_SCOPES.join("+");
     console.log(scopes);
     // Generate url from auth request
@@ -174,10 +181,12 @@ const oAuth2Server = async (req, res, next) => {
     // TODO: Maybe, validate state
     const { code, state } = req.query;
     const storedState = req.cookies.oauth_state;
+    console.log(state);
     if (state != storedState) {
         return res.status(403).json({ error: "Invalid state parameter" });
     }
     res.clearCookie("oauth_state"); // Remove state cookie
+    const referer = decodeURIComponent(state).split('::')[0] || "https://www.ciy.sangat.tech";
     // const REDIRECT_URI = "http://localhost:3000/user/oauthsuccess";
     const REDIRECT_URI = `${config_1.BACKEND_URL}/user/oauthsuccess`;
     // ENV === "PROD"
@@ -230,7 +239,7 @@ const oAuth2Server = async (req, res, next) => {
         const resp = (0, loginHelper_1.loginHelper)(data[0], res);
         if (resp.success) {
             // res.redirect("http://localhost:5173")
-            res.redirect(`${config_1.FRONTEND_URL}`);
+            res.redirect(302, referer);
         }
     }
     catch (error) {
