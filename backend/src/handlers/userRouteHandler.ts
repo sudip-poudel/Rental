@@ -263,7 +263,7 @@ export const oAuth2Server = async (
   const token_info_response_json = await token_info_response.json();
   console.log(token_info_response_json);
 
-  const { name, email } = token_info_response_json;
+  const { name, email } = userInfo;
   console.log(name, email);
   try {
     const user = await db.query.users.findFirst({
